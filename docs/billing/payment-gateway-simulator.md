@@ -382,6 +382,8 @@ Phase 3 creates no tests; this section defines target coverage only.
 - Phase 5+ should implement service-layer transitions and contracts using DTO/FormRequest patterns.
 - Queue/scheduler commands should be idempotent and replay-safe from first implementation.
 
+Database planning details: [Billing Database Schema Planning](./database.md).
+
 ## Status
 
 - Phase 3 is design/documentation only.

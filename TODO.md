@@ -110,24 +110,24 @@ Phase 0 completed after Docker, DB, migrations, routes, Redis, queue worker, Rev
 
 ## Phase 4 — Database Schema Planning
 
-- [ ] Plan `plans` migration
-- [ ] Plan `plan_features` migration
-- [ ] Plan `subscriptions` migration
-- [ ] Plan `feature_usages` migration
-- [ ] Plan `payments` migration
-- [ ] Plan `payment_transactions` migration
-- [ ] Plan `idempotency_keys` migration
-- [ ] Plan `webhook_deliveries` migration
-- [ ] Plan relation between users and subscriptions
-- [ ] Plan relation between subscriptions and payments
-- [ ] Plan relation between payments and transactions
-- [ ] Plan relation between payments and webhook deliveries
-- [ ] Plan indexes
-- [ ] Plan unique constraints
-- [ ] Plan foreign keys
-- [ ] Plan JSON fields
-- [ ] Plan enum/status columns
-- [ ] Document DB schema in `docs/billing/database.md`
+- [x] Plan `plans` migration
+- [x] Plan `plan_features` migration
+- [x] Plan `subscriptions` migration
+- [x] Plan `feature_usages` migration
+- [x] Plan `payments` migration
+- [x] Plan `payment_transactions` migration
+- [x] Plan `idempotency_keys` migration
+- [x] Plan `webhook_deliveries` migration
+- [x] Plan relation between users and subscriptions
+- [x] Plan relation between subscriptions and payments
+- [x] Plan relation between payments and transactions
+- [x] Plan relation between payments and webhook deliveries
+- [x] Plan indexes
+- [x] Plan unique constraints
+- [x] Plan foreign keys
+- [x] Plan JSON fields
+- [x] Plan enum/status columns
+- [x] Document DB schema in `docs/billing/database.md`
 
 ---
 

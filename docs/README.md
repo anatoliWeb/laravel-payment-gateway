@@ -21,6 +21,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/overview.md](./billing/overview.md) - Billing strategy and roadmap scope
 - [billing/plans.md](./billing/plans.md) - Plans and feature-access design
 - [billing/payment-gateway-simulator.md](./billing/payment-gateway-simulator.md) - Payment Gateway Simulator design
+- [billing/database.md](./billing/database.md) - Billing database schema planning
 - [TODO.md](../TODO.md) - Development roadmap and task tracking
 
 ---
@@ -32,6 +33,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing -> [./billing/overview.md](./billing/overview.md)
 - Billing Plans -> [./billing/plans.md](./billing/plans.md)
 - Billing Simulator -> [./billing/payment-gateway-simulator.md](./billing/payment-gateway-simulator.md)
+- Billing Database -> [./billing/database.md](./billing/database.md)
 - Commands -> [./commands.md](./commands.md)
 - Coding Standards -> [./coding-standards.md](./coding-standards.md)
 - TODO -> [../TODO.md](../TODO.md)
@@ -166,6 +168,7 @@ Improves developer navigation and onboarding experience.
 - [Billing Strategy](./billing/overview.md)
 - [Billing Plans Design](./billing/plans.md)
 - [Payment Gateway Simulator Design](./billing/payment-gateway-simulator.md)
+- [Billing Database Schema Planning](./billing/database.md)
 - [Commands](./commands.md)
 - [Coding Standards](./coding-standards.md)
 - [Main Docs](./README.md)

@@ -380,6 +380,8 @@ Next phase focus:
 - Then schema implementation phase for plans/features/subscriptions/usages.
 - Then service-layer implementation with DTO/FormRequest + tests.
 
+Schema-level planning details: [Billing Database Schema Planning](./database.md).
+
 ## Status
 
 - Phase 2 is design/documentation only.
