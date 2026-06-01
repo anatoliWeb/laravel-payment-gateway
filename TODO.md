@@ -1,0 +1,506 @@
+# TODO — Billing & Payment Gateway Module
+
+## Project Direction
+
+We are not creating a standalone payment gateway.
+
+We are extending the existing Laravel SaaS foundation with a Billing & Payment module.
+
+The goal is to demonstrate Senior Backend Developer skills through:
+
+- SaaS billing architecture
+- paid plans
+- paid chat features
+- future paid dialer/calling features
+- payment gateway simulator
+- payment transactions
+- idempotency
+- webhook callbacks
+- queues
+- cron/scheduled jobs
+- activity logging
+- API-first design
+- Service Layer
+- DTO
+- FormRequest validation
+- tests
+- documentation
+
+---
+
+## Phase 0 — Safety & Baseline Verification
+
+- [ ] Confirm correct project root
+- [ ] Confirm git repository root
+- [ ] Check current branch
+- [ ] Create backup branch before changes
+- [ ] Run `git status`
+- [ ] Ensure no important uncommitted work will be overwritten
+- [ ] Check Docker stack status
+- [ ] Check backend container status
+- [ ] Check MySQL container status
+- [ ] Check Redis container status
+- [ ] Check queue-worker container status
+- [ ] Check current routes
+- [ ] Check current migrations
+- [ ] Check current tests
+- [ ] Save current audit report in docs if needed
+
+---
+
+## Phase 1 — Product Billing Strategy
+
+- [ ] Define billing module purpose
+- [ ] Define what is free
+- [ ] Define what is paid
+- [ ] Define what belongs to chat billing
+- [ ] Define what will be reusable for future dialer billing
+- [ ] Define plan types
+- [ ] Define usage-based limits
+- [ ] Define subscription lifecycle
+- [ ] Define payment lifecycle
+- [ ] Define invoice lifecycle
+- [ ] Define webhook lifecycle
+- [ ] Define cron/scheduler responsibilities
+- [ ] Document billing strategy in `docs/billing/overview.md`
+
+---
+
+## Phase 2 — Plans & Feature Access Design
+
+- [ ] Design `plans` table
+- [ ] Design `plan_features` table
+- [ ] Design `subscriptions` table
+- [ ] Design `subscription_items` table if needed
+- [ ] Design `feature_usages` table
+- [ ] Define plan slugs
+- [ ] Define default free plan
+- [ ] Define paid basic plan
+- [ ] Define paid pro plan
+- [ ] Define enterprise/demo plan if needed
+- [ ] Define chat feature limits
+- [ ] Define future dialer feature limits
+- [ ] Define storage/retention limits if useful
+- [ ] Define plan upgrade rules
+- [ ] Define plan downgrade rules
+- [ ] Define subscription cancellation rules
+- [ ] Document plans in `docs/billing/plans.md`
+
+---
+
+## Phase 3 — Payment Gateway Simulator Design
+
+- [ ] Design payment gateway simulator concept
+- [ ] Define supported fake payment methods
+- [ ] Define payment creation flow
+- [ ] Define payment success simulation flow
+- [ ] Define payment failure simulation flow
+- [ ] Define payment expiration flow
+- [ ] Define payment retry flow
+- [ ] Define webhook callback flow
+- [ ] Define idempotency behavior
+- [ ] Define transaction history behavior
+- [ ] Define payment metadata structure
+- [ ] Define simulator API contract
+- [ ] Document simulator in `docs/billing/payment-gateway-simulator.md`
+
+---
+
+## Phase 4 — Database Schema Planning
+
+- [ ] Plan `plans` migration
+- [ ] Plan `plan_features` migration
+- [ ] Plan `subscriptions` migration
+- [ ] Plan `feature_usages` migration
+- [ ] Plan `payments` migration
+- [ ] Plan `payment_transactions` migration
+- [ ] Plan `idempotency_keys` migration
+- [ ] Plan `webhook_deliveries` migration
+- [ ] Plan relation between users and subscriptions
+- [ ] Plan relation between subscriptions and payments
+- [ ] Plan relation between payments and transactions
+- [ ] Plan relation between payments and webhook deliveries
+- [ ] Plan indexes
+- [ ] Plan unique constraints
+- [ ] Plan foreign keys
+- [ ] Plan JSON fields
+- [ ] Plan enum/status columns
+- [ ] Document DB schema in `docs/billing/database.md`
+
+---
+
+## Phase 5 — Billing Domain Structure
+
+- [ ] Create target folder plan for `app/Services/Billing`
+- [ ] Create target folder plan for `app/Services/Payments`
+- [ ] Create target folder plan for `app/DTO/Billing`
+- [ ] Create target folder plan for `app/DTO/Payments`
+- [ ] Create target folder plan for `app/Enums/Billing`
+- [ ] Create target folder plan for `app/Enums/Payments`
+- [ ] Create target folder plan for `app/Http/Requests/Api/V1/Billing`
+- [ ] Create target folder plan for `app/Http/Requests/Api/V1/Payments`
+- [ ] Create target folder plan for `app/Http/Resources/Billing`
+- [ ] Create target folder plan for `app/Http/Resources/Payments`
+- [ ] Create target folder plan for `app/Jobs/Billing`
+- [ ] Create target folder plan for `app/Jobs/Payments`
+- [ ] Create target folder plan for `app/Exceptions/Billing`
+- [ ] Create target folder plan for `app/Exceptions/Payments`
+- [ ] Document folder structure in `docs/billing/architecture.md`
+
+---
+
+## Phase 6 — API Contract Planning
+
+- [ ] Plan `GET /api/v1/billing/plans`
+- [ ] Plan `GET /api/v1/billing/current-subscription`
+- [ ] Plan `POST /api/v1/billing/subscriptions`
+- [ ] Plan `POST /api/v1/billing/subscriptions/change-plan`
+- [ ] Plan `POST /api/v1/billing/subscriptions/cancel`
+- [ ] Plan `GET /api/v1/billing/usage`
+- [ ] Plan `GET /api/v1/billing/payments`
+- [ ] Plan `POST /api/v1/billing/payments`
+- [ ] Plan `GET /api/v1/billing/payments/{payment}`
+- [ ] Plan `GET /api/v1/billing/payments/{payment}/status`
+- [ ] Plan `GET /api/v1/billing/payments/{payment}/transactions`
+- [ ] Plan `POST /api/v1/billing/payments/{payment}/simulate/success`
+- [ ] Plan `POST /api/v1/billing/payments/{payment}/simulate/failure`
+- [ ] Plan `GET /api/v1/billing/payments/{payment}/webhooks`
+- [ ] Plan `POST /api/v1/billing/webhooks/{webhookDelivery}/retry`
+- [ ] Document API contract in `docs/billing/api.md`
+
+---
+
+## Phase 7 — Enums & Statuses Planning
+
+- [ ] Define `PlanType`
+- [ ] Define `SubscriptionStatus`
+- [ ] Define `PaymentStatus`
+- [ ] Define `PaymentTransactionType`
+- [ ] Define `WebhookDeliveryStatus`
+- [ ] Define `BillingFeature`
+- [ ] Define `UsagePeriod`
+- [ ] Define allowed payment status transitions
+- [ ] Define allowed subscription status transitions
+- [ ] Document statuses in `docs/billing/statuses.md`
+
+---
+
+## Phase 8 — Core Billing Models
+
+- [ ] Create `Plan` model
+- [ ] Create `PlanFeature` model
+- [ ] Create `Subscription` model
+- [ ] Create `FeatureUsage` model
+- [ ] Add relations between Plan and PlanFeature
+- [ ] Add relations between User and Subscription
+- [ ] Add relations between Subscription and Plan
+- [ ] Add casts
+- [ ] Add fillable fields
+- [ ] Add factories
+- [ ] Add seeders for default plans
+- [ ] Add tests for billing models
+
+---
+
+## Phase 9 — Core Payment Models
+
+- [ ] Create `Payment` model
+- [ ] Create `PaymentTransaction` model
+- [ ] Create `IdempotencyKey` model
+- [ ] Create `WebhookDelivery` model
+- [ ] Add relations between Payment and Subscription
+- [ ] Add relations between Payment and PaymentTransaction
+- [ ] Add relations between Payment and WebhookDelivery
+- [ ] Add casts
+- [ ] Add fillable fields
+- [ ] Add factories
+- [ ] Add tests for payment models
+
+---
+
+## Phase 10 — Plan Access Service
+
+- [ ] Create `PlanService`
+- [ ] Create `SubscriptionService`
+- [ ] Create `FeatureAccessService`
+- [ ] Create `UsageLimitService`
+- [ ] Add method to check if user has active subscription
+- [ ] Add method to get current plan
+- [ ] Add method to check feature availability
+- [ ] Add method to check usage limit
+- [ ] Add method to increment feature usage
+- [ ] Add method to reset usage by period
+- [ ] Add tests for plan access rules
+- [ ] Add tests for usage limits
+
+---
+
+## Phase 11 — Paid Chat Features
+
+- [ ] Define free chat limits
+- [ ] Define paid chat limits
+- [ ] Define chat messages per day limit
+- [ ] Define chat webhooks limit
+- [ ] Define chat history retention limit
+- [ ] Define chat attachments limit if needed
+- [ ] Add feature checks before premium chat actions
+- [ ] Add usage increment after billable chat actions
+- [ ] Add API error for limit exceeded
+- [ ] Add activity log for limit exceeded
+- [ ] Add tests for free plan chat limits
+- [ ] Add tests for paid plan chat access
+- [ ] Add tests for usage tracking
+
+---
+
+## Phase 12 — Future Dialer Billing Foundation
+
+- [ ] Define reusable billing feature names for dialer
+- [ ] Define future `dialer.calls.monthly`
+- [ ] Define future `dialer.recordings.storage`
+- [ ] Define future `dialer.concurrent_calls`
+- [ ] Define future `dialer.webhooks`
+- [ ] Ensure billing system is not chat-only
+- [ ] Ensure feature access works for any module
+- [ ] Document future dialer billing extension in `docs/billing/future-dialer.md`
+
+---
+
+## Phase 13 — Payment Creation Flow
+
+- [ ] Create `CreatePaymentRequest`
+- [ ] Create `CreatePaymentData` DTO
+- [ ] Create `PaymentService`
+- [ ] Add payment creation method
+- [ ] Validate subscription/payment context
+- [ ] Validate amount
+- [ ] Validate currency
+- [ ] Validate idempotency key
+- [ ] Create payment inside DB transaction
+- [ ] Create initial payment transaction record
+- [ ] Create activity log record
+- [ ] Return unified API response
+- [ ] Add feature tests for payment creation
+- [ ] Add validation tests
+
+---
+
+## Phase 14 — Idempotency Support
+
+- [ ] Require `Idempotency-Key` for payment creation
+- [ ] Create `IdempotencyService`
+- [ ] Generate request hash
+- [ ] Store idempotency key
+- [ ] Store response body
+- [ ] Store response status
+- [ ] Return previous response for same key and same payload
+- [ ] Reject same key with different payload
+- [ ] Prevent duplicate payments
+- [ ] Add tests for idempotency replay
+- [ ] Add tests for idempotency conflict
+- [ ] Add tests for duplicate prevention
+- [ ] Document idempotency in `docs/billing/idempotency.md`
+
+---
+
+## Phase 15 — Payment Simulation Flow
+
+- [ ] Create `PaymentSimulationService`
+- [ ] Add success simulation
+- [ ] Add failure simulation
+- [ ] Add invalid state protection
+- [ ] Add payment row locking if needed
+- [ ] Mark payment as succeeded
+- [ ] Mark payment as failed
+- [ ] Store failure reason
+- [ ] Create payment transaction for success
+- [ ] Create payment transaction for failure
+- [ ] Activate subscription after successful payment
+- [ ] Do not activate subscription after failed payment
+- [ ] Dispatch webhook job after payment status change
+- [ ] Add tests for successful payment
+- [ ] Add tests for failed payment
+- [ ] Add tests for invalid state transitions
+
+---
+
+## Phase 16 — Webhook Delivery
+
+- [ ] Create `WebhookPayloadBuilder`
+- [ ] Create `WebhookDeliveryService`
+- [ ] Create `SendPaymentWebhookJob`
+- [ ] Create webhook delivery record
+- [ ] Send payment success webhook
+- [ ] Send payment failure webhook
+- [ ] Store webhook payload
+- [ ] Store response status
+- [ ] Store response body
+- [ ] Store attempts count
+- [ ] Mark webhook as delivered
+- [ ] Mark webhook as failed
+- [ ] Configure retry attempts
+- [ ] Configure backoff
+- [ ] Add manual retry endpoint
+- [ ] Add tests for webhook job dispatch
+- [ ] Add tests for successful webhook delivery
+- [ ] Add tests for failed webhook delivery
+- [ ] Document webhooks in `docs/billing/webhooks.md`
+
+---
+
+## Phase 17 — Queue Integration
+
+- [ ] Verify Redis queue connection
+- [ ] Verify queue-worker container
+- [ ] Add payment webhook job
+- [ ] Add payment activity job if needed
+- [ ] Add subscription activation job if needed
+- [ ] Add failed job handling
+- [ ] Add retry/backoff strategy
+- [ ] Add queue tests with fake queue
+- [ ] Add docs for queue commands
+- [ ] Add docs for queue-worker Docker usage
+
+---
+
+## Phase 18 — Cron / Scheduler
+
+- [ ] Configure Laravel scheduler in Docker if not configured
+- [ ] Add scheduled command for expired pending payments
+- [ ] Add scheduled command for usage reset
+- [ ] Add scheduled command for subscription expiration check
+- [ ] Add scheduled command for failed webhook retry if needed
+- [ ] Add scheduled command for billing cleanup if needed
+- [ ] Add command tests
+- [ ] Add scheduler docs
+- [ ] Document cron architecture in `docs/billing/scheduler.md`
+
+---
+
+## Phase 19 — Subscription Lifecycle
+
+- [ ] Create subscription in pending state before payment if needed
+- [ ] Activate subscription after successful payment
+- [ ] Keep subscription inactive after failed payment
+- [ ] Handle plan upgrade
+- [ ] Handle plan downgrade
+- [ ] Handle subscription cancellation
+- [ ] Handle subscription expiration
+- [ ] Handle subscription renewal simulation
+- [ ] Create activity logs for subscription changes
+- [ ] Add tests for subscription activation
+- [ ] Add tests for subscription cancellation
+- [ ] Add tests for expired subscription
+
+---
+
+## Phase 20 — Activity Logging
+
+- [ ] Log plan viewed if needed
+- [ ] Log subscription created
+- [ ] Log subscription activated
+- [ ] Log subscription cancelled
+- [ ] Log payment created
+- [ ] Log payment succeeded
+- [ ] Log payment failed
+- [ ] Log idempotency replay
+- [ ] Log idempotency conflict
+- [ ] Log webhook dispatched
+- [ ] Log webhook delivered
+- [ ] Log webhook failed
+- [ ] Log usage limit exceeded
+- [ ] Add tests for critical activity logs
+
+---
+
+## Phase 21 — Unified API Response & Errors
+
+- [ ] Review current BaseController/API response format
+- [ ] Decide final response contract
+- [ ] Ensure billing endpoints use unified success response
+- [ ] Ensure billing endpoints use unified error response
+- [ ] Add domain exceptions
+- [ ] Add payment already processed exception
+- [ ] Add invalid payment state exception
+- [ ] Add idempotency conflict exception
+- [ ] Add subscription inactive exception
+- [ ] Add feature limit exceeded exception
+- [ ] Add tests for API errors
+- [ ] Document error responses
+
+---
+
+## Phase 22 — API Documentation
+
+- [ ] Update main README with billing module description
+- [ ] Add `docs/billing/overview.md`
+- [ ] Add `docs/billing/api.md`
+- [ ] Add `docs/billing/plans.md`
+- [ ] Add `docs/billing/idempotency.md`
+- [ ] Add `docs/billing/webhooks.md`
+- [ ] Add `docs/billing/scheduler.md`
+- [ ] Add `docs/billing/testing.md`
+- [ ] Add curl examples
+- [ ] Add example payment flow
+- [ ] Add example subscription flow
+- [ ] Add example chat limit flow
+- [ ] Add future dialer billing notes
+
+---
+
+## Phase 23 — Testing Strategy
+
+- [ ] Add feature tests for plans API
+- [ ] Add feature tests for current subscription API
+- [ ] Add feature tests for subscription creation
+- [ ] Add feature tests for payment creation
+- [ ] Add feature tests for payment success
+- [ ] Add feature tests for payment failure
+- [ ] Add feature tests for transaction history
+- [ ] Add feature tests for webhooks
+- [ ] Add feature tests for idempotency
+- [ ] Add feature tests for paid chat limits
+- [ ] Add unit tests for services
+- [ ] Add unit tests for DTOs
+- [ ] Add unit tests for webhook payload builder
+- [ ] Add command tests for scheduler tasks
+- [ ] Add queue fake tests
+- [ ] Add HTTP fake tests
+- [ ] Add test docs
+
+---
+
+## Phase 24 — Docker & DevOps Polish
+
+- [ ] Verify backend container
+- [ ] Verify nginx container
+- [ ] Verify mysql container
+- [ ] Verify redis container
+- [ ] Verify queue-worker container
+- [ ] Add scheduler container or cron strategy if needed
+- [ ] Review old `saas_*` names
+- [ ] Decide whether to rename containers
+- [ ] Keep frontend containers untouched unless needed
+- [ ] Document Docker commands
+- [ ] Document queue worker commands
+- [ ] Document scheduler commands
+- [ ] Add troubleshooting docs
+
+---
+
+## Phase 25 — Portfolio Polish
+
+- [ ] Add README section: SaaS Billing Module
+- [ ] Add README section: Payment Gateway Simulator
+- [ ] Add README section: Idempotency
+- [ ] Add README section: Webhooks
+- [ ] Add README section: Queue & Scheduler
+- [ ] Add README section: Paid Chat Features
+- [ ] Add README section: Future Dialer Billing
+- [ ] Add architecture diagram text
+- [ ] Add interview talking points
+- [ ] Add examples of senior-level decisions
+- [ ] Explain why repository layer is not used initially
+- [ ] Explain transaction boundaries
+- [ ] Explain webhook retry strategy
+- [ ] Explain idempotency strategy

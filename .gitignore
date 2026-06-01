@@ -1,0 +1,89 @@
+# ========================
+# Laravel
+# ========================
+/vendor
+/node_modules
+/backend/vendor
+/backend/node_modules
+/public/storage
+/storage/*.key
+/storage/app/*
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/bootstrap/cache/*
+.env
+/backend/.env
+backend/.env
+.phpunit.result.cache
+/backend/.phpunit.result.cache
+.pest
+/backend/.pest
+
+# ========================
+# Node / Frontend
+# ========================
+/frontend/node_modules
+/frontend/dist
+/frontend/.angular
+/frontend/.vite
+/frontend/node_modules/.cache
+/frontend/.env
+
+# ========================
+# Docker
+# ========================
+/data/mysql/*
+/data/redis/*
+!/data/mysql/.gitkeep
+!/data/redis/.gitkeep
+
+# Docker runtime data
+docker/data/mysql/*
+docker/data/redis/*
+
+# Keep placeholders
+!docker/data/mysql/.gitkeep
+!docker/data/redis/.gitkeep
+
+# ========================
+# Logs
+# ========================
+*.log
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ========================
+# OS / IDE
+# ========================
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+*.swp
+*.swo
+
+# ========================
+# Misc
+# ========================
+*.bak
+*.tmp
+*.cache
+
+# ========================
+# Linux
+# ========================
+*.sock
+
+# Backend Laravel runtime
+/backend/storage/logs/*
+/backend/storage/framework/cache/*
+/backend/storage/framework/sessions/*
+/backend/storage/framework/views/*
+/backend/bootstrap/cache/*
