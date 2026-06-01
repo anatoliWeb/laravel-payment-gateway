@@ -18,6 +18,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [commands.md](./commands.md) - Development and operational commands
 - [coding-standards.md](./coding-standards.md) - Code style and best practices
 - [api.md](./api.md) - API endpoints and examples
+- [billing/overview.md](./billing/overview.md) - Billing strategy and roadmap scope
 - [TODO.md](../TODO.md) - Development roadmap and task tracking
 
 ---
@@ -26,6 +27,7 @@ The project follows an API-first, modular architecture with clear separation bet
 
 - Architecture -> [./architecture.md](./architecture.md)
 - API -> [./api.md](./api.md)
+- Billing -> [./billing/overview.md](./billing/overview.md)
 - Commands -> [./commands.md](./commands.md)
 - Coding Standards -> [./coding-standards.md](./coding-standards.md)
 - TODO -> [../TODO.md](../TODO.md)
@@ -157,6 +159,7 @@ Improves developer navigation and onboarding experience.
 
 - [Architecture](./architecture.md)
 - [API](./api.md)
+- [Billing Strategy](./billing/overview.md)
 - [Commands](./commands.md)
 - [Coding Standards](./coding-standards.md)
 - [Main Docs](./README.md)

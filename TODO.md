@@ -52,19 +52,19 @@ Phase 0 completed after Docker, DB, migrations, routes, Redis, queue worker, Rev
 
 ## Phase 1 — Product Billing Strategy
 
-- [ ] Define billing module purpose
-- [ ] Define what is free
-- [ ] Define what is paid
-- [ ] Define what belongs to chat billing
-- [ ] Define what will be reusable for future dialer billing
-- [ ] Define plan types
-- [ ] Define usage-based limits
-- [ ] Define subscription lifecycle
-- [ ] Define payment lifecycle
-- [ ] Define invoice lifecycle
-- [ ] Define webhook lifecycle
-- [ ] Define cron/scheduler responsibilities
-- [ ] Document billing strategy in `docs/billing/overview.md`
+- [x] Define billing module purpose
+- [x] Define what is free
+- [x] Define what is paid
+- [x] Define what belongs to chat billing
+- [x] Define what will be reusable for future dialer billing
+- [x] Define plan types
+- [x] Define usage-based limits
+- [x] Define subscription lifecycle
+- [x] Define payment lifecycle
+- [x] Define invoice lifecycle
+- [x] Define webhook lifecycle
+- [x] Define cron/scheduler responsibilities
+- [x] Document billing strategy in `docs/billing/overview.md`
 
 ---
 
