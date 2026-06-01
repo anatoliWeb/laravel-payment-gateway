@@ -92,19 +92,19 @@ Phase 0 completed after Docker, DB, migrations, routes, Redis, queue worker, Rev
 
 ## Phase 3 — Payment Gateway Simulator Design
 
-- [ ] Design payment gateway simulator concept
-- [ ] Define supported fake payment methods
-- [ ] Define payment creation flow
-- [ ] Define payment success simulation flow
-- [ ] Define payment failure simulation flow
-- [ ] Define payment expiration flow
-- [ ] Define payment retry flow
-- [ ] Define webhook callback flow
-- [ ] Define idempotency behavior
-- [ ] Define transaction history behavior
-- [ ] Define payment metadata structure
-- [ ] Define simulator API contract
-- [ ] Document simulator in `docs/billing/payment-gateway-simulator.md`
+- [x] Design payment gateway simulator concept
+- [x] Define supported fake payment methods
+- [x] Define payment creation flow
+- [x] Define payment success simulation flow
+- [x] Define payment failure simulation flow
+- [x] Define payment expiration flow
+- [x] Define payment retry flow
+- [x] Define webhook callback flow
+- [x] Define idempotency behavior
+- [x] Define transaction history behavior
+- [x] Define payment metadata structure
+- [x] Define simulator API contract
+- [x] Document simulator in `docs/billing/payment-gateway-simulator.md`
 
 ---
 

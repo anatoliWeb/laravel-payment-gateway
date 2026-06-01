@@ -262,6 +262,7 @@ Next implementation phases should start with:
 5. Scheduler command contracts and test strategy
 
 Detailed Phase 2 planning: [Billing Plans & Feature Access Design](./plans.md).
+Detailed Phase 3 planning: [Payment Gateway Simulator Design](./payment-gateway-simulator.md).
 
 ## Status
 
