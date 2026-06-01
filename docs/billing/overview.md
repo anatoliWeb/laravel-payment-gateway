@@ -264,6 +264,7 @@ Next implementation phases should start with:
 Detailed Phase 2 planning: [Billing Plans & Feature Access Design](./plans.md).
 Detailed Phase 3 planning: [Payment Gateway Simulator Design](./payment-gateway-simulator.md).
 Detailed Phase 4 planning: [Billing Database Schema Planning](./database.md).
+Detailed Phase 5 planning: [Billing Domain Architecture](./architecture.md).
 
 ## Status
 

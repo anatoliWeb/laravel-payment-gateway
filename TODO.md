@@ -133,21 +133,21 @@ Phase 0 completed after Docker, DB, migrations, routes, Redis, queue worker, Rev
 
 ## Phase 5 — Billing Domain Structure
 
-- [ ] Create target folder plan for `app/Services/Billing`
-- [ ] Create target folder plan for `app/Services/Payments`
-- [ ] Create target folder plan for `app/DTO/Billing`
-- [ ] Create target folder plan for `app/DTO/Payments`
-- [ ] Create target folder plan for `app/Enums/Billing`
-- [ ] Create target folder plan for `app/Enums/Payments`
-- [ ] Create target folder plan for `app/Http/Requests/Api/V1/Billing`
-- [ ] Create target folder plan for `app/Http/Requests/Api/V1/Payments`
-- [ ] Create target folder plan for `app/Http/Resources/Billing`
-- [ ] Create target folder plan for `app/Http/Resources/Payments`
-- [ ] Create target folder plan for `app/Jobs/Billing`
-- [ ] Create target folder plan for `app/Jobs/Payments`
-- [ ] Create target folder plan for `app/Exceptions/Billing`
-- [ ] Create target folder plan for `app/Exceptions/Payments`
-- [ ] Document folder structure in `docs/billing/architecture.md`
+- [x] Create target folder plan for `app/Services/Billing`
+- [x] Create target folder plan for `app/Services/Payments`
+- [x] Create target folder plan for `app/DTO/Billing`
+- [x] Create target folder plan for `app/DTO/Payments`
+- [x] Create target folder plan for `app/Enums/Billing`
+- [x] Create target folder plan for `app/Enums/Payments`
+- [x] Create target folder plan for `app/Http/Requests/Api/V1/Billing`
+- [x] Create target folder plan for `app/Http/Requests/Api/V1/Payments`
+- [x] Create target folder plan for `app/Http/Resources/Billing`
+- [x] Create target folder plan for `app/Http/Resources/Payments`
+- [x] Create target folder plan for `app/Jobs/Billing`
+- [x] Create target folder plan for `app/Jobs/Payments`
+- [x] Create target folder plan for `app/Exceptions/Billing`
+- [x] Create target folder plan for `app/Exceptions/Payments`
+- [x] Document folder structure in `docs/billing/architecture.md`
 
 ---
 

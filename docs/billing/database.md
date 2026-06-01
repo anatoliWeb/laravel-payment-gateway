@@ -518,6 +518,8 @@ Dependency notes:
 - After that, create migrations in safe dependency order with explicit indexes and constraints.
 - Service-layer transaction boundaries and idempotency locking should be implemented together with write flows.
 
+Domain structure details: [Billing Domain Architecture](./architecture.md).
+
 ## Status
 
 - Phase 4 is database planning/documentation only.

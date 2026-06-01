@@ -383,6 +383,7 @@ Phase 3 creates no tests; this section defines target coverage only.
 - Queue/scheduler commands should be idempotent and replay-safe from first implementation.
 
 Database planning details: [Billing Database Schema Planning](./database.md).
+Domain structure details: [Billing Domain Architecture](./architecture.md).
 
 ## Status
 

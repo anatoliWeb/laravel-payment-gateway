@@ -381,6 +381,7 @@ Next phase focus:
 - Then service-layer implementation with DTO/FormRequest + tests.
 
 Schema-level planning details: [Billing Database Schema Planning](./database.md).
+Domain structure planning details: [Billing Domain Architecture](./architecture.md).
 
 ## Status
 
