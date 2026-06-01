@@ -289,6 +289,7 @@ Do not log:
 - Next phase should formalize enum/status sets and transition rules.
 - After enums, implement routes/controllers/FormRequests/DTO/services incrementally.
 - Keep API envelope and error code stability from first implementation commit.
+- Enum/status planning details: [Enums & Statuses Planning](./statuses.md).
 
 ## Status
 

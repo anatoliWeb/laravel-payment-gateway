@@ -383,6 +383,7 @@ Next phase focus:
 Schema-level planning details: [Billing Database Schema Planning](./database.md).
 Domain structure planning details: [Billing Domain Architecture](./architecture.md).
 API contract planning details: [Billing API Contract](./api.md).
+Enum/status planning details: [Enums & Statuses Planning](./statuses.md).
 
 ## Status
 

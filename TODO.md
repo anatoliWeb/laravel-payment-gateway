@@ -174,16 +174,16 @@ Phase 0 completed after Docker, DB, migrations, routes, Redis, queue worker, Rev
 
 ## Phase 7 — Enums & Statuses Planning
 
-- [ ] Define `PlanType`
-- [ ] Define `SubscriptionStatus`
-- [ ] Define `PaymentStatus`
-- [ ] Define `PaymentTransactionType`
-- [ ] Define `WebhookDeliveryStatus`
-- [ ] Define `BillingFeature`
-- [ ] Define `UsagePeriod`
-- [ ] Define allowed payment status transitions
-- [ ] Define allowed subscription status transitions
-- [ ] Document statuses in `docs/billing/statuses.md`
+- [x] Define `PlanType`
+- [x] Define `SubscriptionStatus`
+- [x] Define `PaymentStatus`
+- [x] Define `PaymentTransactionType`
+- [x] Define `WebhookDeliveryStatus`
+- [x] Define `BillingFeature`
+- [x] Define `UsagePeriod`
+- [x] Define allowed payment status transitions
+- [x] Define allowed subscription status transitions
+- [x] Document statuses in `docs/billing/statuses.md`
 
 ---
 

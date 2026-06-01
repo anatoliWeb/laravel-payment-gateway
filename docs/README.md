@@ -24,6 +24,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/database.md](./billing/database.md) - Billing database schema planning
 - [billing/architecture.md](./billing/architecture.md) - Billing domain structure architecture
 - [billing/api.md](./billing/api.md) - Billing API contract planning
+- [billing/statuses.md](./billing/statuses.md) - Billing enums, statuses, and transition rules
 - [TODO.md](../TODO.md) - Development roadmap and task tracking
 
 ---
@@ -38,6 +39,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Database -> [./billing/database.md](./billing/database.md)
 - Billing Architecture -> [./billing/architecture.md](./billing/architecture.md)
 - Billing API -> [./billing/api.md](./billing/api.md)
+- Billing Statuses -> [./billing/statuses.md](./billing/statuses.md)
 - Commands -> [./commands.md](./commands.md)
 - Coding Standards -> [./coding-standards.md](./coding-standards.md)
 - TODO -> [../TODO.md](../TODO.md)
@@ -175,6 +177,7 @@ Improves developer navigation and onboarding experience.
 - [Billing Database Schema Planning](./billing/database.md)
 - [Billing Domain Architecture](./billing/architecture.md)
 - [Billing API Contract](./billing/api.md)
+- [Billing Enums & Statuses](./billing/statuses.md)
 - [Commands](./commands.md)
 - [Coding Standards](./coding-standards.md)
 - [Main Docs](./README.md)

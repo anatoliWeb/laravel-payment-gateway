@@ -266,6 +266,7 @@ Detailed Phase 3 planning: [Payment Gateway Simulator Design](./payment-gateway-
 Detailed Phase 4 planning: [Billing Database Schema Planning](./database.md).
 Detailed Phase 5 planning: [Billing Domain Architecture](./architecture.md).
 Detailed Phase 6 planning: [Billing API Contract](./api.md).
+Detailed Phase 7 planning: [Enums & Statuses Planning](./statuses.md).
 
 ## Status
 

@@ -423,6 +423,7 @@ Circular dependency prevention:
 - Preserve thin-controller/service-centric architecture from first implementation commit.
 
 API contract planning details: [Billing API Contract](./api.md).
+Enum/status planning details: [Enums & Statuses Planning](./statuses.md).
 
 ## Status
 

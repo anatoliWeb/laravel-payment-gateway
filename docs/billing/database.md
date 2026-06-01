@@ -520,6 +520,7 @@ Dependency notes:
 
 Domain structure details: [Billing Domain Architecture](./architecture.md).
 API contract planning details: [Billing API Contract](./api.md).
+Enum/status planning details: [Enums & Statuses Planning](./statuses.md).
 
 ## Status
 
