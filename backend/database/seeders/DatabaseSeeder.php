@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ActivitySeeder::class,
             SettingsSeeder::class,
             TranslationsSeeder::class,
+            BillingSeeder::class,
         ]);
 
         if (! app()->environment('production') && (bool) env('CHAT_DEMO_SEED', false)) {

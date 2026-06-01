@@ -189,44 +189,44 @@ Phase 0 completed after Docker, DB, migrations, routes, Redis, queue worker, Rev
 
 ## Phase 7.1 — Database Migrations & Seeders Implementation
 
-- [ ] Create `plans` migration
-- [ ] Create `plan_features` migration
-- [ ] Create `subscriptions` migration
-- [ ] Create `feature_usages` migration
-- [ ] Add indexes for billing tables
-- [ ] Add unique constraints for billing tables
-- [ ] Add foreign keys for billing tables
-- [ ] Add JSON columns for billing metadata
-- [ ] Add enum/status string columns for billing tables
-- [ ] Verify billing migration order
-- [ ] Run migrations in local Docker environment
-- [ ] Run migrations in testing database
-- [ ] Create `payments` migration
-- [ ] Create `payment_transactions` migration
-- [ ] Create `idempotency_keys` migration
-- [ ] Create `webhook_deliveries` migration
-- [ ] Add indexes for payment tables
-- [ ] Add unique constraints for payment tables
-- [ ] Add foreign keys for payment tables
-- [ ] Add JSON columns for payment metadata and payloads
-- [ ] Add enum/status string columns for payment tables
-- [ ] Verify payment migration order
-- [ ] Create billing plan seeder
-- [ ] Seed default Free plan
-- [ ] Seed Basic plan
-- [ ] Seed Pro plan
-- [ ] Seed Enterprise/Demo plan if needed
-- [ ] Seed default plan features
-- [ ] Ensure plan feature keys match `docs/billing/statuses.md`
-- [ ] Ensure seeded plan slugs match `docs/billing/plans.md`
-- [ ] Ensure seeders are safe to run repeatedly
+- [x] Create `plans` migration
+- [x] Create `plan_features` migration
+- [x] Create `subscriptions` migration
+- [x] Create `feature_usages` migration
+- [x] Add indexes for billing tables
+- [x] Add unique constraints for billing tables
+- [x] Add foreign keys for billing tables
+- [x] Add JSON columns for billing metadata
+- [x] Add enum/status string columns for billing tables
+- [x] Verify billing migration order
+- [x] Run migrations in local Docker environment
+- [x] Run migrations in testing database
+- [x] Create `payments` migration
+- [x] Create `payment_transactions` migration
+- [x] Create `idempotency_keys` migration
+- [x] Create `webhook_deliveries` migration
+- [x] Add indexes for payment tables
+- [x] Add unique constraints for payment tables
+- [x] Add foreign keys for payment tables
+- [x] Add JSON columns for payment metadata and payloads
+- [x] Add enum/status string columns for payment tables
+- [x] Verify payment migration order
+- [x] Create billing plan seeder
+- [x] Seed default Free plan
+- [x] Seed Basic plan
+- [x] Seed Pro plan
+- [x] Seed Enterprise/Demo plan if needed
+- [x] Seed default plan features
+- [x] Ensure plan feature keys match `docs/billing/statuses.md`
+- [x] Ensure seeded plan slugs match `docs/billing/plans.md`
+- [x] Ensure seeders are safe to run repeatedly
 - [ ] Add seeder documentation if needed
-- [ ] Add migration tests for billing tables
-- [ ] Add migration tests for payment tables
-- [ ] Add seeder tests for default plans
-- [ ] Add seeder tests for default plan features
-- [ ] Verify `php artisan migrate:fresh --seed` works locally
-- [ ] Verify `php artisan migrate:fresh --env=testing --seed` works for tests
+- [x] Add migration tests for billing tables
+- [x] Add migration tests for payment tables
+- [x] Add seeder tests for default plans
+- [x] Add seeder tests for default plan features
+- [x] Verify `php artisan migrate:fresh --seed` works locally
+- [x] Verify `php artisan migrate:fresh --env=testing --seed` works for tests
 - [ ] Verify existing test suite still passes or document known failures
 
 ---
