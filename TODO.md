@@ -70,23 +70,23 @@ Phase 0 completed after Docker, DB, migrations, routes, Redis, queue worker, Rev
 
 ## Phase 2 — Plans & Feature Access Design
 
-- [ ] Design `plans` table
-- [ ] Design `plan_features` table
-- [ ] Design `subscriptions` table
-- [ ] Design `subscription_items` table if needed
-- [ ] Design `feature_usages` table
-- [ ] Define plan slugs
-- [ ] Define default free plan
-- [ ] Define paid basic plan
-- [ ] Define paid pro plan
-- [ ] Define enterprise/demo plan if needed
-- [ ] Define chat feature limits
-- [ ] Define future dialer feature limits
-- [ ] Define storage/retention limits if useful
-- [ ] Define plan upgrade rules
-- [ ] Define plan downgrade rules
-- [ ] Define subscription cancellation rules
-- [ ] Document plans in `docs/billing/plans.md`
+- [x] Design `plans` table
+- [x] Design `plan_features` table
+- [x] Design `subscriptions` table
+- [x] Design `subscription_items` table if needed
+- [x] Design `feature_usages` table
+- [x] Define plan slugs
+- [x] Define default free plan
+- [x] Define paid basic plan
+- [x] Define paid pro plan
+- [x] Define enterprise/demo plan if needed
+- [x] Define chat feature limits
+- [x] Define future dialer feature limits
+- [x] Define storage/retention limits if useful
+- [x] Define plan upgrade rules
+- [x] Define plan downgrade rules
+- [x] Define subscription cancellation rules
+- [x] Document plans in `docs/billing/plans.md`
 
 ---
 

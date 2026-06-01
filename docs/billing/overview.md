@@ -261,6 +261,8 @@ Next implementation phases should start with:
 4. Idempotency and webhook delivery architecture
 5. Scheduler command contracts and test strategy
 
+Detailed Phase 2 planning: [Billing Plans & Feature Access Design](./plans.md).
+
 ## Status
 
 - Phase 1 is strategy/documentation only.
