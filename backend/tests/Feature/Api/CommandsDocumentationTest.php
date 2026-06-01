@@ -34,7 +34,7 @@ class CommandsDocumentationTest extends TestCase
         $this->assertStringContainsString('docker compose logs backend --tail=100', $doc);
 
         $this->assertStringContainsString('do not run multiple backend test processes in parallel', $lower);
-        $this->assertStringContainsString('saas_testing', $doc);
+        $this->assertStringContainsString('payment_gateway_testing', $doc);
 
         $this->assertStringNotContainsString('app_key=base64:', $lower);
         $this->assertStringNotContainsString('db_password=', $lower);
@@ -44,4 +44,3 @@ class CommandsDocumentationTest extends TestCase
         $this->assertStringNotContainsString('sk_live_', $lower);
     }
 }
-

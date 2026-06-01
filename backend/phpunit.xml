@@ -24,11 +24,11 @@
         <server name="DB_CONNECTION" value="mysql"/>
         <server name="DB_HOST" value="mysql"/>
         <server name="DB_PORT" value="3306"/>
-        <server name="DB_DATABASE" value="saas_testing"/>
-        <server name="DB_TEST_DATABASE" value="saas_testing"/>
-        <server name="DB_USERNAME" value="saas"/>
+        <server name="DB_DATABASE" value="payment_gateway_testing"/>
+        <server name="DB_TEST_DATABASE" value="payment_gateway_testing"/>
+        <server name="DB_USERNAME" value="payment_gateway"/>
         <server name="DB_PASSWORD" value="secret"/>
-        <server name="DB_TEST_USERNAME" value="saas"/>
+        <server name="DB_TEST_USERNAME" value="payment_gateway"/>
         <server name="DB_TEST_PASSWORD" value="secret"/>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_KEY" value="base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="/>
@@ -39,11 +39,11 @@
         <env name="DB_CONNECTION" value="mysql"/>
         <env name="DB_HOST" value="mysql"/>
         <env name="DB_PORT" value="3306"/>
-        <env name="DB_DATABASE" value="saas_testing"/>
-        <env name="DB_TEST_DATABASE" value="saas_testing"/>
-        <env name="DB_USERNAME" value="saas"/>
+        <env name="DB_DATABASE" value="payment_gateway_testing"/>
+        <env name="DB_TEST_DATABASE" value="payment_gateway_testing"/>
+        <env name="DB_USERNAME" value="payment_gateway"/>
         <env name="DB_PASSWORD" value="secret"/>
-        <env name="DB_TEST_USERNAME" value="saas"/>
+        <env name="DB_TEST_USERNAME" value="payment_gateway"/>
         <env name="DB_TEST_PASSWORD" value="secret"/>
         <env name="DB_URL" value=""/>
         <env name="MAIL_MAILER" value="array"/>

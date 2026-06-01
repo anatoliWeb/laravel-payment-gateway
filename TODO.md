@@ -30,21 +30,23 @@ The goal is to demonstrate Senior Backend Developer skills through:
 
 ## Phase 0 — Safety & Baseline Verification
 
-- [ ] Confirm correct project root
-- [ ] Confirm git repository root
-- [ ] Check current branch
-- [ ] Create backup branch before changes
-- [ ] Run `git status`
-- [ ] Ensure no important uncommitted work will be overwritten
-- [ ] Check Docker stack status
-- [ ] Check backend container status
-- [ ] Check MySQL container status
-- [ ] Check Redis container status
-- [ ] Check queue-worker container status
-- [ ] Check current routes
-- [ ] Check current migrations
-- [ ] Check current tests
-- [ ] Save current audit report in docs if needed
+- [x] Confirm correct project root
+- [x] Confirm git repository root
+- [x] Check current branch
+- [x] Create backup branch before changes
+- [x] Run `git status`
+- [x] Ensure no important uncommitted work will be overwritten
+- [x] Check Docker stack status
+- [x] Check backend container status
+- [x] Check MySQL container status
+- [x] Check Redis container status
+- [x] Check queue-worker container status
+- [x] Check current routes
+- [x] Check current migrations
+- [x] Check current tests
+- [x] Save current audit report in docs if needed
+
+Phase 0 completed after Docker, DB, migrations, routes, Redis, queue worker, Reverb, and baseline tests were verified. Billing/payment logic is not implemented yet.
 
 ---
 
