@@ -384,6 +384,7 @@ Phase 3 creates no tests; this section defines target coverage only.
 
 Database planning details: [Billing Database Schema Planning](./database.md).
 Domain structure details: [Billing Domain Architecture](./architecture.md).
+API contract planning details: [Billing API Contract](./api.md).
 
 ## Status
 

@@ -422,6 +422,8 @@ Circular dependency prevention:
 - After API planning, implementation phases should create folders/classes incrementally by vertical slice.
 - Preserve thin-controller/service-centric architecture from first implementation commit.
 
+API contract planning details: [Billing API Contract](./api.md).
+
 ## Status
 
 - Phase 5 is architecture/documentation only.

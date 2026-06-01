@@ -153,22 +153,22 @@ Phase 0 completed after Docker, DB, migrations, routes, Redis, queue worker, Rev
 
 ## Phase 6 — API Contract Planning
 
-- [ ] Plan `GET /api/v1/billing/plans`
-- [ ] Plan `GET /api/v1/billing/current-subscription`
-- [ ] Plan `POST /api/v1/billing/subscriptions`
-- [ ] Plan `POST /api/v1/billing/subscriptions/change-plan`
-- [ ] Plan `POST /api/v1/billing/subscriptions/cancel`
-- [ ] Plan `GET /api/v1/billing/usage`
-- [ ] Plan `GET /api/v1/billing/payments`
-- [ ] Plan `POST /api/v1/billing/payments`
-- [ ] Plan `GET /api/v1/billing/payments/{payment}`
-- [ ] Plan `GET /api/v1/billing/payments/{payment}/status`
-- [ ] Plan `GET /api/v1/billing/payments/{payment}/transactions`
-- [ ] Plan `POST /api/v1/billing/payments/{payment}/simulate/success`
-- [ ] Plan `POST /api/v1/billing/payments/{payment}/simulate/failure`
-- [ ] Plan `GET /api/v1/billing/payments/{payment}/webhooks`
-- [ ] Plan `POST /api/v1/billing/webhooks/{webhookDelivery}/retry`
-- [ ] Document API contract in `docs/billing/api.md`
+- [x] Plan `GET /api/v1/billing/plans`
+- [x] Plan `GET /api/v1/billing/current-subscription`
+- [x] Plan `POST /api/v1/billing/subscriptions`
+- [x] Plan `POST /api/v1/billing/subscriptions/change-plan`
+- [x] Plan `POST /api/v1/billing/subscriptions/cancel`
+- [x] Plan `GET /api/v1/billing/usage`
+- [x] Plan `GET /api/v1/billing/payments`
+- [x] Plan `POST /api/v1/billing/payments`
+- [x] Plan `GET /api/v1/billing/payments/{payment}`
+- [x] Plan `GET /api/v1/billing/payments/{payment}/status`
+- [x] Plan `GET /api/v1/billing/payments/{payment}/transactions`
+- [x] Plan `POST /api/v1/billing/payments/{payment}/simulate/success`
+- [x] Plan `POST /api/v1/billing/payments/{payment}/simulate/failure`
+- [x] Plan `GET /api/v1/billing/payments/{payment}/webhooks`
+- [x] Plan `POST /api/v1/billing/webhooks/{webhookDelivery}/retry`
+- [x] Document API contract in `docs/billing/api.md`
 
 ---
 
