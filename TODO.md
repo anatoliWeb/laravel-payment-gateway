@@ -423,6 +423,34 @@ Users may pay either from internal wallet balance or directly through a payment 
 
 ---
 
+## Phase 12.3 — Payment Methods & User Payment Preferences
+
+- [ ] Design `payment_methods` table
+- [ ] Design `user_payment_preferences` table
+- [ ] Define fake card payment method
+- [ ] Define fake manual invoice payment method
+- [ ] Define fake wallet/internal balance payment method
+- [ ] Define payment method status
+- [ ] Define default payment method
+- [ ] Define payment strategy: wallet only
+- [ ] Define payment strategy: card/payment method only
+- [ ] Define payment strategy: wallet first with card fallback
+- [ ] Define payment strategy: manual approval only if needed
+- [ ] Store explicit user consent for saved payment method
+- [ ] Store explicit user consent for auto charge
+- [ ] Store explicit user consent for auto top-up
+- [ ] Add payment method metadata rules
+- [ ] Add payment method masking rules
+- [ ] Ensure no raw card data is stored
+- [ ] Add payment method seed/demo data if needed
+- [ ] Add tests for payment methods
+- [ ] Add tests for payment preferences
+- [ ] Document payment methods in `docs/billing/payment-methods.md`
+
+Payment methods are simulated in this portfolio project. The system must model consent, masking, default method selection, and payment strategy, but must not store raw card data or real provider secrets.
+
+---
+
 ## Phase 13 — Payment Creation Flow
 
 - [ ] Create `CreatePaymentRequest`
@@ -433,15 +461,25 @@ Users may pay either from internal wallet balance or directly through a payment 
 - [ ] Validate amount
 - [ ] Validate currency
 - [ ] Validate idempotency key
+- [ ] Accept payment source in `CreatePaymentRequest`
+- [ ] Accept payment strategy in `CreatePaymentData`
+- [ ] Resolve payment source from user preferences if not provided
 - [ ] Support payment source: direct payment method
 - [ ] Support payment source: internal wallet balance
 - [ ] Support payment source: wallet first with payment method fallback
+- [ ] Support direct payment method charge
+- [ ] Support internal wallet balance debit
+- [ ] Support wallet first with payment method fallback
 - [ ] Validate user payment preference
+- [ ] Validate saved payment method ownership
+- [ ] Validate saved payment method status
 - [ ] Validate wallet balance before wallet debit
 - [ ] Create payment inside DB transaction
 - [ ] Create wallet debit transaction when paying from balance
 - [ ] Do not activate subscription if wallet debit fails
 - [ ] Link payment to wallet transaction if balance is used
+- [ ] Link payment to wallet transaction when wallet is used
+- [ ] Link payment to payment method when payment method is used
 - [ ] Create initial payment transaction record
 - [ ] Create activity log record
 - [ ] Return unified API response
@@ -501,6 +539,47 @@ Auto top-up and auto charge require explicit user consent. In this simulator pro
 
 ---
 
+## Phase 13.3 — Wallet/Card Payment API Interface
+
+- [ ] Plan `GET /api/v1/billing/wallet`
+- [ ] Plan `GET /api/v1/billing/wallet/balances`
+- [ ] Plan `GET /api/v1/billing/wallet/transactions`
+- [ ] Plan `POST /api/v1/billing/wallet/top-ups`
+- [ ] Plan `POST /api/v1/billing/wallet/debits` for internal/admin-safe use if needed
+- [ ] Plan `GET /api/v1/billing/payment-methods`
+- [ ] Plan `POST /api/v1/billing/payment-methods`
+- [ ] Plan `PATCH /api/v1/billing/payment-methods/{paymentMethod}`
+- [ ] Plan `DELETE /api/v1/billing/payment-methods/{paymentMethod}`
+- [ ] Plan `POST /api/v1/billing/payment-methods/{paymentMethod}/set-default`
+- [ ] Plan `GET /api/v1/billing/payment-preferences`
+- [ ] Plan `PATCH /api/v1/billing/payment-preferences`
+- [ ] Plan `POST /api/v1/billing/payments` with `payment_source`
+- [ ] Support `payment_source=wallet`
+- [ ] Support `payment_source=payment_method`
+- [ ] Support `payment_source=wallet_first`
+- [ ] Validate user payment strategy before payment creation
+- [ ] Validate wallet balance before wallet debit
+- [ ] Validate payment method availability before card/payment-method charge
+- [ ] Create wallet debit transaction when paying from balance
+- [ ] Create payment attempt when paying from card/payment method
+- [ ] Link payment to wallet transaction when wallet is used
+- [ ] Do not activate subscription if wallet debit fails
+- [ ] Do not activate subscription if payment method charge fails
+- [ ] Return stable API error for insufficient wallet balance
+- [ ] Return stable API error for missing payment method
+- [ ] Return stable API error for payment method not allowed
+- [ ] Require idempotency for wallet debit payment requests
+- [ ] Require idempotency for payment method charge requests
+- [ ] Add tests for wallet payment API
+- [ ] Add tests for card/payment-method payment API
+- [ ] Add tests for wallet-first fallback API
+- [ ] Add tests for payment preferences API
+- [ ] Document payment API interface in `docs/billing/payment-api.md`
+
+This API layer must allow users to pay from internal wallet balance, from a saved/simulated payment method, or by wallet-first fallback depending on user preferences. All write operations that can create charges, wallet debits, or payment attempts must be idempotent.
+
+---
+
 ## Phase 14 — Idempotency Support
 
 - [ ] Require `Idempotency-Key` for payment creation
@@ -513,7 +592,10 @@ Auto top-up and auto charge require explicit user consent. In this simulator pro
 - [ ] Reject same key with different payload
 - [ ] Prevent duplicate payments
 - [ ] Prevent duplicate wallet debit
+- [ ] Prevent duplicate payment method charge
+- [ ] Prevent duplicate wallet-first fallback charge
 - [ ] Prevent duplicate auto top-up
+- [ ] Store idempotency relation to payment method charge if applicable
 - [ ] Store idempotency relation to wallet transaction if applicable
 - [ ] Add tests for idempotency replay
 - [ ] Add tests for idempotency conflict
@@ -648,6 +730,12 @@ Auto top-up and auto charge require explicit user consent. In this simulator pro
 - [ ] Add idempotency conflict exception
 - [ ] Add subscription inactive exception
 - [ ] Add feature limit exceeded exception
+- [ ] Add insufficient wallet balance exception
+- [ ] Add payment method not found exception
+- [ ] Add payment method not allowed exception
+- [ ] Add payment preference invalid exception
+- [ ] Add duplicate wallet debit exception
+- [ ] Add auto charge consent required exception
 - [ ] Add tests for API errors
 - [ ] Document error responses
 
@@ -668,6 +756,13 @@ Auto top-up and auto charge require explicit user consent. In this simulator pro
 - [ ] Add example subscription flow
 - [ ] Add example chat limit flow
 - [ ] Add future dialer billing notes
+- [ ] Add wallet balance API examples
+- [ ] Add wallet top-up API examples
+- [ ] Add wallet payment API examples
+- [ ] Add card/payment method API examples
+- [ ] Add wallet-first fallback API examples
+- [ ] Add payment preferences API examples
+- [ ] Add auto-charge consent API examples
 
 ---
 
@@ -683,6 +778,16 @@ Auto top-up and auto charge require explicit user consent. In this simulator pro
 - [ ] Add feature tests for webhooks
 - [ ] Add feature tests for idempotency
 - [ ] Add feature tests for paid chat limits
+- [ ] Add feature tests for wallet balance API
+- [ ] Add feature tests for wallet top-up API
+- [ ] Add feature tests for wallet debit API
+- [ ] Add feature tests for payment methods API
+- [ ] Add feature tests for payment preferences API
+- [ ] Add feature tests for wallet-only payment strategy
+- [ ] Add feature tests for card-only payment strategy
+- [ ] Add feature tests for wallet-first fallback strategy
+- [ ] Add idempotency tests for wallet debit
+- [ ] Add idempotency tests for payment method charge
 - [ ] Add unit tests for services
 - [ ] Add unit tests for DTOs
 - [ ] Add unit tests for webhook payload builder
