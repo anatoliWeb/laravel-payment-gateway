@@ -360,14 +360,14 @@ Phase 11 implementation scope:
 
 ## Phase 12 — Future Dialer Billing Foundation
 
-- [ ] Define reusable billing feature names for dialer
-- [ ] Define future `dialer.calls.monthly`
-- [ ] Define future `dialer.recordings.storage`
-- [ ] Define future `dialer.concurrent_calls`
-- [ ] Define future `dialer.webhooks`
-- [ ] Ensure billing system is not chat-only
-- [ ] Ensure feature access works for any module
-- [ ] Document future dialer billing extension in `docs/billing/future-dialer.md`
+- [x] Define reusable billing feature names for dialer
+- [x] Define future `dialer.calls.monthly`
+- [x] Define future `dialer.recordings.storage`
+- [x] Define future `dialer.concurrent_calls`
+- [x] Define future `dialer.webhooks`
+- [x] Ensure billing system is not chat-only
+- [x] Ensure feature access works for any module
+- [x] Document future dialer billing extension in `docs/billing/future-dialer.md`
 
 ---
 

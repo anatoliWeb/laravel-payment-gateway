@@ -28,6 +28,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/seeders.md](./billing/seeders.md) - Billing seed data and idempotent seeding strategy
 - [billing/overrides.md](./billing/overrides.md) - Billing restrictions and manual feature overrides
 - [billing/rbac.md](./billing/rbac.md) - Billing RBAC permissions and admin access model
+- [billing/future-dialer.md](./billing/future-dialer.md) - Future dialer billing extension
 - [TODO.md](../TODO.md) - Development roadmap and task tracking
 
 ---
@@ -46,6 +47,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Seeders -> [./billing/seeders.md](./billing/seeders.md)
 - Billing Overrides -> [./billing/overrides.md](./billing/overrides.md)
 - Billing RBAC -> [./billing/rbac.md](./billing/rbac.md)
+- Future Dialer Billing -> [./billing/future-dialer.md](./billing/future-dialer.md)
 - Commands -> [./commands.md](./commands.md)
 - Coding Standards -> [./coding-standards.md](./coding-standards.md)
 - TODO -> [../TODO.md](../TODO.md)
@@ -187,6 +189,7 @@ Improves developer navigation and onboarding experience.
 - [Billing Seeders](./billing/seeders.md)
 - [Billing Overrides](./billing/overrides.md)
 - [Billing RBAC](./billing/rbac.md)
+- [Future Dialer Billing](./billing/future-dialer.md)
 - [Commands](./commands.md)
 - [Coding Standards](./coding-standards.md)
 - [Main Docs](./README.md)

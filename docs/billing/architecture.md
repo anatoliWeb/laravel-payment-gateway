@@ -92,6 +92,8 @@ Manual restrictions and feature overrides are documented in [Billing Overrides &
 
 Billing administration permissions are documented in [Billing RBAC Permissions](./rbac.md).
 
+Future dialer reuse is documented in [Future Dialer Billing Extension](./future-dialer.md).
+
 ## app/Services/Payments
 
 Planned services:

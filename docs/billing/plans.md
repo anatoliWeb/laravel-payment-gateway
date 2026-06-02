@@ -301,7 +301,7 @@ Current implementation notes:
 | `dialer.analytics.enabled` | Dialer analytics feature flag | boolean | policy | Future module |
 | `dialer.call_recording.enabled` | Call recording feature flag | boolean | policy | Future module |
 
-Phase 2 defines keys only; implementation belongs to future dialer scope.
+Phase 12 validates that these keys work through generic billing services. Future runtime integration is documented in [Future Dialer Billing Extension](./future-dialer.md).
 
 ## Storage & Retention Limits
 
