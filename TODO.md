@@ -339,6 +339,58 @@ Billing overrides must remain module-agnostic. Chat and future dialer modules sh
 
 ---
 
+## Phase 12.1 — Currency & Exchange Rates Foundation
+
+- [ ] Design `currencies` table
+- [ ] Design `exchange_rates` table
+- [ ] Define base system currency
+- [ ] Define currency code format
+- [ ] Define currency display name
+- [ ] Define currency symbol
+- [ ] Define currency decimal precision
+- [ ] Define currency active/inactive state
+- [ ] Define currency comment/description field
+- [ ] Define exchange rate source
+- [ ] Define manual exchange rate mode
+- [ ] Define exchange rate validity period
+- [ ] Define currency conversion rules
+- [ ] Define rounding rules
+- [ ] Add currency seeders
+- [ ] Add tests for currencies
+- [ ] Add tests for exchange rates
+- [ ] Document currencies in `docs/billing/currencies.md`
+
+Currency support is required before wallet balances and multi-currency payments. Exchange rates in this portfolio project can be manual/simulated and must not depend on real external providers.
+
+---
+
+## Phase 12.2 — User Wallet Balance
+
+- [ ] Design `wallets` table
+- [ ] Design `wallet_balances` table if needed
+- [ ] Design `wallet_transactions` table
+- [ ] Decide one wallet per user vs one wallet per currency
+- [ ] Add multi-currency balance support
+- [ ] Add available balance
+- [ ] Add held/reserved balance
+- [ ] Add wallet transaction types
+- [ ] Add wallet top-up transaction
+- [ ] Add wallet debit transaction
+- [ ] Add wallet refund transaction
+- [ ] Add wallet adjustment transaction
+- [ ] Add balance locking strategy
+- [ ] Add idempotency for wallet transactions
+- [ ] Add relation between wallet transactions and payments
+- [ ] Add relation between wallet transactions and subscriptions if needed
+- [ ] Add wallet activity logs
+- [ ] Add tests for wallet balance operations
+- [ ] Add tests for multi-currency wallet balances
+- [ ] Document wallet balance in `docs/billing/wallets.md`
+
+Users may pay either from internal wallet balance or directly through a payment method. Wallet debits must be transactional and idempotent to avoid double-charging or granting access without a valid debit.
+
+---
+
 ## Phase 13 — Payment Creation Flow
 
 - [ ] Create `CreatePaymentRequest`
@@ -349,7 +401,15 @@ Billing overrides must remain module-agnostic. Chat and future dialer modules sh
 - [ ] Validate amount
 - [ ] Validate currency
 - [ ] Validate idempotency key
+- [ ] Support payment source: direct payment method
+- [ ] Support payment source: internal wallet balance
+- [ ] Support payment source: wallet first with payment method fallback
+- [ ] Validate user payment preference
+- [ ] Validate wallet balance before wallet debit
 - [ ] Create payment inside DB transaction
+- [ ] Create wallet debit transaction when paying from balance
+- [ ] Do not activate subscription if wallet debit fails
+- [ ] Link payment to wallet transaction if balance is used
 - [ ] Create initial payment transaction record
 - [ ] Create activity log record
 - [ ] Return unified API response
@@ -381,6 +441,34 @@ Payment Risk & Fraud Guard is a demo-safe risk layer for the simulator. It is no
 
 ---
 
+## Phase 13.2 — Auto Top-Up & Auto Charge
+
+- [ ] Design user payment method preference
+- [ ] Design auto top-up settings
+- [ ] Design auto charge settings
+- [ ] Allow user to choose wallet balance only
+- [ ] Allow user to choose card/payment method only
+- [ ] Allow user to choose wallet first, then card fallback
+- [ ] Allow user to enable/disable automatic charges
+- [ ] Add minimum wallet balance threshold
+- [ ] Add auto top-up amount
+- [ ] Add max auto top-up per day/month
+- [ ] Add failed auto top-up handling
+- [ ] Add auto charge consent tracking
+- [ ] Add activity log for auto charge consent changes
+- [ ] Add activity log for automatic balance top-up
+- [ ] Add activity log for automatic subscription charge
+- [ ] Add tests for auto top-up disabled
+- [ ] Add tests for auto top-up enabled
+- [ ] Add tests for wallet-first payment strategy
+- [ ] Add tests for card-only payment strategy
+- [ ] Add tests for max auto top-up limits
+- [ ] Document auto top-up in `docs/billing/auto-top-up.md`
+
+Auto top-up and auto charge require explicit user consent. In this simulator project, external payment provider behavior is fake, but consent, limits, idempotency, and audit logging must be modeled seriously.
+
+---
+
 ## Phase 14 — Idempotency Support
 
 - [ ] Require `Idempotency-Key` for payment creation
@@ -392,6 +480,9 @@ Payment Risk & Fraud Guard is a demo-safe risk layer for the simulator. It is no
 - [ ] Return previous response for same key and same payload
 - [ ] Reject same key with different payload
 - [ ] Prevent duplicate payments
+- [ ] Prevent duplicate wallet debit
+- [ ] Prevent duplicate auto top-up
+- [ ] Store idempotency relation to wallet transaction if applicable
 - [ ] Add tests for idempotency replay
 - [ ] Add tests for idempotency conflict
 - [ ] Add tests for duplicate prevention
@@ -483,6 +574,10 @@ Payment Risk & Fraud Guard is a demo-safe risk layer for the simulator. It is no
 - [ ] Handle subscription cancellation
 - [ ] Handle subscription expiration
 - [ ] Handle subscription renewal simulation
+- [ ] Renew subscription from wallet balance if user preference allows
+- [ ] Renew subscription by automatic payment method charge if user consent exists
+- [ ] Keep subscription past_due if wallet/card renewal fails
+- [ ] Add activity log for automatic renewal attempt
 - [ ] Create activity logs for subscription changes
 - [ ] Add tests for subscription activation
 - [ ] Add tests for subscription cancellation
