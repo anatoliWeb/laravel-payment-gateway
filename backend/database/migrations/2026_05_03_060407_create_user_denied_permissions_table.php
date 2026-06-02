@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -107,6 +108,9 @@ return new class extends Migration
                 'user_denied_permissions_unique'
             );
         });
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE user_denied_permissions COMMENT = 'Stores explicit permission denials overriding role grants.'");
+        }
     }
 
     /**

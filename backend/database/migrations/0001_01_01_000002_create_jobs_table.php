@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -130,6 +131,9 @@ return new class extends Migration
                 'jobs_available_at_idx'
             );
         });
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE jobs COMMENT = 'Stores queued jobs when the database queue driver is used.'");
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -227,6 +231,9 @@ return new class extends Migration
                 'job_batches_finished_at_idx'
             );
         });
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE job_batches COMMENT = 'Stores queue batch metadata and progress information.'");
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -313,6 +320,9 @@ return new class extends Migration
                 'failed_jobs_queue_idx'
             );
         });
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE failed_jobs COMMENT = 'Stores failed queued job records for troubleshooting and retries.'");
+        }
     }
 
     /**

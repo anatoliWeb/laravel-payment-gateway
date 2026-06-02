@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -97,6 +98,9 @@ return new class extends Migration
                 'permission_role_role_idx'
             );
         });
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE permission_role COMMENT = 'Maps permissions assigned to roles.'");
+        }
     }
 
     /**

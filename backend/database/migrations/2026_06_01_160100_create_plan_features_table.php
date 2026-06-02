@@ -26,7 +26,7 @@ return new class extends Migration
         });
 
         if (Schema::getConnection()->getDriverName() === 'mysql') {
-            DB::statement("ALTER TABLE plan_features COMMENT = 'Per-plan feature configuration and limits for billing modules.'");
+            DB::statement("ALTER TABLE plan_features COMMENT = 'Per-plan feature configuration and usage limits for billing modules.'");
         }
     }
 
@@ -35,4 +35,3 @@ return new class extends Migration
         Schema::dropIfExists('plan_features');
     }
 };
-

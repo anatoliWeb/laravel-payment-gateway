@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -88,6 +89,9 @@ return new class extends Migration
                 'cache_expiration_idx'
             );
         });
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE cache COMMENT = 'Stores database cache entries used by the application.'");
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -147,6 +151,9 @@ return new class extends Migration
                 'cache_locks_expiration_idx'
             );
         });
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE cache_locks COMMENT = 'Stores database cache locks for atomic cache operations.'");
+        }
     }
 
     /**

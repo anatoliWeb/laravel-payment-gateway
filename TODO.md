@@ -220,14 +220,14 @@ Phase 0 completed after Docker, DB, migrations, routes, Redis, queue worker, Rev
 - [x] Ensure plan feature keys match `docs/billing/statuses.md`
 - [x] Ensure seeded plan slugs match `docs/billing/plans.md`
 - [x] Ensure seeders are safe to run repeatedly
-- [ ] Add seeder documentation if needed
+- [x] Add seeder documentation if needed
 - [x] Add migration tests for billing tables
 - [x] Add migration tests for payment tables
 - [x] Add seeder tests for default plans
 - [x] Add seeder tests for default plan features
 - [x] Verify `php artisan migrate:fresh --seed` works locally
 - [x] Verify `php artisan migrate:fresh --env=testing --seed` works for tests
-- [ ] Verify existing test suite still passes or document known failures
+- [x] Verify existing test suite still passes or document known failures
 
 ---
 

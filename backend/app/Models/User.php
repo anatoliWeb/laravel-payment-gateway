@@ -121,4 +121,12 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Permission::class, 'user_denied_permissions');
     }
+
+    /**
+     * Billing subscriptions owned by user.
+     */
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
 }

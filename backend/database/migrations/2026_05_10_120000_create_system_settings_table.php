@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -276,6 +277,9 @@ return new class extends Migration
                 'settings_scope_unique'
             );
         });
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE system_settings COMMENT = 'Stores configurable application settings.'");
+        }
     }
 
     public function down(): void

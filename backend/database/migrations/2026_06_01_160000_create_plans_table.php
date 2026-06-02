@@ -30,7 +30,7 @@ return new class extends Migration
         });
 
         if (Schema::getConnection()->getDriverName() === 'mysql') {
-            DB::statement("ALTER TABLE plans COMMENT = 'Billing catalog plans used for subscription and feature access decisions.'");
+            DB::statement("ALTER TABLE plans COMMENT = 'Billing catalog plans used for subscriptions and feature access decisions.'");
         }
     }
 
@@ -39,4 +39,3 @@ return new class extends Migration
         Schema::dropIfExists('plans');
     }
 };
-

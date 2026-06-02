@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /**
@@ -32,6 +33,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE migrations COMMENT = 'Tracks executed database migrations.'");
+        }
+
         /*
         |--------------------------------------------------------------------------
         | Users Table
@@ -118,6 +123,9 @@ return new class extends Migration
                 'users_created_at_idx'
             );
         });
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE users COMMENT = 'Stores application user accounts and authentication profile data.'");
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -169,6 +177,9 @@ return new class extends Migration
                 'password_reset_tokens_created_at_idx'
             );
         });
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE password_reset_tokens COMMENT = 'Stores password reset tokens for account recovery flows.'");
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -257,6 +268,9 @@ return new class extends Migration
                 'sessions_user_last_activity_idx'
             );
         });
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE sessions COMMENT = 'Stores user session payloads when the database session driver is used.'");
+        }
     }
 
     /**
