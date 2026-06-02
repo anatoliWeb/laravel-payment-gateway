@@ -254,17 +254,17 @@ Core Billing Models must not be implemented before Phase 7.1 creates and validat
 
 ## Phase 9 — Core Payment Models
 
-- [ ] Create `Payment` model
-- [ ] Create `PaymentTransaction` model
-- [ ] Create `IdempotencyKey` model
-- [ ] Create `WebhookDelivery` model
-- [ ] Add relations between Payment and Subscription
-- [ ] Add relations between Payment and PaymentTransaction
-- [ ] Add relations between Payment and WebhookDelivery
-- [ ] Add casts
-- [ ] Add fillable fields
-- [ ] Add factories
-- [ ] Add tests for payment models
+- [x] Create `Payment` model
+- [x] Create `PaymentTransaction` model
+- [x] Create `IdempotencyKey` model
+- [x] Create `WebhookDelivery` model
+- [x] Add relations between Payment and Subscription
+- [x] Add relations between Payment and PaymentTransaction
+- [x] Add relations between Payment and WebhookDelivery
+- [x] Add casts
+- [x] Add fillable fields
+- [x] Add factories
+- [x] Add tests for payment models
 
 ---
 

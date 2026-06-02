@@ -14,7 +14,7 @@ abstract class TestCase extends BaseTestCase
             ?? $_SERVER['DB_TEST_DATABASE']
             ?? getenv('DB_TEST_DATABASE')
             ?? getenv('TEST_DB_DATABASE')
-            ?? 'saas_testing');
+            ?? 'payment_gateway_testing');
 
         // Ensure test process boots with isolated testing database variables
         // before Laravel initializes connections for RefreshDatabase.
@@ -31,10 +31,28 @@ abstract class TestCase extends BaseTestCase
         $_SERVER['DB_DATABASE'] = $testingDatabase;
         $_ENV['DB_TEST_DATABASE'] = $testingDatabase;
         $_SERVER['DB_TEST_DATABASE'] = $testingDatabase;
-        $_ENV['DB_USERNAME'] = 'saas';
-        $_SERVER['DB_USERNAME'] = 'saas';
-        $_ENV['DB_PASSWORD'] = 'secret';
-        $_SERVER['DB_PASSWORD'] = 'secret';
+        $testingUsername = (string) ($_ENV['DB_TEST_USERNAME']
+            ?? $_SERVER['DB_TEST_USERNAME']
+            ?? getenv('DB_TEST_USERNAME')
+            ?? getenv('TEST_DB_USERNAME')
+            ?? getenv('DB_USERNAME')
+            ?? 'payment_gateway');
+
+        $testingPassword = (string) ($_ENV['DB_TEST_PASSWORD']
+            ?? $_SERVER['DB_TEST_PASSWORD']
+            ?? getenv('DB_TEST_PASSWORD')
+            ?? getenv('TEST_DB_PASSWORD')
+            ?? getenv('DB_PASSWORD')
+            ?? '');
+
+        $_ENV['DB_USERNAME'] = $testingUsername;
+        $_SERVER['DB_USERNAME'] = $testingUsername;
+        $_ENV['DB_PASSWORD'] = $testingPassword;
+        $_SERVER['DB_PASSWORD'] = $testingPassword;
+        $_ENV['DB_TEST_USERNAME'] = $testingUsername;
+        $_SERVER['DB_TEST_USERNAME'] = $testingUsername;
+        $_ENV['DB_TEST_PASSWORD'] = $testingPassword;
+        $_SERVER['DB_TEST_PASSWORD'] = $testingPassword;
 
         return parent::createApplication();
     }

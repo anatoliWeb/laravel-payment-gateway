@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Represents a user's billing subscription lifecycle and active plan context.
@@ -51,5 +52,12 @@ class Subscription extends Model
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class);
+    }
+
+    // WHY: Subscriptions keep payment history through a relation, while
+    // activation and renewal decisions stay in the service layer.
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
     }
 }
