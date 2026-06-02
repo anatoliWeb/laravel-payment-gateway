@@ -3,6 +3,7 @@
 namespace App\Services\Billing;
 
 use App\Models\FeatureUsage;
+use App\Models\FeatureOverride;
 use App\Models\PlanFeature;
 use App\Models\User;
 use Illuminate\Support\Carbon;
@@ -13,6 +14,8 @@ class UsageLimitService
     public function __construct(
         private readonly PlanService $planService,
         private readonly SubscriptionService $subscriptionService,
+        private readonly BillingRestrictionService $billingRestrictionService,
+        private readonly FeatureOverrideService $featureOverrideService,
     ) {
     }
 
@@ -21,6 +24,20 @@ class UsageLimitService
      */
     public function checkUsageLimit(User $user, string $featureKey, int $amount = 1): array
     {
+        if ($this->billingRestrictionService->isBillingBlocked($user)) {
+            return $this->result(false, $featureKey, 0, null, null, null, 'billing_blocked');
+        }
+
+        if ($this->billingRestrictionService->isFeatureBlocked($user, $featureKey)) {
+            return $this->result(false, $featureKey, 0, null, null, null, 'feature_blocked');
+        }
+
+        $subscription = $this->subscriptionService->getCurrentSubscription($user);
+        $override = $this->featureOverrideService->getActiveOverride($user, $subscription, $featureKey);
+        if ($override && ! $override->is_enabled) {
+            return $this->result(false, $featureKey, 0, (int) $override->value, 0, $override->period, 'feature_override_disabled');
+        }
+
         $context = $this->resolveNumericFeatureContext($user, $featureKey);
 
         if (! $context) {
@@ -66,6 +83,17 @@ class UsageLimitService
     public function incrementUsage(User $user, string $featureKey, int $amount = 1): FeatureUsage
     {
         return DB::transaction(function () use ($user, $featureKey, $amount): FeatureUsage {
+            if ($this->billingRestrictionService->isBillingBlocked($user)
+                || $this->billingRestrictionService->isFeatureBlocked($user, $featureKey)) {
+                throw new \RuntimeException('feature_blocked');
+            }
+
+            $subscription = $this->subscriptionService->getCurrentSubscription($user);
+            $override = $this->featureOverrideService->getActiveOverride($user, $subscription, $featureKey);
+            if ($override && ! $override->is_enabled) {
+                throw new \RuntimeException('feature_override_disabled');
+            }
+
             $context = $this->resolveNumericFeatureContext($user, $featureKey);
 
             if (! $context) {
@@ -137,7 +165,7 @@ class UsageLimitService
     }
 
     /**
-     * @return array{feature: PlanFeature, plan: \App\Models\Plan, subscription: \App\Models\Subscription|null}|null
+     * @return array{feature: PlanFeature|FeatureOverride, plan: \App\Models\Plan, subscription: \App\Models\Subscription|null}|null
      */
     private function resolveNumericFeatureContext(User $user, string $featureKey): ?array
     {
@@ -146,6 +174,21 @@ class UsageLimitService
 
         if (! $plan) {
             return null;
+        }
+
+        $override = $this->featureOverrideService->getActiveOverride($user, $subscription, $featureKey);
+        if ($override) {
+            if (! $override->is_enabled) {
+                return null;
+            }
+
+            if (in_array($override->value_type, ['integer', 'decimal'], true)) {
+                return [
+                    'feature' => $override,
+                    'plan' => $plan,
+                    'subscription' => $subscription,
+                ];
+            }
         }
 
         $feature = $this->planService->getEnabledFeature($plan, $featureKey);

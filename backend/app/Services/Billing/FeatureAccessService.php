@@ -10,6 +10,8 @@ class FeatureAccessService
         private readonly PlanService $planService,
         private readonly SubscriptionService $subscriptionService,
         private readonly UsageLimitService $usageLimitService,
+        private readonly BillingRestrictionService $billingRestrictionService,
+        private readonly FeatureOverrideService $featureOverrideService,
     ) {
     }
 
@@ -23,6 +25,37 @@ class FeatureAccessService
      */
     public function checkFeatureAvailability(User $user, string $featureKey): array
     {
+        if ($this->billingRestrictionService->isBillingBlocked($user)) {
+            return $this->result(false, $featureKey, null, 'billing_blocked', null);
+        }
+
+        if ($this->billingRestrictionService->isFeatureBlocked($user, $featureKey)) {
+            return $this->result(false, $featureKey, null, 'feature_blocked', null);
+        }
+
+        $subscription = $this->subscriptionService->getCurrentSubscription($user);
+        $override = $this->featureOverrideService->getActiveOverride($user, $subscription, $featureKey);
+        if ($override) {
+            $value = $this->featureOverrideService->castOverrideValue($override);
+            $planSlug = $subscription?->plan?->slug;
+
+            if (! $override->is_enabled) {
+                return $this->result(false, $featureKey, $value, 'feature_override_disabled', $planSlug);
+            }
+
+            if ($override->value_type === 'boolean') {
+                return $this->result((bool) $value, $featureKey, $value, (bool) $value ? null : 'feature_override_disabled', $planSlug);
+            }
+
+            if (in_array($override->value_type, ['integer', 'decimal'], true)) {
+                $usage = $this->usageLimitService->checkUsageLimit($user, $featureKey, 0);
+
+                return $this->result((bool) $usage['allowed'], $featureKey, $value, $usage['reason'], $planSlug);
+            }
+
+            return $this->result(true, $featureKey, $value, null, $planSlug);
+        }
+
         $plan = $this->subscriptionService->getEffectivePlan($user);
 
         if (! $plan) {
@@ -52,6 +85,19 @@ class FeatureAccessService
 
     public function getFeatureValue(User $user, string $featureKey, mixed $default = null): mixed
     {
+        if ($this->billingRestrictionService->isBillingBlocked($user)
+            || $this->billingRestrictionService->isFeatureBlocked($user, $featureKey)) {
+            return $default;
+        }
+
+        $subscription = $this->subscriptionService->getCurrentSubscription($user);
+        $override = $this->featureOverrideService->getActiveOverride($user, $subscription, $featureKey);
+        if ($override) {
+            return $override->is_enabled
+                ? $this->featureOverrideService->castOverrideValue($override)
+                : $default;
+        }
+
         $plan = $this->subscriptionService->getEffectivePlan($user);
 
         if (! $plan) {

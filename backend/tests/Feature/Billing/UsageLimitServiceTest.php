@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\FeatureUsage;
+use App\Models\BillingRestriction;
+use App\Models\FeatureOverride;
 use App\Models\Plan;
 use App\Models\PlanFeature;
 use App\Models\User;
@@ -87,6 +89,35 @@ it('denies missing feature usage checks', function () {
 
     expect($result['allowed'])->toBeFalse();
     expect($result['reason'])->toBe('feature_not_available');
+});
+
+it('uses override numeric limit before plan feature limit', function () {
+    [$user] = createUsageContext('chat.messages.daily', 10, 'daily');
+    FeatureOverride::factory()->numericLimit(100)->create([
+        'user_id' => $user->id,
+        'feature_key' => 'chat.messages.daily',
+    ]);
+
+    $result = app(UsageLimitService::class)->checkUsageLimit($user, 'chat.messages.daily', 50);
+
+    expect($result['allowed'])->toBeTrue();
+    expect($result['limit'])->toBe(100);
+});
+
+it('feature restriction beats override numeric limit', function () {
+    [$user] = createUsageContext('chat.messages.daily', 10, 'daily');
+    FeatureOverride::factory()->numericLimit(100)->create([
+        'user_id' => $user->id,
+        'feature_key' => 'chat.messages.daily',
+    ]);
+    BillingRestriction::factory()->featureBlocked('chat.messages.daily')->create([
+        'user_id' => $user->id,
+    ]);
+
+    $result = app(UsageLimitService::class)->checkUsageLimit($user, 'chat.messages.daily', 1);
+
+    expect($result['allowed'])->toBeFalse();
+    expect($result['reason'])->toBe('feature_blocked');
 });
 
 it('creates stable daily and monthly usage windows', function (string $period, string $expectedStart, string $expectedEnd) {

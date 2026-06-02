@@ -347,6 +347,8 @@ Planned decision order for future `FeatureAccessService`:
 
 Phase 2 defines only the contract logic, not implementation.
 
+Manual restriction and override behavior is documented separately in [Billing Overrides & Restrictions](./overrides.md).
+
 ## Usage Tracking Rules
 
 - Increment usage when billable action completes.

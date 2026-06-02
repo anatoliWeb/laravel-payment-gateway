@@ -88,6 +88,8 @@ Dependency guidance:
 - Should not depend on HTTP layer objects directly.
 - Should not depend on chat internals.
 
+Manual restrictions and feature overrides are documented in [Billing Overrides & Restrictions](./overrides.md).
+
 ## app/Services/Payments
 
 Planned services:

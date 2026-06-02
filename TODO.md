@@ -287,22 +287,22 @@ Core Billing Models must not be implemented before Phase 7.1 creates and validat
 
 ## Phase 10.1 — Billing Overrides & Restrictions
 
-- [ ] Design user billing blacklist
-- [ ] Design user payment blacklist
-- [ ] Design subscription-level feature overrides
-- [ ] Design user-level feature overrides if needed
-- [ ] Decide override priority over plan features
-- [ ] Add support for manual feature limit override
-- [ ] Add support for temporary feature override
-- [ ] Add support for override expiration
-- [ ] Add blocked billing access reason
-- [ ] Add blocked payment creation reason
-- [ ] Add admin/manual override notes
+- [x] Design user billing blacklist
+- [x] Design user payment blacklist
+- [x] Design subscription-level feature overrides
+- [x] Design user-level feature overrides if needed
+- [x] Decide override priority over plan features
+- [x] Add support for manual feature limit override
+- [x] Add support for temporary feature override
+- [x] Add support for override expiration
+- [x] Add blocked billing access reason
+- [x] Add blocked payment creation reason
+- [x] Add admin/manual override notes
 - [ ] Add activity logs for billing restrictions
 - [ ] Add activity logs for manual overrides
-- [ ] Add tests for billing blacklist
-- [ ] Add tests for feature overrides
-- [ ] Document overrides in `docs/billing/overrides.md`
+- [x] Add tests for billing blacklist
+- [x] Add tests for feature overrides
+- [x] Document overrides in `docs/billing/overrides.md`
 
 Billing overrides must remain module-agnostic. Chat and future dialer modules should use FeatureAccessService and must not implement their own billing override logic.
 
