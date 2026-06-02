@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             ActivitySeeder::class,
             SettingsSeeder::class,
             TranslationsSeeder::class,
+            CurrencySeeder::class,
             BillingSeeder::class,
         ]);
 

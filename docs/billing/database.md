@@ -17,6 +17,8 @@ This phase captures structure, integrity rules, and migration sequencing only.
 ## Tables Overview
 
 Planned tables:
+- `currencies`
+- `exchange_rates`
 - `plans`
 - `plan_features`
 - `subscriptions`
@@ -25,6 +27,61 @@ Planned tables:
 - `payment_transactions`
 - `idempotency_keys`
 - `webhook_deliveries`
+
+## currencies Table
+
+Implemented fields:
+- `id`
+- `code`
+- `name`
+- `symbol` nullable
+- `decimal_precision`
+- `is_active`
+- `is_base`
+- `description` nullable
+- `metadata` JSON nullable
+- `created_at`
+- `updated_at`
+
+Notes:
+- `code` is a unique uppercase ISO-like 3-letter key.
+- `decimal_precision` controls minor-unit conversion and display precision.
+- `is_base` identifies the system base currency for simulated rates.
+- `metadata` is safe extension context and must not contain secrets.
+
+Recommended indexes/constraints:
+- unique: `code`
+- index: `is_active`
+- index: `is_base`
+
+## exchange_rates Table
+
+Implemented fields:
+- `id`
+- `base_currency_id`
+- `quote_currency_id`
+- `rate`
+- `source`
+- `valid_from`
+- `valid_until` nullable
+- `is_active`
+- `metadata` JSON nullable
+- `created_at`
+- `updated_at`
+
+Notes:
+- Rates are manual/simulated in this portfolio project.
+- `rate` uses `decimal(20, 8)`.
+- Validity windows allow historical rates later.
+- No hard pair uniqueness is enforced so rate history remains possible.
+
+Recommended indexes/constraints:
+- FK: `base_currency_id -> currencies.id`
+- FK: `quote_currency_id -> currencies.id`
+- index: `base_currency_id`
+- index: `quote_currency_id`
+- index: (`base_currency_id`, `quote_currency_id`)
+- index: (`base_currency_id`, `quote_currency_id`, `is_active`, `valid_from`)
 
 ## plans Table
 

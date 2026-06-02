@@ -94,6 +94,8 @@ Billing administration permissions are documented in [Billing RBAC Permissions](
 
 Future dialer reuse is documented in [Future Dialer Billing Extension](./future-dialer.md).
 
+Currency and exchange-rate foundation is documented in [Currency & Exchange Rates Foundation](./currencies.md).
+
 ## app/Services/Payments
 
 Planned services:

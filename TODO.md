@@ -373,24 +373,24 @@ Phase 11 implementation scope:
 
 ## Phase 12.1 — Currency & Exchange Rates Foundation
 
-- [ ] Design `currencies` table
-- [ ] Design `exchange_rates` table
-- [ ] Define base system currency
-- [ ] Define currency code format
-- [ ] Define currency display name
-- [ ] Define currency symbol
-- [ ] Define currency decimal precision
-- [ ] Define currency active/inactive state
-- [ ] Define currency comment/description field
-- [ ] Define exchange rate source
-- [ ] Define manual exchange rate mode
-- [ ] Define exchange rate validity period
-- [ ] Define currency conversion rules
-- [ ] Define rounding rules
-- [ ] Add currency seeders
-- [ ] Add tests for currencies
-- [ ] Add tests for exchange rates
-- [ ] Document currencies in `docs/billing/currencies.md`
+- [x] Design `currencies` table
+- [x] Design `exchange_rates` table
+- [x] Define base system currency
+- [x] Define currency code format
+- [x] Define currency display name
+- [x] Define currency symbol
+- [x] Define currency decimal precision
+- [x] Define currency active/inactive state
+- [x] Define currency comment/description field
+- [x] Define exchange rate source
+- [x] Define manual exchange rate mode
+- [x] Define exchange rate validity period
+- [x] Define currency conversion rules
+- [x] Define rounding rules
+- [x] Add currency seeders
+- [x] Add tests for currencies
+- [x] Add tests for exchange rates
+- [x] Document currencies in `docs/billing/currencies.md`
 
 Currency support is required before wallet balances and multi-currency payments. Exchange rates in this portfolio project can be manual/simulated and must not depend on real external providers.
 
