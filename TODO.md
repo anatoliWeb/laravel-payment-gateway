@@ -270,18 +270,41 @@ Core Billing Models must not be implemented before Phase 7.1 creates and validat
 
 ## Phase 10 — Plan Access Service
 
-- [ ] Create `PlanService`
-- [ ] Create `SubscriptionService`
-- [ ] Create `FeatureAccessService`
-- [ ] Create `UsageLimitService`
-- [ ] Add method to check if user has active subscription
-- [ ] Add method to get current plan
-- [ ] Add method to check feature availability
-- [ ] Add method to check usage limit
-- [ ] Add method to increment feature usage
-- [ ] Add method to reset usage by period
-- [ ] Add tests for plan access rules
-- [ ] Add tests for usage limits
+- [x] Create `PlanService`
+- [x] Create `SubscriptionService`
+- [x] Create `FeatureAccessService`
+- [x] Create `UsageLimitService`
+- [x] Add method to check if user has active subscription
+- [x] Add method to get current plan
+- [x] Add method to check feature availability
+- [x] Add method to check usage limit
+- [x] Add method to increment feature usage
+- [x] Add method to reset usage by period
+- [x] Add tests for plan access rules
+- [x] Add tests for usage limits
+
+---
+
+## Phase 10.1 — Billing Overrides & Restrictions
+
+- [ ] Design user billing blacklist
+- [ ] Design user payment blacklist
+- [ ] Design subscription-level feature overrides
+- [ ] Design user-level feature overrides if needed
+- [ ] Decide override priority over plan features
+- [ ] Add support for manual feature limit override
+- [ ] Add support for temporary feature override
+- [ ] Add support for override expiration
+- [ ] Add blocked billing access reason
+- [ ] Add blocked payment creation reason
+- [ ] Add admin/manual override notes
+- [ ] Add activity logs for billing restrictions
+- [ ] Add activity logs for manual overrides
+- [ ] Add tests for billing blacklist
+- [ ] Add tests for feature overrides
+- [ ] Document overrides in `docs/billing/overrides.md`
+
+Billing overrides must remain module-agnostic. Chat and future dialer modules should use FeatureAccessService and must not implement their own billing override logic.
 
 ---
 
@@ -332,6 +355,29 @@ Core Billing Models must not be implemented before Phase 7.1 creates and validat
 - [ ] Return unified API response
 - [ ] Add feature tests for payment creation
 - [ ] Add validation tests
+
+---
+
+## Phase 13.1 — Payment Risk & Fraud Guard
+
+- [ ] Define payment risk rules
+- [ ] Add payment risk check before payment creation
+- [ ] Add user payment blacklist check
+- [ ] Add max failed payment attempts per period
+- [ ] Add max payment creation attempts per hour/day
+- [ ] Add suspicious payment activity flags
+- [ ] Add blocked payment reason
+- [ ] Add payment risk metadata
+- [ ] Add activity log for blocked payments
+- [ ] Add activity log for suspicious attempts
+- [ ] Ensure risk guard does not replace idempotency
+- [ ] Ensure idempotency still prevents duplicate payment creation
+- [ ] Add tests for payment blacklist
+- [ ] Add tests for failed-attempt limits
+- [ ] Add tests for suspicious activity blocking
+- [ ] Document payment risk guard in `docs/billing/payment-risk.md`
+
+Payment Risk & Fraud Guard is a demo-safe risk layer for the simulator. It is not a real bank-grade antifraud system.
 
 ---
 
