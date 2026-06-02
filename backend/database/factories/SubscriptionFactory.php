@@ -10,6 +10,8 @@ use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Subscription>
+ *
+ * Generates test-local subscription records without invoking billing runtime flows.
  */
 class SubscriptionFactory extends Factory
 {
@@ -35,6 +37,8 @@ class SubscriptionFactory extends Factory
         ];
     }
 
+    // WHY: Pending subscriptions let tests cover pre-activation state without
+    // introducing payment models before Phase 9.
     public function pending(): static
     {
         return $this->state(fn (array $attributes) => [
@@ -51,4 +55,3 @@ class SubscriptionFactory extends Factory
         ]);
     }
 }
-

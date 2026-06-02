@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<PlanFeature>
+ *
+ * Generates isolated plan feature rows for billing model tests.
  */
 class PlanFeatureFactory extends Factory
 {
@@ -34,6 +36,8 @@ class PlanFeatureFactory extends Factory
         ];
     }
 
+    // WHY: Factories create valid billing records without triggering payment
+    // or subscription flows.
     public function boolean(): static
     {
         return $this->state(fn (array $attributes) => [
@@ -45,4 +49,3 @@ class PlanFeatureFactory extends Factory
         ]);
     }
 }
-

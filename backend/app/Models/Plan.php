@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * Represents a billing catalog plan used for subscriptions and feature access.
+ */
 class Plan extends Model
 {
     use HasFactory;
@@ -38,6 +41,8 @@ class Plan extends Model
         'metadata' => 'array',
     ];
 
+    // WHY: Feature limits are stored as rows so chat and future dialer modules
+    // can share one billing engine without schema duplication.
     public function features(): HasMany
     {
         return $this->hasMany(PlanFeature::class);
@@ -58,9 +63,10 @@ class Plan extends Model
         return $query->where('is_public', true);
     }
 
+    // WHY: Plan slugs are stable business identifiers used by seeders, tests,
+    // and API contracts.
     public function scopeBySlug(Builder $query, string $slug): Builder
     {
         return $query->where('slug', $slug);
     }
 }
-

@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Represents one feature flag or usage limit attached to a billing plan.
+ */
 class PlanFeature extends Model
 {
     use HasFactory;
@@ -28,9 +31,10 @@ class PlanFeature extends Model
         'metadata' => 'array',
     ];
 
+    // WHY: Feature keys stay module-agnostic so billing is not coupled to
+    // chat-only rules and can be reused by future domains.
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class);
     }
 }
-

@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Represents a user's billing subscription lifecycle and active plan context.
+ */
 class Subscription extends Model
 {
     use HasFactory;
@@ -43,9 +46,10 @@ class Subscription extends Model
         return $this->belongsTo(User::class);
     }
 
+    // WHY: Payment relations are intentionally added later in Phase 9 once the
+    // payment-side models exist and can keep the boundary explicit.
     public function plan(): BelongsTo
     {
         return $this->belongsTo(Plan::class);
     }
 }
-

@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends Factory<FeatureUsage>
+ *
+ * Generates period-bound usage rows for billing limit and relation tests.
  */
 class FeatureUsageFactory extends Factory
 {
@@ -17,6 +19,8 @@ class FeatureUsageFactory extends Factory
     {
         $periodStart = now()->startOfDay();
 
+        // WHY: Usage factories default to a bounded window so tests exercise the
+        // same shape that future access-limit services will consume.
         return [
             'user_id' => User::factory(),
             'subscription_id' => Subscription::factory(),
@@ -34,4 +38,3 @@ class FeatureUsageFactory extends Factory
         ];
     }
 }
-

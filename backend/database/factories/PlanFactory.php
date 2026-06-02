@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Plan>
+ *
+ * Generates disposable billing plans for model and relation tests.
  */
 class PlanFactory extends Factory
 {
@@ -32,6 +34,8 @@ class PlanFactory extends Factory
         ];
     }
 
+    // WHY: Factory states mirror seeded plans so tests can express intent
+    // without depending on shared seeded records.
     public function free(): static
     {
         return $this->state(fn (array $attributes) => [
@@ -88,4 +92,3 @@ class PlanFactory extends Factory
         ]);
     }
 }
-

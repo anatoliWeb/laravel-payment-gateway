@@ -237,18 +237,18 @@ Core Billing Models must not be implemented before Phase 7.1 creates and validat
 
 ## Phase 8 — Core Billing Models
 
-- [ ] Create `Plan` model
-- [ ] Create `PlanFeature` model
-- [ ] Create `Subscription` model
-- [ ] Create `FeatureUsage` model
-- [ ] Add relations between Plan and PlanFeature
-- [ ] Add relations between User and Subscription
-- [ ] Add relations between Subscription and Plan
-- [ ] Add casts
-- [ ] Add fillable fields
-- [ ] Add factories
-- [ ] Add seeders for default plans
-- [ ] Add tests for billing models
+- [x] Create `Plan` model
+- [x] Create `PlanFeature` model
+- [x] Create `Subscription` model
+- [x] Create `FeatureUsage` model
+- [x] Add relations between Plan and PlanFeature
+- [x] Add relations between User and Subscription
+- [x] Add relations between Subscription and Plan
+- [x] Add casts
+- [x] Add fillable fields
+- [x] Add factories
+- [x] Add seeders for default plans
+- [x] Add tests for billing models
 
 ---
 

@@ -124,6 +124,10 @@ class User extends Authenticatable
 
     /**
      * Billing subscriptions owned by user.
+     *
+     * WHY:
+     * Billing stays user-scoped in the MVP until team/company ownership is
+     * introduced as a separate domain decision.
      */
     public function subscriptions()
     {

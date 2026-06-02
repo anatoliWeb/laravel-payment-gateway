@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * Represents period-based usage counters used by feature access checks.
+ */
 class FeatureUsage extends Model
 {
     use HasFactory;
@@ -40,6 +43,8 @@ class FeatureUsage extends Model
         return $this->belongsTo(User::class);
     }
 
+    // WHY: Usage rows are period-bound to support daily, monthly, and
+    // billing-cycle limits without changing the subscription record itself.
     public function subscription(): BelongsTo
     {
         return $this->belongsTo(Subscription::class);
@@ -50,4 +55,3 @@ class FeatureUsage extends Model
         return $this->belongsTo(Plan::class);
     }
 }
-
