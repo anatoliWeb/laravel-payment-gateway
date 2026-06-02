@@ -27,6 +27,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/statuses.md](./billing/statuses.md) - Billing enums, statuses, and transition rules
 - [billing/seeders.md](./billing/seeders.md) - Billing seed data and idempotent seeding strategy
 - [billing/overrides.md](./billing/overrides.md) - Billing restrictions and manual feature overrides
+- [billing/rbac.md](./billing/rbac.md) - Billing RBAC permissions and admin access model
 - [TODO.md](../TODO.md) - Development roadmap and task tracking
 
 ---
@@ -44,6 +45,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Statuses -> [./billing/statuses.md](./billing/statuses.md)
 - Billing Seeders -> [./billing/seeders.md](./billing/seeders.md)
 - Billing Overrides -> [./billing/overrides.md](./billing/overrides.md)
+- Billing RBAC -> [./billing/rbac.md](./billing/rbac.md)
 - Commands -> [./commands.md](./commands.md)
 - Coding Standards -> [./coding-standards.md](./coding-standards.md)
 - TODO -> [../TODO.md](../TODO.md)
@@ -184,6 +186,7 @@ Improves developer navigation and onboarding experience.
 - [Billing Enums & Statuses](./billing/statuses.md)
 - [Billing Seeders](./billing/seeders.md)
 - [Billing Overrides](./billing/overrides.md)
+- [Billing RBAC](./billing/rbac.md)
 - [Commands](./commands.md)
 - [Coding Standards](./coding-standards.md)
 - [Main Docs](./README.md)

@@ -11,6 +11,7 @@ use App\Http\Resources\Chat\ChatMessageResource;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\User;
+use App\Services\Chat\ChatBillingGuard;
 use App\Services\Chat\ChatConversationQueryService;
 use App\Services\Chat\ChatMessageService;
 use App\Services\Chat\ExternalChatMessageService;
@@ -22,6 +23,7 @@ class ChatMessageController extends BaseController
     public function __construct(
         protected ChatMessageService $messageService,
         protected ChatConversationQueryService $queryService,
+        protected ChatBillingGuard $billingGuard,
         protected ExternalChatMessageService $externalChatMessageService,
     ) {
     }
@@ -30,7 +32,13 @@ class ChatMessageController extends BaseController
     {
         /** @var User $user */
         $user = $request->user();
+        $billingCheck = $this->billingGuard->checkMessageCreation($user);
+        if (! (bool) $billingCheck['allowed']) {
+            return $this->billingGuard->limitExceededResponse($user, 'chat.message.create', $billingCheck);
+        }
+
         $message = $this->messageService->sendMessage($user, $conversation, $request->validated());
+        $this->billingGuard->recordMessageCreated($user);
 
         $payload = (new ChatMessageResource($message))
             ->withAdminMetadata($this->queryService->applyAdminMetadataGate($user, $conversation))

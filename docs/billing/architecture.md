@@ -90,6 +90,8 @@ Dependency guidance:
 
 Manual restrictions and feature overrides are documented in [Billing Overrides & Restrictions](./overrides.md).
 
+Billing administration permissions are documented in [Billing RBAC Permissions](./rbac.md).
+
 ## app/Services/Payments
 
 Planned services:

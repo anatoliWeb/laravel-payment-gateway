@@ -8,6 +8,7 @@ use App\Http\Requests\Api\UpdateChatWebhookEndpointRequest;
 use App\Http\Resources\Chat\ChatWebhookEndpointResource;
 use App\Models\ChatWebhookEndpoint;
 use App\Models\User;
+use App\Services\Chat\ChatBillingGuard;
 use App\Services\Chat\ChatWebhookSecretRotationService;
 use App\Services\Chat\ExternalChatTokenService;
 use Illuminate\Http\JsonResponse;
@@ -18,6 +19,7 @@ class ChatWebhookEndpointController extends BaseController
     public function __construct(
         protected ExternalChatTokenService $tokenService,
         protected ChatWebhookSecretRotationService $secretRotationService,
+        protected ChatBillingGuard $billingGuard,
     ) {
     }
 
@@ -38,6 +40,14 @@ class ChatWebhookEndpointController extends BaseController
         /** @var User $user */
         $user = $request->user();
         $validated = $request->validated();
+        $currentEndpointCount = ChatWebhookEndpoint::query()
+            ->where('created_by', $user->id)
+            ->count();
+        $billingCheck = $this->billingGuard->checkWebhookEndpointCreation($user, $currentEndpointCount);
+        if (! (bool) $billingCheck['allowed']) {
+            return $this->billingGuard->limitExceededResponse($user, 'chat.webhook_endpoint.create', $billingCheck);
+        }
+
         $scopesInput = $validated['scopes'] ?? config('chat.external_api.scopes.default', []);
         $tokenMetadata = $this->tokenService->issueTokenMetadata(
             is_array($scopesInput) ? $scopesInput : [],

@@ -9,13 +9,15 @@ use App\Models\Message;
 use App\Models\MessageAttachment;
 use App\Models\User;
 use App\Services\Chat\ChatAttachmentService;
+use App\Services\Chat\ChatBillingGuard;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ChatAttachmentController extends BaseController
 {
     public function __construct(
-        protected ChatAttachmentService $attachmentService
+        protected ChatAttachmentService $attachmentService,
+        protected ChatBillingGuard $billingGuard,
     ) {
     }
 
@@ -23,7 +25,13 @@ class ChatAttachmentController extends BaseController
     {
         /** @var User $user */
         $user = $request->user();
+        $billingCheck = $this->billingGuard->checkAttachmentUpload($user);
+        if (! (bool) $billingCheck['allowed']) {
+            return $this->billingGuard->limitExceededResponse($user, 'chat.attachment.upload', $billingCheck);
+        }
+
         $attachment = $this->attachmentService->uploadAttachment($user, $message, $request->file('file'));
+        $this->billingGuard->recordAttachmentUploaded($user);
 
         return $this->successResponse(
             (new ChatAttachmentResource($attachment))->resolve(),
@@ -54,4 +62,3 @@ class ChatAttachmentController extends BaseController
         ], 'Attachment deleted');
     }
 }
-

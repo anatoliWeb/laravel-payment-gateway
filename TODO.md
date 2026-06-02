@@ -308,21 +308,53 @@ Billing overrides must remain module-agnostic. Chat and future dialer modules sh
 
 ---
 
+## Phase 10.2 — Billing RBAC Permissions
+
+- [x] Define billing permission keys
+- [x] Define payment permission keys
+- [x] Define billing override/restriction permission keys
+- [x] Define wallet/currency permission keys
+- [x] Add billing permissions to permission seeder
+- [x] Add payment permissions to permission seeder
+- [x] Add override/restriction permissions to permission seeder
+- [x] Add wallet/currency permissions to permission seeder
+- [x] Assign billing/payment permissions to admin role
+- [x] Assign override/restriction permissions to admin role
+- [x] Assign wallet/currency permissions to admin role
+- [x] Ensure normal users do not receive admin billing permissions by default
+- [x] Ensure permissions are idempotent
+- [x] Add tests that billing/payment permissions exist after seed
+- [x] Add tests that admin role has billing/payment permissions
+- [x] Add tests that normal users do not get admin billing permissions by default
+- [x] Document billing RBAC in `docs/billing/rbac.md`
+
+Billing RBAC permissions must be seeded before billing/payment API endpoints are exposed. Admin should receive billing management permissions, while normal users should access only their own billing data through ownership checks, not global admin permissions.
+
+---
+
 ## Phase 11 — Paid Chat Features
 
-- [ ] Define free chat limits
-- [ ] Define paid chat limits
-- [ ] Define chat messages per day limit
-- [ ] Define chat webhooks limit
-- [ ] Define chat history retention limit
-- [ ] Define chat attachments limit if needed
-- [ ] Add feature checks before premium chat actions
-- [ ] Add usage increment after billable chat actions
-- [ ] Add API error for limit exceeded
-- [ ] Add activity log for limit exceeded
-- [ ] Add tests for free plan chat limits
-- [ ] Add tests for paid plan chat access
-- [ ] Add tests for usage tracking
+- [x] Define free chat limits
+- [x] Define paid chat limits
+- [x] Define chat messages per day limit
+- [x] Define chat webhooks limit
+- [x] Define chat history retention limit
+- [x] Define chat attachments limit if needed
+- [x] Add feature checks before premium chat actions
+- [x] Add usage increment after billable chat actions
+- [x] Add API error for limit exceeded
+- [x] Add activity log for limit exceeded
+- [x] Add tests for free plan chat limits
+- [x] Add tests for paid plan chat access
+- [x] Add tests for usage tracking
+
+Phase 11 implementation scope:
+- Chat message creation is limited by `chat.messages.daily` and `chat.messages.monthly`.
+- Chat attachment upload is limited by `chat.attachments.monthly`.
+- Chat webhook endpoint creation is limited by `chat.webhook_endpoints.count`.
+- Limit exceeded responses use stable code `feature_limit_exceeded`.
+- Limit exceeded attempts are logged as `chat.feature_limit_exceeded`.
+- Billing guards are inactive only when no billing plans exist yet; once a billing catalog exists, chat feature keys are enforced strictly.
 
 ---
 

@@ -279,6 +279,14 @@ Notes:
 | `chat.advanced_search.enabled` | Advanced search features | boolean | policy | Pro+ |
 | `chat.admin_reply.enabled` | Admin reply/support workflow feature | boolean | policy | Plan-dependent |
 
+Current implementation notes:
+- Message creation checks `chat.messages.daily` and `chat.messages.monthly` before sending, then increments both usage counters after a successful message write.
+- Attachment upload checks `chat.attachments.monthly` before storing the file, then increments usage after a successful upload.
+- Webhook endpoint creation checks `chat.webhook_endpoints.count` against the current number of endpoints owned by the user.
+- Limit failures return a stable API error code: `feature_limit_exceeded`.
+- Limit failures are recorded in `activity_logs` with action `chat.feature_limit_exceeded`.
+- If no billing plans exist yet, chat billing guards stay inactive so legacy chat flows and isolated chat tests can run before `BillingSeeder`. Once at least one plan exists, missing chat feature keys are treated as billing configuration errors.
+
 ## Future Dialer Feature Limits
 
 | Feature key | Meaning | Value type | Period | Notes |
