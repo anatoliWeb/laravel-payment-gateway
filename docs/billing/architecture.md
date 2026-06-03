@@ -80,6 +80,8 @@ Planned services:
 - `UsageLimitService`: limit policy evaluation and threshold decisions.
 - `BillingCycleService`: period/cycle window calculations.
 - `InvoiceService` (future): invoice lifecycle coordination.
+- `PaymentMethodService`: simulator-safe user payment method management.
+- `PaymentPreferenceService`: payment strategy and explicit consent management.
 - `BillingSchedulerService` (optional): command-level orchestration helpers.
 - `BillingActivityService` (optional): adapter around existing ActivityLog service.
 
@@ -97,6 +99,8 @@ Future dialer reuse is documented in [Future Dialer Billing Extension](./future-
 Currency and exchange-rate foundation is documented in [Currency & Exchange Rates Foundation](./currencies.md).
 
 User wallet balance foundation is documented in [User Wallet Balance](./wallets.md).
+
+Payment methods and preferences are documented in [Payment Methods & User Payment Preferences](./payment-methods.md).
 
 ## app/Services/Payments
 

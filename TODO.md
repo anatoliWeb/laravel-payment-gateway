@@ -425,27 +425,27 @@ Users may pay either from internal wallet balance or directly through a payment 
 
 ## Phase 12.3 — Payment Methods & User Payment Preferences
 
-- [ ] Design `payment_methods` table
-- [ ] Design `user_payment_preferences` table
-- [ ] Define fake card payment method
-- [ ] Define fake manual invoice payment method
-- [ ] Define fake wallet/internal balance payment method
-- [ ] Define payment method status
-- [ ] Define default payment method
-- [ ] Define payment strategy: wallet only
-- [ ] Define payment strategy: card/payment method only
-- [ ] Define payment strategy: wallet first with card fallback
-- [ ] Define payment strategy: manual approval only if needed
-- [ ] Store explicit user consent for saved payment method
-- [ ] Store explicit user consent for auto charge
-- [ ] Store explicit user consent for auto top-up
-- [ ] Add payment method metadata rules
-- [ ] Add payment method masking rules
-- [ ] Ensure no raw card data is stored
-- [ ] Add payment method seed/demo data if needed
-- [ ] Add tests for payment methods
-- [ ] Add tests for payment preferences
-- [ ] Document payment methods in `docs/billing/payment-methods.md`
+- [x] Design `payment_methods` table
+- [x] Design `user_payment_preferences` table
+- [x] Define fake card payment method
+- [x] Define fake manual invoice payment method
+- [x] Define fake wallet/internal balance payment method
+- [x] Define payment method status
+- [x] Define default payment method
+- [x] Define payment strategy: wallet only
+- [x] Define payment strategy: card/payment method only
+- [x] Define payment strategy: wallet first with card fallback
+- [x] Define payment strategy: manual approval only if needed
+- [x] Store explicit user consent for saved payment method
+- [x] Store explicit user consent for auto charge
+- [x] Store explicit user consent for auto top-up
+- [x] Add payment method metadata rules
+- [x] Add payment method masking rules
+- [x] Ensure no raw card data is stored
+- [x] Add payment method seed/demo data if needed
+- [x] Add tests for payment methods
+- [x] Add tests for payment preferences
+- [x] Document payment methods in `docs/billing/payment-methods.md`
 
 Payment methods are simulated in this portfolio project. The system must model consent, masking, default method selection, and payment strategy, but must not store raw card data or real provider secrets.
 
@@ -473,6 +473,17 @@ Payment methods are simulated in this portfolio project. The system must model c
 - [ ] Validate user payment preference
 - [ ] Validate saved payment method ownership
 - [ ] Validate saved payment method status
+- [ ] Resolve provider from payment method
+- [ ] Resolve provider account from user/customer settings if available
+- [ ] Fallback to platform provider config from `.env` if allowed
+- [ ] Use provider abstraction for payment method charges
+- [ ] Store provider key/source safely without storing secrets on payment
+- [ ] Store provider reference safely
+- [ ] Map provider response to internal payment status
+- [ ] Map provider errors to stable internal error codes
+- [ ] Ensure simulator provider is default in demo mode
+- [ ] Ensure external providers are disabled unless explicitly configured
+- [ ] Ensure customer-owned provider config cannot access another customer's credentials
 - [ ] Validate wallet balance before wallet debit
 - [ ] Create payment inside DB transaction
 - [ ] Create wallet debit transaction when paying from balance
@@ -580,6 +591,94 @@ This API layer must allow users to pay from internal wallet balance, from a save
 
 ---
 
+## Phase 13.4 — External Payment Provider Integration Readiness
+
+- [ ] Design `PaymentProviderInterface`
+- [ ] Design `PaymentProviderFactory`
+- [ ] Design provider request DTOs
+- [ ] Design provider response DTOs
+- [ ] Design provider error DTOs
+- [ ] Design provider webhook DTOs
+- [ ] Design provider capability map
+- [ ] Design provider configuration contract
+- [ ] Design platform-level provider config from `.env`
+- [ ] Design customer-level provider config from database
+- [ ] Design `payment_provider_accounts` table
+- [ ] Design encrypted provider credentials storage
+- [ ] Design provider config source priority
+- [ ] Support config source: platform `.env`
+- [ ] Support config source: customer database settings
+- [ ] Support config source: disabled provider
+- [ ] Add provider account status
+- [ ] Add provider account test/live mode flag
+- [ ] Add provider account owner relation if needed
+- [ ] Add provider credentials validation rules
+- [ ] Add provider credentials masking rules
+- [ ] Add provider credentials metadata safety rules
+- [ ] Add admin form readiness notes for provider settings
+- [ ] Add simulator provider adapter
+- [ ] Add fake provider charge flow
+- [ ] Add fake provider refund flow if needed
+- [ ] Add fake provider payment status lookup
+- [ ] Add fake provider webhook verification
+- [ ] Add provider timeout/retry rules
+- [ ] Add provider error mapping
+- [ ] Add provider idempotency forwarding rules
+- [ ] Add provider metadata sanitization rules
+- [ ] Add provider webhook signature verification contract
+- [ ] Add provider-specific documentation folder structure
+- [ ] Add provider integration template README
+- [ ] Add planned Stripe adapter notes
+- [ ] Add planned PayPal adapter notes
+- [ ] Add planned LiqPay adapter notes
+- [ ] Add planned WayForPay adapter notes
+- [ ] Add planned Monobank/Fondy adapter notes if useful
+- [ ] Ensure no real provider secrets are committed
+- [ ] Ensure real external charges are disabled in portfolio/demo mode
+- [ ] Add tests for simulator provider adapter
+- [ ] Add tests for provider factory
+- [ ] Add tests for provider config resolver
+- [ ] Add tests for env-based provider config
+- [ ] Add tests for DB-based provider config
+- [ ] Add tests for encrypted credential masking
+- [ ] Add tests for provider error mapping
+- [ ] Add tests for fake webhook verification
+- [ ] Document provider integration readiness in `docs/billing/payment-providers.md`
+
+This project uses a payment gateway simulator by default. Real payment providers are intentionally not connected in portfolio/demo mode. The architecture must support provider adapters, platform-level `.env` credentials, customer-level database credentials, encrypted credential storage, webhook verification, idempotency propagation, and provider-specific documentation/templates for Stripe/PayPal/LiqPay/WayForPay-style integrations.
+
+---
+
+## Phase 13.5 — Provider Adapter Template & Documentation
+
+- [ ] Create provider adapter folder convention
+- [ ] Create simulator provider folder
+- [ ] Create provider template folder
+- [ ] Create provider README template
+- [ ] Create provider capabilities template
+- [ ] Create provider config example template
+- [ ] Create provider webhook verification guide template
+- [ ] Create provider error mapping guide template
+- [ ] Create provider testing checklist template
+- [ ] Document how to add a new payment provider
+- [ ] Document required provider adapter methods
+- [ ] Document required provider DTOs
+- [ ] Document required provider tests
+- [ ] Document required provider environment variables
+- [ ] Document required DB configuration fields
+- [ ] Document safe credential storage rules
+- [ ] Document demo/sandbox/live mode difference
+- [ ] Add example provider skeleton for `Simulator`
+- [ ] Add placeholder docs for `Stripe`
+- [ ] Add placeholder docs for `PayPal`
+- [ ] Add placeholder docs for `LiqPay`
+- [ ] Add placeholder docs for `WayForPay`
+- [ ] Add tests or static checks for provider documentation if useful
+
+Adding a new provider should be repeatable: create a provider folder, implement the provider interface, define capabilities, document configuration fields, map errors, implement webhook verification, and add provider-specific tests. This phase prepares the project so future providers can be added without changing core payment logic.
+
+---
+
 ## Phase 14 — Idempotency Support
 
 - [ ] Require `Idempotency-Key` for payment creation
@@ -641,10 +740,19 @@ This API layer must allow users to pay from internal wallet balance, from a save
 - [ ] Mark webhook as failed
 - [ ] Configure retry attempts
 - [ ] Configure backoff
+- [ ] Design inbound provider webhook endpoint
+- [ ] Design inbound provider webhook verification
+- [ ] Resolve provider account for inbound webhook
+- [ ] Verify provider webhook signature if provider supports it
+- [ ] Map provider webhook event to internal billing event
+- [ ] Ignore duplicate provider webhook events safely
+- [ ] Store provider webhook reference
+- [ ] Store provider account reference for webhook event
 - [ ] Add manual retry endpoint
 - [ ] Add tests for webhook job dispatch
 - [ ] Add tests for successful webhook delivery
 - [ ] Add tests for failed webhook delivery
+- [ ] Add tests for fake provider webhook verification
 - [ ] Document webhooks in `docs/billing/webhooks.md`
 
 ---
@@ -736,6 +844,15 @@ This API layer must allow users to pay from internal wallet balance, from a save
 - [ ] Add payment preference invalid exception
 - [ ] Add duplicate wallet debit exception
 - [ ] Add auto charge consent required exception
+- [ ] Add provider not configured exception
+- [ ] Add provider disabled exception
+- [ ] Add provider credentials invalid exception
+- [ ] Add provider account not found exception
+- [ ] Add provider account forbidden exception
+- [ ] Add provider charge failed exception
+- [ ] Add provider timeout exception
+- [ ] Add provider webhook signature invalid exception
+- [ ] Add provider unsupported operation exception
 - [ ] Add tests for API errors
 - [ ] Document error responses
 
@@ -763,6 +880,19 @@ This API layer must allow users to pay from internal wallet balance, from a save
 - [ ] Add wallet-first fallback API examples
 - [ ] Add payment preferences API examples
 - [ ] Add auto-charge consent API examples
+- [ ] Add provider abstraction documentation
+- [ ] Add simulator provider examples
+- [ ] Add platform `.env` provider config examples
+- [ ] Add customer DB provider config examples
+- [ ] Add provider account admin form examples
+- [ ] Add encrypted credentials documentation
+- [ ] Add planned Stripe integration notes
+- [ ] Add planned PayPal integration notes
+- [ ] Add planned LiqPay integration notes
+- [ ] Add planned WayForPay integration notes
+- [ ] Add provider webhook verification examples
+- [ ] Add provider error mapping examples
+- [ ] Add provider adapter template documentation
 
 ---
 
@@ -791,6 +921,20 @@ This API layer must allow users to pay from internal wallet balance, from a save
 - [ ] Add unit tests for services
 - [ ] Add unit tests for DTOs
 - [ ] Add unit tests for webhook payload builder
+- [ ] Add unit tests for `PaymentProviderInterface` implementations
+- [ ] Add unit tests for provider factory
+- [ ] Add unit tests for provider config resolver
+- [ ] Add unit tests for env-based provider configuration
+- [ ] Add unit tests for DB-based provider configuration
+- [ ] Add unit tests for encrypted credential masking
+- [ ] Add unit tests for provider response mapping
+- [ ] Add unit tests for provider error mapping
+- [ ] Add feature tests for simulator provider charge flow
+- [ ] Add feature tests for simulator provider webhook verification
+- [ ] Add tests that real providers are disabled in demo mode
+- [ ] Add tests that no real provider secrets are required for local setup
+- [ ] Add tests that customer provider credentials are isolated
+- [ ] Add tests that one customer cannot use another customer's provider account
 - [ ] Add command tests for scheduler tasks
 - [ ] Add queue fake tests
 - [ ] Add HTTP fake tests

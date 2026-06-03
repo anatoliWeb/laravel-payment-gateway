@@ -22,6 +22,8 @@ Planned tables:
 - `wallets`
 - `wallet_balances`
 - `wallet_transactions`
+- `payment_methods`
+- `user_payment_preferences`
 - `plans`
 - `plan_features`
 - `subscriptions`
@@ -157,6 +159,78 @@ Notes:
 - balance rows store current state
 - payment/subscription links are nullable for future payment integration
 - local idempotency guards wallet operations but does not replace full payment idempotency
+
+## payment_methods Table
+
+Implemented fields:
+- `id`
+- `uuid`
+- `user_id`
+- `type`
+- `provider`
+- `status`
+- `display_name` nullable
+- `brand` nullable
+- `last4` nullable
+- `exp_month` nullable
+- `exp_year` nullable
+- `provider_reference` nullable
+- `is_default`
+- `consent_given_at` nullable
+- `metadata` JSON nullable
+- `created_at`
+- `updated_at`
+
+Notes:
+- payment methods are simulator-safe billing instruments
+- raw card numbers and CVV/CVC/security codes are not stored
+- `last4` is display-only simulator-safe data
+- provider references are fake simulator references
+
+Recommended indexes/constraints:
+- unique: `uuid`
+- FK: `user_id -> users.id`
+- index: `user_id`
+- index: `type`
+- index: `provider`
+- index: `status`
+- index: `is_default`
+- index: (`user_id`, `is_default`)
+
+## user_payment_preferences Table
+
+Implemented fields:
+- `id`
+- `user_id`
+- `default_payment_method_id` nullable
+- `strategy`
+- `auto_charge_enabled`
+- `auto_top_up_enabled`
+- `auto_top_up_threshold_amount` nullable
+- `auto_top_up_amount` nullable
+- `auto_top_up_currency_id` nullable
+- `max_auto_top_up_per_day` nullable
+- `max_auto_top_up_per_month` nullable
+- `auto_charge_consent_at` nullable
+- `auto_top_up_consent_at` nullable
+- `metadata` JSON nullable
+- `created_at`
+- `updated_at`
+
+Notes:
+- one preference row per user
+- strategy controls future payment method selection only
+- consent timestamps are explicit and separate from saved payment methods
+- auto top-up preferences do not execute top-up in Phase 12.3
+
+Recommended indexes/constraints:
+- unique: `user_id`
+- FK: `user_id -> users.id`
+- FK: `default_payment_method_id -> payment_methods.id`
+- FK: `auto_top_up_currency_id -> currencies.id`
+- index: `strategy`
+- index: `auto_charge_enabled`
+- index: `auto_top_up_enabled`
 
 ## plans Table
 
@@ -554,6 +628,8 @@ Guiding rule:
 ## JSON Fields
 
 Planned JSON fields:
+- `payment_methods.metadata`
+- `user_payment_preferences.metadata`
 - `plans.metadata`
 - `plan_features.metadata`
 - `subscriptions.metadata`
@@ -630,6 +706,10 @@ Planned order:
 7. `idempotency_keys`
 8. `webhook_deliveries`
 
+Implemented Phase 12 foundation additions after wallet tables:
+- `payment_methods`
+- `user_payment_preferences`
+
 Dependency notes:
 - `subscriptions` depends on `users` and `plans`.
 - `payments` depends on `users` and optionally `subscriptions`.
@@ -654,6 +734,7 @@ Domain structure details: [Billing Domain Architecture](./architecture.md).
 API contract planning details: [Billing API Contract](./api.md).
 Enum/status planning details: [Enums & Statuses Planning](./statuses.md).
 Seeder implementation notes: [Billing Seeders](./seeders.md).
+Payment methods and preferences: [Payment Methods & User Payment Preferences](./payment-methods.md).
 
 ## Status
 

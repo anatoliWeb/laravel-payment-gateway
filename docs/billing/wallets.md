@@ -106,6 +106,8 @@ Wallet transactions can optionally reference:
 
 Future payment flows can link wallet debits to payment attempts without changing the wallet ledger schema.
 
+Payment method and preference selection is documented in [Payment Methods & User Payment Preferences](./payment-methods.md).
+
 ## Auto Top-Up Readiness
 
 The wallet foundation can support auto top-up later, but no automatic charging, consent handling, or payment-method fallback is implemented in this phase.

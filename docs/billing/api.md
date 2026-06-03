@@ -191,11 +191,13 @@ Auth/tracing/idempotency:
 
 - Purpose: create payment attempt.
 - Idempotency: required.
-- Body: optional context refs (`plan_slug`, `subscription_public_id`, future `invoice_public_id`), `currency`, `payment_method`, optional callback/metadata.
+- Body: optional context refs (`plan_slug`, `subscription_public_id`, future `invoice_public_id`), `currency`, `payment_method`, optional `payment_method_uuid`, optional callback/metadata.
 - Behavior: validate context, create pending payment, append initial transaction.
 - Response:
   - `201` on first create
   - `200` on idempotency replay
+
+Payment method and preference persistence details: [Payment Methods & User Payment Preferences](./payment-methods.md).
 
 ### `GET /api/v1/billing/payments/{payment}`
 
@@ -273,6 +275,7 @@ Do not log:
 ## Security Notes
 
 - No real card data.
+- Payment methods store only simulator-safe masked data and last4.
 - No provider secrets in payload/response logs.
 - Restrict simulator endpoints to elevated permissions.
 - Treat idempotency keys as operational identifiers (do not over-log raw values).
