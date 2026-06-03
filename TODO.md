@@ -524,27 +524,27 @@ Payment Risk & Fraud Guard is a demo-safe risk layer for the simulator. It is no
 
 ## Phase 13.2 — Auto Top-Up & Auto Charge
 
-- [ ] Design user payment method preference
-- [ ] Design auto top-up settings
-- [ ] Design auto charge settings
-- [ ] Allow user to choose wallet balance only
-- [ ] Allow user to choose card/payment method only
-- [ ] Allow user to choose wallet first, then card fallback
-- [ ] Allow user to enable/disable automatic charges
-- [ ] Add minimum wallet balance threshold
-- [ ] Add auto top-up amount
-- [ ] Add max auto top-up per day/month
-- [ ] Add failed auto top-up handling
-- [ ] Add auto charge consent tracking
+- [x] Design user payment method preference
+- [x] Design auto top-up settings
+- [x] Design auto charge settings
+- [x] Allow user to choose wallet balance only
+- [x] Allow user to choose card/payment method only
+- [x] Allow user to choose wallet first, then card fallback
+- [x] Allow user to enable/disable automatic charges
+- [x] Add minimum wallet balance threshold
+- [x] Add auto top-up amount
+- [x] Add max auto top-up per day/month
+- [x] Add failed auto top-up handling
+- [x] Add auto charge consent tracking
 - [ ] Add activity log for auto charge consent changes
-- [ ] Add activity log for automatic balance top-up
+- [x] Add activity log for automatic balance top-up
 - [ ] Add activity log for automatic subscription charge
-- [ ] Add tests for auto top-up disabled
-- [ ] Add tests for auto top-up enabled
-- [ ] Add tests for wallet-first payment strategy
-- [ ] Add tests for card-only payment strategy
-- [ ] Add tests for max auto top-up limits
-- [ ] Document auto top-up in `docs/billing/auto-top-up.md`
+- [x] Add tests for auto top-up disabled
+- [x] Add tests for auto top-up enabled
+- [x] Add tests for wallet-first payment strategy
+- [x] Add tests for card-only payment strategy
+- [x] Add tests for max auto top-up limits
+- [x] Document auto top-up in `docs/billing/auto-top-up.md`
 
 Auto top-up and auto charge require explicit user consent. In this simulator project, external payment provider behavior is fake, but consent, limits, idempotency, and audit logging must be modeled seriously.
 

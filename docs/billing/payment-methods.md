@@ -80,6 +80,8 @@ Phase 12.3 does not execute top-up, wallet credit, card charge, or queue jobs.
 
 Actual auto top-up remains Phase 13.2.
 
+Auto top-up and auto charge foundation is documented in [Auto Top-Up & Auto Charge](./auto-top-up.md).
+
 ## Masking Rules
 
 Rules:

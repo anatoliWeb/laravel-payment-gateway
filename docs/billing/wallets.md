@@ -114,6 +114,8 @@ The wallet foundation can support auto top-up later, but no automatic charging, 
 
 Auto top-up remains Phase 13.2.
 
+Auto top-up and auto charge foundation is documented in [Auto Top-Up & Auto Charge](./auto-top-up.md).
+
 ## Testing Strategy
 
 Tests cover:

@@ -83,6 +83,8 @@ Planned services:
 - `PaymentMethodService`: simulator-safe user payment method management.
 - `PaymentPreferenceService`: payment strategy and explicit consent management.
 - `PaymentRiskService`: demo-safe guard before payment creation side effects.
+- `AutoTopUpService`: simulator-safe wallet top-up automation with consent and limits.
+- `AutoChargeService`: simulator-safe automatic payment-method charge orchestration.
 - `BillingSchedulerService` (optional): command-level orchestration helpers.
 - `BillingActivityService` (optional): adapter around existing ActivityLog service.
 
@@ -104,6 +106,8 @@ User wallet balance foundation is documented in [User Wallet Balance](./wallets.
 Payment methods and preferences are documented in [Payment Methods & User Payment Preferences](./payment-methods.md).
 
 Payment risk guard is documented in [Payment Risk & Fraud Guard](./payment-risk.md).
+
+Auto top-up and auto charge foundation is documented in [Auto Top-Up & Auto Charge](./auto-top-up.md).
 
 ## app/Services/Payments
 

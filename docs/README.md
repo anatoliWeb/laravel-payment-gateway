@@ -33,6 +33,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/wallets.md](./billing/wallets.md) - User wallet balance foundation
 - [billing/payment-methods.md](./billing/payment-methods.md) - Payment methods and user payment preferences foundation
 - [billing/payment-risk.md](./billing/payment-risk.md) - Demo-safe payment risk and fraud guard
+- [billing/auto-top-up.md](./billing/auto-top-up.md) - Auto top-up and auto charge foundation
 - [TODO.md](../TODO.md) - Development roadmap and task tracking
 
 ---
@@ -56,6 +57,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Wallets -> [./billing/wallets.md](./billing/wallets.md)
 - Billing Payment Methods -> [./billing/payment-methods.md](./billing/payment-methods.md)
 - Billing Payment Risk -> [./billing/payment-risk.md](./billing/payment-risk.md)
+- Billing Auto Top-Up -> [./billing/auto-top-up.md](./billing/auto-top-up.md)
 - Commands -> [./commands.md](./commands.md)
 - Coding Standards -> [./coding-standards.md](./coding-standards.md)
 - TODO -> [../TODO.md](../TODO.md)
@@ -202,6 +204,7 @@ Improves developer navigation and onboarding experience.
 - [Billing Wallets](./billing/wallets.md)
 - [Billing Payment Methods](./billing/payment-methods.md)
 - [Billing Payment Risk](./billing/payment-risk.md)
+- [Billing Auto Top-Up](./billing/auto-top-up.md)
 - [Commands](./commands.md)
 - [Coding Standards](./coding-standards.md)
 - [Main Docs](./README.md)
