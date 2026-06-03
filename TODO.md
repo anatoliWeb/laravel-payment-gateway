@@ -398,26 +398,26 @@ Currency support is required before wallet balances and multi-currency payments.
 
 ## Phase 12.2 — User Wallet Balance
 
-- [ ] Design `wallets` table
-- [ ] Design `wallet_balances` table if needed
-- [ ] Design `wallet_transactions` table
-- [ ] Decide one wallet per user vs one wallet per currency
-- [ ] Add multi-currency balance support
-- [ ] Add available balance
-- [ ] Add held/reserved balance
-- [ ] Add wallet transaction types
-- [ ] Add wallet top-up transaction
-- [ ] Add wallet debit transaction
-- [ ] Add wallet refund transaction
-- [ ] Add wallet adjustment transaction
-- [ ] Add balance locking strategy
-- [ ] Add idempotency for wallet transactions
-- [ ] Add relation between wallet transactions and payments
-- [ ] Add relation between wallet transactions and subscriptions if needed
+- [x] Design `wallets` table
+- [x] Design `wallet_balances` table if needed
+- [x] Design `wallet_transactions` table
+- [x] Decide one wallet per user vs one wallet per currency
+- [x] Add multi-currency balance support
+- [x] Add available balance
+- [x] Add held/reserved balance
+- [x] Add wallet transaction types
+- [x] Add wallet top-up transaction
+- [x] Add wallet debit transaction
+- [x] Add wallet refund transaction
+- [x] Add wallet adjustment transaction
+- [x] Add balance locking strategy
+- [x] Add idempotency for wallet transactions
+- [x] Add relation between wallet transactions and payments
+- [x] Add relation between wallet transactions and subscriptions if needed
 - [ ] Add wallet activity logs
-- [ ] Add tests for wallet balance operations
-- [ ] Add tests for multi-currency wallet balances
-- [ ] Document wallet balance in `docs/billing/wallets.md`
+- [x] Add tests for wallet balance operations
+- [x] Add tests for multi-currency wallet balances
+- [x] Document wallet balance in `docs/billing/wallets.md`
 
 Users may pay either from internal wallet balance or directly through a payment method. Wallet debits must be transactional and idempotent to avoid double-charging or granting access without a valid debit.
 

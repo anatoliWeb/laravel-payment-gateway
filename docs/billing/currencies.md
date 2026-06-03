@@ -96,7 +96,7 @@ The seeder is idempotent and can be safely rerun.
 
 Wallet balances in Phase 12.2 can reference `currencies` for one balance per currency.
 
-This phase does not create wallet tables or wallet transaction logic.
+Wallet balance implementation is documented in [User Wallet Balance](./wallets.md).
 
 ## Payment Readiness
 

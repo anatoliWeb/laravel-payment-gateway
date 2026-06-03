@@ -96,6 +96,8 @@ Future dialer reuse is documented in [Future Dialer Billing Extension](./future-
 
 Currency and exchange-rate foundation is documented in [Currency & Exchange Rates Foundation](./currencies.md).
 
+User wallet balance foundation is documented in [User Wallet Balance](./wallets.md).
+
 ## app/Services/Payments
 
 Planned services:

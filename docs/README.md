@@ -30,6 +30,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/rbac.md](./billing/rbac.md) - Billing RBAC permissions and admin access model
 - [billing/future-dialer.md](./billing/future-dialer.md) - Future dialer billing extension
 - [billing/currencies.md](./billing/currencies.md) - Currency and exchange-rate foundation
+- [billing/wallets.md](./billing/wallets.md) - User wallet balance foundation
 - [TODO.md](../TODO.md) - Development roadmap and task tracking
 
 ---
@@ -50,6 +51,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing RBAC -> [./billing/rbac.md](./billing/rbac.md)
 - Future Dialer Billing -> [./billing/future-dialer.md](./billing/future-dialer.md)
 - Billing Currencies -> [./billing/currencies.md](./billing/currencies.md)
+- Billing Wallets -> [./billing/wallets.md](./billing/wallets.md)
 - Commands -> [./commands.md](./commands.md)
 - Coding Standards -> [./coding-standards.md](./coding-standards.md)
 - TODO -> [../TODO.md](../TODO.md)
@@ -193,6 +195,7 @@ Improves developer navigation and onboarding experience.
 - [Billing RBAC](./billing/rbac.md)
 - [Future Dialer Billing](./billing/future-dialer.md)
 - [Billing Currencies](./billing/currencies.md)
+- [Billing Wallets](./billing/wallets.md)
 - [Commands](./commands.md)
 - [Coding Standards](./coding-standards.md)
 - [Main Docs](./README.md)

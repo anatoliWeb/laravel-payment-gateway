@@ -19,6 +19,9 @@ This phase captures structure, integrity rules, and migration sequencing only.
 Planned tables:
 - `currencies`
 - `exchange_rates`
+- `wallets`
+- `wallet_balances`
+- `wallet_transactions`
 - `plans`
 - `plan_features`
 - `subscriptions`
@@ -82,6 +85,78 @@ Recommended indexes/constraints:
 - index: `quote_currency_id`
 - index: (`base_currency_id`, `quote_currency_id`)
 - index: (`base_currency_id`, `quote_currency_id`, `is_active`, `valid_from`)
+
+## wallets Table
+
+Implemented fields:
+- `id`
+- `uuid`
+- `user_id`
+- `status`
+- `metadata` JSON nullable
+- `created_at`
+- `updated_at`
+
+Notes:
+- one wallet per user
+- status is stored as string: `active`, `suspended`, `closed`
+- no wallet auto-create logic in the User model
+
+Recommended indexes/constraints:
+- unique: `uuid`
+- unique: `user_id`
+- FK: `user_id -> users.id`
+- index: `status`
+
+## wallet_balances Table
+
+Implemented fields:
+- `id`
+- `wallet_id`
+- `currency_id`
+- `available_amount`
+- `held_amount`
+- `metadata` JSON nullable
+- `created_at`
+- `updated_at`
+
+Notes:
+- amounts are stored in minor currency units
+- available balance is spendable
+- held balance is reserved
+
+Recommended indexes/constraints:
+- FK: `wallet_id -> wallets.id`
+- FK: `currency_id -> currencies.id`
+- unique: (`wallet_id`, `currency_id`)
+
+## wallet_transactions Table
+
+Implemented fields:
+- `id`
+- `uuid`
+- `wallet_id`
+- `wallet_balance_id` nullable
+- `currency_id`
+- `payment_id` nullable
+- `subscription_id` nullable
+- `type`
+- `direction`
+- `amount`
+- balance snapshot columns
+- `idempotency_key` nullable
+- optional reference columns
+- `reason` nullable
+- `status`
+- `metadata` JSON nullable
+- `created_at`
+- `updated_at`
+
+Notes:
+- wallet transactions are ledger history
+- balance rows store current state
+- payment/subscription links are nullable for future payment integration
+- local idempotency guards wallet operations but does not replace full payment idempotency
 
 ## plans Table
 
