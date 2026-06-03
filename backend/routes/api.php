@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\V1\Chat\ChatTypingController;
 use App\Http\Controllers\Api\V1\Chat\ChatPresenceController;
 use App\Http\Controllers\Api\V1\Chat\ChatWebhookEndpointController;
 use App\Http\Controllers\Api\V1\Chat\ChatIncomingWebhookController;
+use App\Http\Controllers\Api\V1\Billing\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -351,6 +352,18 @@ Route::prefix('v1')
                 Route::get('/system/health', [MonitoringHealthController::class, 'readiness'])
                     ->middleware('permission:system.monitoring')
                     ->name('system.health');
+
+                /**
+                 * ------------------------------------------------
+                 * Billing Payments
+                 * ------------------------------------------------
+                 */
+                Route::prefix('billing')
+                    ->as('billing.')
+                    ->group(function (): void {
+                        Route::post('/payments', [PaymentController::class, 'store'])
+                            ->name('payments.store');
+                    });
 
                 /**
                  * ------------------------------------------------

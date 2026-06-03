@@ -192,7 +192,13 @@ Auth/tracing/idempotency:
 - Purpose: create payment attempt.
 - Idempotency: required.
 - Body: optional context refs (`plan_slug`, `subscription_public_id`, future `invoice_public_id`), `currency`, `payment_method`, optional `payment_method_uuid`, optional callback/metadata.
-- Behavior: validate context, create pending payment, append initial transaction.
+- Behavior: validate context, resolve payment source, create payment, append initial transaction.
+- Phase 13 supports `payment_source` values:
+  - `wallet`: debit internal wallet balance and create a succeeded internal payment
+  - `payment_method`: create a simulator-safe payment-method attempt
+  - `wallet_first`: debit wallet when funds are available, otherwise fall back to default active payment method
+- Phase 13 requires `Idempotency-Key` for the write request, but full idempotency replay/conflict storage remains Phase 14.
+- Phase 13 does not activate subscriptions, send webhooks, or call real providers.
 - Response:
   - `201` on first create
   - `200` on idempotency replay

@@ -453,49 +453,49 @@ Payment methods are simulated in this portfolio project. The system must model c
 
 ## Phase 13 — Payment Creation Flow
 
-- [ ] Create `CreatePaymentRequest`
-- [ ] Create `CreatePaymentData` DTO
-- [ ] Create `PaymentService`
-- [ ] Add payment creation method
-- [ ] Validate subscription/payment context
-- [ ] Validate amount
-- [ ] Validate currency
-- [ ] Validate idempotency key
-- [ ] Accept payment source in `CreatePaymentRequest`
-- [ ] Accept payment strategy in `CreatePaymentData`
-- [ ] Resolve payment source from user preferences if not provided
-- [ ] Support payment source: direct payment method
-- [ ] Support payment source: internal wallet balance
-- [ ] Support payment source: wallet first with payment method fallback
-- [ ] Support direct payment method charge
-- [ ] Support internal wallet balance debit
-- [ ] Support wallet first with payment method fallback
-- [ ] Validate user payment preference
-- [ ] Validate saved payment method ownership
-- [ ] Validate saved payment method status
-- [ ] Resolve provider from payment method
+- [x] Create `CreatePaymentRequest`
+- [x] Create `CreatePaymentData` DTO
+- [x] Create `PaymentService`
+- [x] Add payment creation method
+- [x] Validate subscription/payment context
+- [x] Validate amount
+- [x] Validate currency
+- [x] Validate idempotency key
+- [x] Accept payment source in `CreatePaymentRequest`
+- [x] Accept payment strategy in `CreatePaymentData`
+- [x] Resolve payment source from user preferences if not provided
+- [x] Support payment source: direct payment method
+- [x] Support payment source: internal wallet balance
+- [x] Support payment source: wallet first with payment method fallback
+- [x] Support direct payment method charge
+- [x] Support internal wallet balance debit
+- [x] Support wallet first with payment method fallback
+- [x] Validate user payment preference
+- [x] Validate saved payment method ownership
+- [x] Validate saved payment method status
+- [x] Resolve provider from payment method
 - [ ] Resolve provider account from user/customer settings if available
 - [ ] Fallback to platform provider config from `.env` if allowed
 - [ ] Use provider abstraction for payment method charges
-- [ ] Store provider key/source safely without storing secrets on payment
-- [ ] Store provider reference safely
-- [ ] Map provider response to internal payment status
-- [ ] Map provider errors to stable internal error codes
-- [ ] Ensure simulator provider is default in demo mode
-- [ ] Ensure external providers are disabled unless explicitly configured
+- [x] Store provider key/source safely without storing secrets on payment
+- [x] Store provider reference safely
+- [x] Map provider response to internal payment status
+- [x] Map provider errors to stable internal error codes
+- [x] Ensure simulator provider is default in demo mode
+- [x] Ensure external providers are disabled unless explicitly configured
 - [ ] Ensure customer-owned provider config cannot access another customer's credentials
-- [ ] Validate wallet balance before wallet debit
-- [ ] Create payment inside DB transaction
-- [ ] Create wallet debit transaction when paying from balance
-- [ ] Do not activate subscription if wallet debit fails
-- [ ] Link payment to wallet transaction if balance is used
-- [ ] Link payment to wallet transaction when wallet is used
-- [ ] Link payment to payment method when payment method is used
-- [ ] Create initial payment transaction record
-- [ ] Create activity log record
-- [ ] Return unified API response
-- [ ] Add feature tests for payment creation
-- [ ] Add validation tests
+- [x] Validate wallet balance before wallet debit
+- [x] Create payment inside DB transaction
+- [x] Create wallet debit transaction when paying from balance
+- [x] Do not activate subscription if wallet debit fails
+- [x] Link payment to wallet transaction if balance is used
+- [x] Link payment to wallet transaction when wallet is used
+- [x] Link payment to payment method when payment method is used
+- [x] Create initial payment transaction record
+- [x] Create activity log record
+- [x] Return unified API response
+- [x] Add feature tests for payment creation
+- [x] Add validation tests
 
 ---
 
