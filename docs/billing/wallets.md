@@ -108,6 +108,8 @@ Future payment flows can link wallet debits to payment attempts without changing
 
 Payment method and preference selection is documented in [Payment Methods & User Payment Preferences](./payment-methods.md).
 
+Runtime wallet endpoints and manual simulator top-up behavior are documented in [Wallet/Card Payment API Interface](./payment-api.md).
+
 ## Auto Top-Up Readiness
 
 The wallet foundation can support auto top-up later, but no automatic charging, consent handling, or payment-method fallback is implemented in this phase.

@@ -103,6 +103,47 @@ class PaymentMethodService
         ]);
     }
 
+    public function createPaymentMethod(User $user, array $data): PaymentMethod
+    {
+        return match ($data['type'] ?? 'fake_card') {
+            'fake_card' => $this->createFakeCard($user, $data),
+            'fake_manual_invoice' => $this->createManualInvoiceMethod($user),
+            'fake_wallet' => $this->createWalletMethod($user),
+            default => throw new RuntimeException('payment_method_type_not_supported'),
+        };
+    }
+
+    public function updatePaymentMethod(User $user, PaymentMethod $paymentMethod, array $data): PaymentMethod
+    {
+        $this->assertBelongsToUser($user, $paymentMethod);
+        $this->assertNoRawCardData($data);
+
+        return DB::transaction(function () use ($user, $paymentMethod, $data): PaymentMethod {
+            $updates = array_intersect_key($data, array_flip([
+                'display_name',
+                'status',
+                'metadata',
+            ]));
+
+            if (array_key_exists('metadata', $updates)) {
+                $updates['metadata'] = $this->safeMetadata((array) $updates['metadata']);
+            }
+
+            $paymentMethod->forceFill($updates)->save();
+
+            if (in_array($paymentMethod->status, ['inactive', 'revoked'], true)) {
+                $paymentMethod->forceFill(['is_default' => false])->save();
+
+                $preference = $user->paymentPreference;
+                if ($preference?->default_payment_method_id === $paymentMethod->id) {
+                    $preference->forceFill(['default_payment_method_id' => null])->save();
+                }
+            }
+
+            return $paymentMethod->refresh();
+        });
+    }
+
     public function setDefaultPaymentMethod(User $user, PaymentMethod $paymentMethod): PaymentMethod
     {
         $this->assertBelongsToUser($user, $paymentMethod);
@@ -163,7 +204,7 @@ class PaymentMethodService
 
     private function safeMetadata(array $metadata): array
     {
-        return array_diff_key($metadata, array_flip([
+        $forbidden = [
             'card_number',
             'number',
             'pan',
@@ -173,6 +214,20 @@ class PaymentMethodService
             'token',
             'secret',
             'password',
-        ]));
+            'private_key',
+        ];
+
+        foreach ($metadata as $key => $value) {
+            if (in_array(strtolower((string) $key), $forbidden, true)) {
+                unset($metadata[$key]);
+                continue;
+            }
+
+            if (is_array($value)) {
+                $metadata[$key] = $this->safeMetadata($value);
+            }
+        }
+
+        return $metadata;
     }
 }

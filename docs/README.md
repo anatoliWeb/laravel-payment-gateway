@@ -34,6 +34,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/payment-methods.md](./billing/payment-methods.md) - Payment methods and user payment preferences foundation
 - [billing/payment-risk.md](./billing/payment-risk.md) - Demo-safe payment risk and fraud guard
 - [billing/auto-top-up.md](./billing/auto-top-up.md) - Auto top-up and auto charge foundation
+- [billing/payment-api.md](./billing/payment-api.md) - Wallet/card payment API interface
 - [TODO.md](../TODO.md) - Development roadmap and task tracking
 
 ---
@@ -58,6 +59,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Payment Methods -> [./billing/payment-methods.md](./billing/payment-methods.md)
 - Billing Payment Risk -> [./billing/payment-risk.md](./billing/payment-risk.md)
 - Billing Auto Top-Up -> [./billing/auto-top-up.md](./billing/auto-top-up.md)
+- Billing Payment API -> [./billing/payment-api.md](./billing/payment-api.md)
 - Commands -> [./commands.md](./commands.md)
 - Coding Standards -> [./coding-standards.md](./coding-standards.md)
 - TODO -> [../TODO.md](../TODO.md)
@@ -205,6 +207,7 @@ Improves developer navigation and onboarding experience.
 - [Billing Payment Methods](./billing/payment-methods.md)
 - [Billing Payment Risk](./billing/payment-risk.md)
 - [Billing Auto Top-Up](./billing/auto-top-up.md)
+- [Billing Payment API](./billing/payment-api.md)
 - [Commands](./commands.md)
 - [Coding Standards](./coding-standards.md)
 - [Main Docs](./README.md)

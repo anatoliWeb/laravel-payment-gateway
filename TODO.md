@@ -536,7 +536,7 @@ Payment Risk & Fraud Guard is a demo-safe risk layer for the simulator. It is no
 - [x] Add max auto top-up per day/month
 - [x] Add failed auto top-up handling
 - [x] Add auto charge consent tracking
-- [ ] Add activity log for auto charge consent changes
+- [x] Add activity log for auto charge consent changes
 - [x] Add activity log for automatic balance top-up
 - [ ] Add activity log for automatic subscription charge
 - [x] Add tests for auto top-up disabled
@@ -552,40 +552,40 @@ Auto top-up and auto charge require explicit user consent. In this simulator pro
 
 ## Phase 13.3 — Wallet/Card Payment API Interface
 
-- [ ] Plan `GET /api/v1/billing/wallet`
-- [ ] Plan `GET /api/v1/billing/wallet/balances`
-- [ ] Plan `GET /api/v1/billing/wallet/transactions`
-- [ ] Plan `POST /api/v1/billing/wallet/top-ups`
-- [ ] Plan `POST /api/v1/billing/wallet/debits` for internal/admin-safe use if needed
-- [ ] Plan `GET /api/v1/billing/payment-methods`
-- [ ] Plan `POST /api/v1/billing/payment-methods`
-- [ ] Plan `PATCH /api/v1/billing/payment-methods/{paymentMethod}`
-- [ ] Plan `DELETE /api/v1/billing/payment-methods/{paymentMethod}`
-- [ ] Plan `POST /api/v1/billing/payment-methods/{paymentMethod}/set-default`
-- [ ] Plan `GET /api/v1/billing/payment-preferences`
-- [ ] Plan `PATCH /api/v1/billing/payment-preferences`
-- [ ] Plan `POST /api/v1/billing/payments` with `payment_source`
-- [ ] Support `payment_source=wallet`
-- [ ] Support `payment_source=payment_method`
-- [ ] Support `payment_source=wallet_first`
-- [ ] Validate user payment strategy before payment creation
-- [ ] Validate wallet balance before wallet debit
-- [ ] Validate payment method availability before card/payment-method charge
-- [ ] Create wallet debit transaction when paying from balance
-- [ ] Create payment attempt when paying from card/payment method
-- [ ] Link payment to wallet transaction when wallet is used
-- [ ] Do not activate subscription if wallet debit fails
-- [ ] Do not activate subscription if payment method charge fails
-- [ ] Return stable API error for insufficient wallet balance
-- [ ] Return stable API error for missing payment method
-- [ ] Return stable API error for payment method not allowed
-- [ ] Require idempotency for wallet debit payment requests
-- [ ] Require idempotency for payment method charge requests
-- [ ] Add tests for wallet payment API
-- [ ] Add tests for card/payment-method payment API
-- [ ] Add tests for wallet-first fallback API
-- [ ] Add tests for payment preferences API
-- [ ] Document payment API interface in `docs/billing/payment-api.md`
+- [x] Plan `GET /api/v1/billing/wallet`
+- [x] Plan `GET /api/v1/billing/wallet/balances`
+- [x] Plan `GET /api/v1/billing/wallet/transactions`
+- [x] Plan `POST /api/v1/billing/wallet/top-ups`
+- [x] Plan `POST /api/v1/billing/wallet/debits` for internal/admin-safe use if needed
+- [x] Plan `GET /api/v1/billing/payment-methods`
+- [x] Plan `POST /api/v1/billing/payment-methods`
+- [x] Plan `PATCH /api/v1/billing/payment-methods/{paymentMethod}`
+- [x] Plan `DELETE /api/v1/billing/payment-methods/{paymentMethod}`
+- [x] Plan `POST /api/v1/billing/payment-methods/{paymentMethod}/set-default`
+- [x] Plan `GET /api/v1/billing/payment-preferences`
+- [x] Plan `PATCH /api/v1/billing/payment-preferences`
+- [x] Plan `POST /api/v1/billing/payments` with `payment_source`
+- [x] Support `payment_source=wallet`
+- [x] Support `payment_source=payment_method`
+- [x] Support `payment_source=wallet_first`
+- [x] Validate user payment strategy before payment creation
+- [x] Validate wallet balance before wallet debit
+- [x] Validate payment method availability before card/payment-method charge
+- [x] Create wallet debit transaction when paying from balance
+- [x] Create payment attempt when paying from card/payment method
+- [x] Link payment to wallet transaction when wallet is used
+- [x] Do not activate subscription if wallet debit fails
+- [x] Do not activate subscription if payment method charge fails
+- [x] Return stable API error for insufficient wallet balance
+- [x] Return stable API error for missing payment method
+- [x] Return stable API error for payment method not allowed
+- [x] Require idempotency for wallet debit payment requests
+- [x] Require idempotency for payment method charge requests
+- [x] Add tests for wallet payment API
+- [x] Add tests for card/payment-method payment API
+- [x] Add tests for wallet-first fallback API
+- [x] Add tests for payment preferences API
+- [x] Document payment API interface in `docs/billing/payment-api.md`
 
 This API layer must allow users to pay from internal wallet balance, from a saved/simulated payment method, or by wallet-first fallback depending on user preferences. All write operations that can create charges, wallet debits, or payment attempts must be idempotent.
 

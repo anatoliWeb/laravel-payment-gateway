@@ -25,6 +25,9 @@ use App\Http\Controllers\Api\V1\Chat\ChatPresenceController;
 use App\Http\Controllers\Api\V1\Chat\ChatWebhookEndpointController;
 use App\Http\Controllers\Api\V1\Chat\ChatIncomingWebhookController;
 use App\Http\Controllers\Api\V1\Billing\PaymentController;
+use App\Http\Controllers\Api\V1\Billing\PaymentMethodController;
+use App\Http\Controllers\Api\V1\Billing\PaymentPreferenceController;
+use App\Http\Controllers\Api\V1\Billing\WalletController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -361,6 +364,26 @@ Route::prefix('v1')
                 Route::prefix('billing')
                     ->as('billing.')
                     ->group(function (): void {
+                        Route::get('/wallet', [WalletController::class, 'show'])
+                            ->name('wallet.show');
+                        Route::get('/wallet/balances', [WalletController::class, 'balances'])
+                            ->name('wallet.balances');
+                        Route::get('/wallet/transactions', [WalletController::class, 'transactions'])
+                            ->name('wallet.transactions');
+                        Route::post('/wallet/top-ups', [WalletController::class, 'topUp'])
+                            ->name('wallet.top-ups.store');
+
+                        Route::apiResource('payment-methods', PaymentMethodController::class)
+                            ->parameters(['payment-methods' => 'paymentMethod'])
+                            ->only(['index', 'store', 'update', 'destroy']);
+                        Route::post('/payment-methods/{paymentMethod}/set-default', [PaymentMethodController::class, 'setDefault'])
+                            ->name('payment-methods.set-default');
+
+                        Route::get('/payment-preferences', [PaymentPreferenceController::class, 'show'])
+                            ->name('payment-preferences.show');
+                        Route::patch('/payment-preferences', [PaymentPreferenceController::class, 'update'])
+                            ->name('payment-preferences.update');
+
                         Route::post('/payments', [PaymentController::class, 'store'])
                             ->name('payments.store');
                     });

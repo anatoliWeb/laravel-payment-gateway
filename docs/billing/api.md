@@ -206,6 +206,24 @@ Auth/tracing/idempotency:
 
 Payment method and preference persistence details: [Payment Methods & User Payment Preferences](./payment-methods.md).
 Payment risk guard details: [Payment Risk & Fraud Guard](./payment-risk.md).
+Wallet/card API runtime details: [Wallet/Card Payment API Interface](./payment-api.md).
+
+## Wallet/Card Payment API
+
+Phase 13.3 exposes authenticated wallet and saved payment method APIs:
+- `GET /api/v1/billing/wallet`
+- `GET /api/v1/billing/wallet/balances`
+- `GET /api/v1/billing/wallet/transactions`
+- `POST /api/v1/billing/wallet/top-ups`
+- `GET /api/v1/billing/payment-methods`
+- `POST /api/v1/billing/payment-methods`
+- `PATCH /api/v1/billing/payment-methods/{paymentMethod}`
+- `DELETE /api/v1/billing/payment-methods/{paymentMethod}`
+- `POST /api/v1/billing/payment-methods/{paymentMethod}/set-default`
+- `GET /api/v1/billing/payment-preferences`
+- `PATCH /api/v1/billing/payment-preferences`
+
+Full endpoint behavior and safety rules are documented in [Wallet/Card Payment API Interface](./payment-api.md).
 
 ### `GET /api/v1/billing/payments/{payment}`
 

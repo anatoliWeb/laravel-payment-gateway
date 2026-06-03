@@ -106,6 +106,8 @@ Auto charge can create a payment, but it does not activate, renew, or upgrade su
 
 Subscription renewal and activation remain Phase 19.
 
+Manual wallet top-up and runtime payment preference endpoints are documented in [Wallet/Card Payment API Interface](./payment-api.md).
+
 ## Testing Strategy
 
 Tests cover:

@@ -126,6 +126,8 @@ Future payment APIs can use:
 
 Actual wallet/card payment API remains Phase 13.3.
 
+Runtime payment method and preference endpoints are documented in [Wallet/Card Payment API Interface](./payment-api.md).
+
 ## Testing Strategy
 
 Tests cover:

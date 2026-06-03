@@ -109,6 +109,8 @@ Payment risk guard is documented in [Payment Risk & Fraud Guard](./payment-risk.
 
 Auto top-up and auto charge foundation is documented in [Auto Top-Up & Auto Charge](./auto-top-up.md).
 
+Wallet/card runtime API interface is documented in [Wallet/Card Payment API Interface](./payment-api.md).
+
 ## app/Services/Payments
 
 Planned services:
