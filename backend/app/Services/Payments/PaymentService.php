@@ -25,6 +25,7 @@ class PaymentService
         private readonly WalletService $walletService,
         private readonly WalletTransactionService $walletTransactionService,
         private readonly ActivityService $activityService,
+        private readonly PaymentRiskService $paymentRiskService,
     ) {
     }
 
@@ -37,6 +38,11 @@ class PaymentService
         $currency = $this->resolveCurrency($data->currency);
         [$subscription, $plan, $amount] = $this->resolveContextAndAmount($data, $currency);
         $source = $this->resolvePaymentSource($data, $amount, $currency->code);
+        $risk = $this->paymentRiskService->checkBeforePaymentCreation($data, $amount, $currency->code, $source);
+
+        if (! $risk['allowed']) {
+            throw new RuntimeException($risk['reason'] ?? 'risk_check_failed');
+        }
 
         return DB::transaction(function () use ($data, $currency, $subscription, $plan, $amount, $source): Payment {
             return match ($source) {

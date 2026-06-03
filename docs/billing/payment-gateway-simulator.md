@@ -52,16 +52,18 @@ MVP should start with `fake_card` and `fake_manual_invoice`.
 2. Billing context resolves invoice/subscription linkage.
 3. Client sends create-payment request with `Idempotency-Key`.
 4. System validates ownership and billing context.
-5. System creates payment in `pending`.
-6. System appends `payment_created` transaction event.
-7. System stores idempotency record (request hash + response snapshot).
-8. System returns payment public identifier + simulator actions.
-9. Activity log records `payment.created`.
+5. System runs demo-safe payment risk checks.
+6. System creates payment in `pending`, `processing`, or `succeeded` depending on source.
+7. System appends `payment_created` transaction event.
+8. System stores idempotency record (request hash + response snapshot).
+9. System returns payment public identifier + simulator actions.
+10. Activity log records `payment.created`.
 
 Design notes:
 - Creation happens in DB transaction boundary.
 - Idempotency prevents duplicate payment rows.
 - Payment uses public UUID/public ID in API responses.
+- Risk guard details: [Payment Risk & Fraud Guard](./payment-risk.md).
 
 ## Payment Success Simulation Flow
 

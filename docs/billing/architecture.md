@@ -82,6 +82,7 @@ Planned services:
 - `InvoiceService` (future): invoice lifecycle coordination.
 - `PaymentMethodService`: simulator-safe user payment method management.
 - `PaymentPreferenceService`: payment strategy and explicit consent management.
+- `PaymentRiskService`: demo-safe guard before payment creation side effects.
 - `BillingSchedulerService` (optional): command-level orchestration helpers.
 - `BillingActivityService` (optional): adapter around existing ActivityLog service.
 
@@ -101,6 +102,8 @@ Currency and exchange-rate foundation is documented in [Currency & Exchange Rate
 User wallet balance foundation is documented in [User Wallet Balance](./wallets.md).
 
 Payment methods and preferences are documented in [Payment Methods & User Payment Preferences](./payment-methods.md).
+
+Payment risk guard is documented in [Payment Risk & Fraud Guard](./payment-risk.md).
 
 ## app/Services/Payments
 

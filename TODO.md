@@ -501,22 +501,22 @@ Payment methods are simulated in this portfolio project. The system must model c
 
 ## Phase 13.1 — Payment Risk & Fraud Guard
 
-- [ ] Define payment risk rules
-- [ ] Add payment risk check before payment creation
-- [ ] Add user payment blacklist check
-- [ ] Add max failed payment attempts per period
-- [ ] Add max payment creation attempts per hour/day
-- [ ] Add suspicious payment activity flags
-- [ ] Add blocked payment reason
-- [ ] Add payment risk metadata
-- [ ] Add activity log for blocked payments
-- [ ] Add activity log for suspicious attempts
-- [ ] Ensure risk guard does not replace idempotency
-- [ ] Ensure idempotency still prevents duplicate payment creation
-- [ ] Add tests for payment blacklist
-- [ ] Add tests for failed-attempt limits
-- [ ] Add tests for suspicious activity blocking
-- [ ] Document payment risk guard in `docs/billing/payment-risk.md`
+- [x] Define payment risk rules
+- [x] Add payment risk check before payment creation
+- [x] Add user payment blacklist check
+- [x] Add max failed payment attempts per period
+- [x] Add max payment creation attempts per hour/day
+- [x] Add suspicious payment activity flags
+- [x] Add blocked payment reason
+- [x] Add payment risk metadata
+- [x] Add activity log for blocked payments
+- [x] Add activity log for suspicious attempts
+- [x] Ensure risk guard does not replace idempotency
+- [x] Ensure idempotency still prevents duplicate payment creation
+- [x] Add tests for payment blacklist
+- [x] Add tests for failed-attempt limits
+- [x] Add tests for suspicious activity blocking
+- [x] Document payment risk guard in `docs/billing/payment-risk.md`
 
 Payment Risk & Fraud Guard is a demo-safe risk layer for the simulator. It is not a real bank-grade antifraud system.
 

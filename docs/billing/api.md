@@ -199,11 +199,13 @@ Auth/tracing/idempotency:
   - `wallet_first`: debit wallet when funds are available, otherwise fall back to default active payment method
 - Phase 13 requires `Idempotency-Key` for the write request, but full idempotency replay/conflict storage remains Phase 14.
 - Phase 13 does not activate subscriptions, send webhooks, or call real providers.
+- Phase 13.1 runs demo-safe payment risk checks before wallet debit or simulator payment-method processing.
 - Response:
   - `201` on first create
   - `200` on idempotency replay
 
 Payment method and preference persistence details: [Payment Methods & User Payment Preferences](./payment-methods.md).
+Payment risk guard details: [Payment Risk & Fraud Guard](./payment-risk.md).
 
 ### `GET /api/v1/billing/payments/{payment}`
 
