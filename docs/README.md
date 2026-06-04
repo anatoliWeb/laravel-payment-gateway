@@ -37,7 +37,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/payment-api.md](./billing/payment-api.md) - Wallet/card payment API interface
 - [billing/wallet-adjustments.md](./billing/wallet-adjustments.md) - Permission-gated manual wallet credit/debit API
 - [billing/idempotency.md](./billing/idempotency.md) - Central billing write replay and conflict protection
-- [billing/ownership-scope.md](./billing/ownership-scope.md) - Company/seller payment and provider ownership foundation
+- [billing/ownership-scope.md](./billing/ownership-scope.md) - Company/seller ownership foundation and demo seed data
 - [billing/payment-providers.md](./billing/payment-providers.md) - External provider integration readiness
 - [billing/providers/README.md](./billing/providers/README.md) - Provider adapter documentation convention
 - [billing/providers/_template/README.md](./billing/providers/_template/README.md) - Provider adapter documentation template

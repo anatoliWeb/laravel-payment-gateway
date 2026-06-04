@@ -129,6 +129,22 @@ Targeted tests cover:
 - admin-only permission seeding
 - existing payment, idempotency, wallet/card, and provider regression
 
+## Demo Seed Data
+
+`CompanySellerSeeder` creates a deterministic local/demo ownership graph:
+
+```text
+Demo Company
+  -> Demo Seller
+       -> Demo Customer
+```
+
+The seeder creates dedicated demo company-owner, seller-owner, and customer users only when their stable emails do not already exist. Existing users are reused without changing their passwords or roles.
+
+It also creates one seller-scoped simulator provider account with a fake encrypted credential. No real provider key or secret is stored.
+
+The company, seller, membership, customer relation, users, and simulator account are seeded idempotently. Repeated runs do not create duplicate ownership records and do not convert unrelated existing users into sellers or customers.
+
 ## Status
 
 Phase 14.1 implements the minimum Company / Seller ownership foundation.

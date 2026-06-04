@@ -782,6 +782,21 @@ Company / Seller ownership scope prepares the billing platform for reports, prov
 
 ---
 
+## Phase 14.1.1 — Company / Seller Demo Seeders
+
+- [x] Add company/seller demo seeder
+- [x] Seed demo company
+- [x] Seed demo seller
+- [x] Seed demo company membership
+- [x] Seed demo seller customer relation
+- [x] Ensure ownership seeders are idempotent
+- [x] Add tests for company/seller seeders
+- [x] Document ownership demo seed data
+
+The demo ownership graph is deterministic and local/demo-safe. It must not convert existing users, modify payment data, or store real provider credentials.
+
+---
+
 ## Phase 15 — Payment Simulation Flow
 
 - [ ] Create `PaymentSimulationService`

@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use Database\Seeders\settings\SettingsSeeder;
 use Database\Seeders\Translations\TranslationsSeeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,6 +24,7 @@ class DatabaseSeeder extends Seeder
             TranslationsSeeder::class,
             CurrencySeeder::class,
             BillingSeeder::class,
+            CompanySellerSeeder::class,
         ]);
 
         if (! app()->environment('production') && (bool) env('CHAT_DEMO_SEED', false)) {
