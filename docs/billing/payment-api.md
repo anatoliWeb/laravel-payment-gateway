@@ -193,6 +193,12 @@ Supported sources:
 
 `Idempotency-Key` is required.
 
+Optional ownership context:
+- `company_id`
+- `seller_id`
+
+These fields are shape-validated by the FormRequest and business-validated by `OwnershipScopeService`. Seller scope infers its parent company. Existing requests without either field remain user-scoped.
+
 ## Payment Strategies
 
 `user_payment_preferences.strategy` can be:
@@ -228,6 +234,11 @@ Current stable domain codes include:
 - `auto_charge_consent_missing`
 - `auto_top_up_currency_not_available`
 - `invalid_auto_top_up_amount`
+- `company_not_found`
+- `company_not_active`
+- `seller_not_found`
+- `seller_not_active`
+- `payment_ownership_scope_conflict`
 
 ## Security and Data Safety
 
@@ -265,3 +276,5 @@ Phase 13.3 implements the Wallet/Card Payment API Interface foundation.
 Provider adapter/config readiness is documented in [External Payment Provider Integration Readiness](./payment-providers.md).
 
 Central replay, conflict, processing, and expiration behavior is documented in [Idempotency Support](./idempotency.md).
+
+Company/seller payment ownership behavior is documented in [Company / Seller Ownership Scope](./ownership-scope.md).

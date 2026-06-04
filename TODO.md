@@ -744,6 +744,44 @@ Payment source/provider permissions are seeded as RBAC readiness and are not enf
 
 ---
 
+## Phase 14.1 — Company / Seller Ownership Scope
+
+- [x] Define company ownership model
+- [x] Define seller/merchant ownership model
+- [x] Define customer/end-user relationship to seller
+- [x] Design `companies` table
+- [x] Design `sellers` table
+- [x] Design `company_users` table
+- [x] Design `seller_customers` table
+- [x] Add company model
+- [x] Add seller model
+- [x] Add company user membership model if needed
+- [x] Add seller customer relation model if needed
+- [x] Add owner/scope fields to payments
+- [x] Add payer user relation to payments
+- [x] Add seller relation to payments
+- [x] Add company relation to payments
+- [x] Add provider account ownership relation to seller/company if needed
+- [x] Define payment ownership resolving rules
+- [x] Define provider account resolving rules by seller/company/platform
+- [x] Define reporting scope rules for company
+- [x] Define reporting scope rules for seller
+- [x] Define reporting scope rules for customer
+- [x] Add company/seller RBAC permissions
+- [x] Add company/seller permissions to seeder
+- [x] Ensure admin receives company/seller management permissions
+- [x] Ensure normal users do not receive company/seller management permissions by default
+- [x] Add ownership scope service
+- [x] Add tests for company/seller models
+- [x] Add tests for payment ownership assignment
+- [x] Add tests for provider account ownership isolation if implemented
+- [x] Add tests for company/seller permission seeding
+- [x] Document ownership scope in `docs/billing/ownership-scope.md`
+
+Company / Seller ownership scope prepares the billing platform for reports, provider account isolation, webhooks, and future multi-merchant flows. It must be additive and must not break existing user-scoped payments.
+
+---
+
 ## Phase 15 — Payment Simulation Flow
 
 - [ ] Create `PaymentSimulationService`

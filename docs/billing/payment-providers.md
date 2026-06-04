@@ -92,14 +92,15 @@ Optional external provider variables are placeholders only. They are not require
 
 ## Customer Database Provider Config
 
-`payment_provider_accounts` stores current user-owned provider accounts.
+`payment_provider_accounts` stores provider accounts with a required custodial `user_id` and optional additive company/seller scope.
 
 Current ownership boundary:
-- one account belongs to one `user_id`
-- resolver only returns an account to its owner
-- cross-user explicit account resolution fails with `provider_account_not_accessible`
+- every account still belongs to one required `user_id`
+- an account may additionally target one company or seller scope
+- explicit account resolution must match the requested seller, company, or unscoped user context
+- cross-scope explicit account resolution fails with `provider_account_not_accessible`
 
-This is not presented as complete tenant isolation. Future tenant/company ownership requires a separately tested ownership model.
+This is not presented as complete tenant isolation because company/seller accounts retain a custodial user. The ownership foundation and boundaries are documented in [Company / Seller Ownership Scope](./ownership-scope.md).
 
 ## Credential Encryption and Masking
 
@@ -115,11 +116,13 @@ No real credentials exist in seeders or tests.
 ## Provider Config Priority
 
 Resolution priority:
-1. explicit provider account when supplied and owned by the user
-2. active user-owned database provider account
-3. enabled platform config from `.env`
-4. simulator/manual/internal-wallet default in demo mode
-5. disabled/not configured result
+1. explicit provider account when supplied and matching the active scope
+2. active seller-scoped database provider account
+3. active company-scoped database provider account
+4. active unscoped user-owned database provider account
+5. enabled platform config from `.env`
+6. simulator/manual/internal-wallet default in demo mode
+7. disabled/not configured result
 
 ## Provider Capabilities
 
@@ -246,6 +249,7 @@ Tests cover:
 - default/env/database/disabled config resolution
 - encrypted credentials and masking
 - cross-user account isolation
+- seller/company/user account priority and cross-scope isolation
 - stable fake webhook verification
 - existing payment creation regression
 
@@ -254,3 +258,5 @@ Tests cover:
 Phase 13.4 implements external payment provider integration readiness.
 
 Real provider integration remains intentionally disabled in portfolio/demo mode.
+
+Phase 14.1 adds company/seller provider-account scope without claiming a complete marketplace credential model.

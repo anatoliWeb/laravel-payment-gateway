@@ -19,6 +19,10 @@ class Payment extends Model
     protected $fillable = [
         'uuid',
         'user_id',
+        'payer_user_id',
+        'company_id',
+        'seller_id',
+        'provider_account_id',
         'subscription_id',
         'invoice_id',
         'parent_payment_id',
@@ -32,6 +36,7 @@ class Payment extends Model
         'failure_reason',
         'callback_url',
         'metadata',
+        'ownership_metadata',
         'paid_at',
         'failed_at',
         'expired_at',
@@ -41,6 +46,7 @@ class Payment extends Model
     protected $casts = [
         'amount' => 'integer',
         'metadata' => 'array',
+        'ownership_metadata' => 'array',
         'paid_at' => 'datetime',
         'failed_at' => 'datetime',
         'expired_at' => 'datetime',
@@ -50,6 +56,29 @@ class Payment extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Explicit payer relation added without removing legacy user ownership.
+     */
+    public function payer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'payer_user_id');
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function seller(): BelongsTo
+    {
+        return $this->belongsTo(Seller::class);
+    }
+
+    public function providerAccount(): BelongsTo
+    {
+        return $this->belongsTo(PaymentProviderAccount::class);
     }
 
     public function subscription(): BelongsTo
@@ -81,4 +110,3 @@ class Payment extends Model
         return $this->hasMany(WebhookDelivery::class);
     }
 }
-

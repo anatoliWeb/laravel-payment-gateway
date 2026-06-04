@@ -59,6 +59,28 @@ Idempotency operations readiness:
 - `billing.idempotency.view`
 - `billing.idempotency.manage`
 
+Company ownership:
+- `billing.companies.view`
+- `billing.companies.manage`
+- `billing.companies.reports.view`
+
+Seller ownership:
+- `billing.sellers.view`
+- `billing.sellers.manage`
+- `billing.sellers.reports.view`
+
+Scoped payment access:
+- `billing.payments.view_company`
+- `billing.payments.view_seller`
+- `billing.payments.manage_company`
+- `billing.payments.manage_seller`
+
+Scoped provider accounts:
+- `billing.provider_accounts.manage_company`
+- `billing.provider_accounts.manage_seller`
+- `billing.provider_accounts.view_company`
+- `billing.provider_accounts.view_seller`
+
 Currencies:
 - `billing.currencies.view`
 - `billing.currencies.manage`
@@ -83,13 +105,15 @@ Customer-facing billing access should be implemented through ownership checks, f
 - users can view their own payment history
 - users can view their own usage records
 
-Those ownership checks belong to future billing API/services work, not to the RBAC seeder.
+`OwnershipScopeService` now implements the minimum company-member, seller-owner, payer, and global-permission checks. Report and management endpoints remain future work.
 
 ## Ownership Checks vs Global Permissions
 
 Global permissions are for administrative operations.
 
 Ownership checks are for user-specific billing data. A regular user should not need `billing.payments.view` to see their own payments through a customer endpoint. That endpoint should verify ownership or tenancy instead.
+
+The implemented ownership rules are documented in [Company / Seller Ownership Scope](./ownership-scope.md).
 
 ## Simulator Permissions
 

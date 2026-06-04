@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
@@ -18,6 +19,8 @@ class PaymentProviderAccount extends Model
     protected $fillable = [
         'uuid',
         'user_id',
+        'company_id',
+        'seller_id',
         'provider',
         'display_name',
         'status',
@@ -50,6 +53,24 @@ class PaymentProviderAccount extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Optional additive company scope; user ownership remains mandatory.
+     */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function seller(): BelongsTo
+    {
+        return $this->belongsTo(Seller::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class, 'provider_account_id');
     }
 
     public function setCredentials(array $credentials): void
@@ -87,6 +108,7 @@ class PaymentProviderAccount extends Model
 
             if (is_array($value)) {
                 $this->assertCredentialsAreSafe($value);
+
                 continue;
             }
 
@@ -101,6 +123,7 @@ class PaymentProviderAccount extends Model
         foreach ($credentials as $key => $value) {
             if (is_array($value)) {
                 $credentials[$key] = $this->mask($value);
+
                 continue;
             }
 

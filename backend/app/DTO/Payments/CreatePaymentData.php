@@ -20,8 +20,9 @@ final readonly class CreatePaymentData
         public ?string $description,
         public array $metadata,
         public string $idempotencyKey,
-    ) {
-    }
+        public ?int $companyId = null,
+        public ?int $sellerId = null,
+    ) {}
 
     public static function fromRequest(CreatePaymentRequest $request): self
     {
@@ -41,6 +42,8 @@ final readonly class CreatePaymentData
             description: $request->input('description'),
             metadata: (array) $request->input('metadata', []),
             idempotencyKey: (string) $request->header('Idempotency-Key'),
+            companyId: $request->integer('company_id') ?: null,
+            sellerId: $request->integer('seller_id') ?: null,
         );
     }
 }

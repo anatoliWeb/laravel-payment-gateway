@@ -12,6 +12,7 @@ use App\Models\Subscription;
 use App\Models\User;
 use App\Models\WalletTransaction;
 use App\Services\ActivityService;
+use App\Services\Billing\OwnershipScopeService;
 use App\Services\Billing\WalletService;
 use App\Services\Billing\WalletTransactionService;
 use App\Services\Payments\Providers\DTO\ProviderChargeData;
@@ -32,6 +33,7 @@ class PaymentService
         private readonly PaymentProviderFactory $paymentProviderFactory,
         private readonly PaymentProviderConfigResolver $paymentProviderConfigResolver,
         private readonly IdempotencyService $idempotencyService,
+        private readonly OwnershipScopeService $ownershipScopeService,
     ) {}
 
     public function createPayment(CreatePaymentData $data): Payment
@@ -64,6 +66,10 @@ class PaymentService
         try {
             $currency = $this->resolveCurrency($data->currency);
             [$subscription, $plan, $amount] = $this->resolveContextAndAmount($data, $currency);
+            $ownership = $this->ownershipScopeService->resolveForPayment($data->user, [
+                'company_id' => $data->companyId,
+                'seller_id' => $data->sellerId,
+            ]);
             $source = $this->resolvePaymentSource($data, $amount, $currency->code);
             $risk = $this->paymentRiskService->checkBeforePaymentCreation($data, $amount, $currency->code, $source);
 
@@ -78,12 +84,13 @@ class PaymentService
                 $plan,
                 $amount,
                 $source,
+                $ownership,
                 $idempotencyRecord,
             ): Payment {
                 $payment = match ($source) {
-                    'wallet' => $this->createWalletPayment($data, $currency->code, $subscription, $plan, $amount),
-                    'payment_method' => $this->createPaymentMethodPayment($data, $currency->code, $subscription, $plan, $amount),
-                    'wallet_first' => $this->createWalletFirstPayment($data, $currency->code, $subscription, $plan, $amount),
+                    'wallet' => $this->createWalletPayment($data, $currency->code, $subscription, $plan, $amount, $ownership),
+                    'payment_method' => $this->createPaymentMethodPayment($data, $currency->code, $subscription, $plan, $amount, $ownership),
+                    'wallet_first' => $this->createWalletFirstPayment($data, $currency->code, $subscription, $plan, $amount, $ownership),
                     default => throw new RuntimeException('invalid_payment_source'),
                 };
 
@@ -114,6 +121,7 @@ class PaymentService
         ?Subscription $subscription,
         ?Plan $plan,
         int $amount,
+        array $ownership,
     ): Payment {
         $this->assertWalletCanPay($data->user, $currency, $amount);
 
@@ -129,6 +137,7 @@ class PaymentService
             provider: 'internal_wallet',
             providerReference: 'wallet_'.Str::lower(Str::random(16)),
             paidAt: now(),
+            ownership: $ownership,
         );
 
         $walletTransaction = $this->walletTransactionService->debit(
@@ -165,10 +174,17 @@ class PaymentService
         ?Subscription $subscription,
         ?Plan $plan,
         int $amount,
+        array $ownership,
         string $source = 'payment_method',
     ): Payment {
         $paymentMethod = $this->resolvePaymentMethod($data);
-        [$provider, $status, $providerReference] = $this->resolveProviderResult($data, $paymentMethod, $amount, $currency);
+        [$provider, $status, $providerReference, $providerAccountId] = $this->resolveProviderResult(
+            $data,
+            $paymentMethod,
+            $amount,
+            $currency,
+            $ownership,
+        );
 
         $payment = $this->createBasePayment(
             data: $data,
@@ -182,6 +198,8 @@ class PaymentService
             provider: $provider,
             providerReference: $providerReference,
             paidAt: null,
+            ownership: $ownership,
+            providerAccountId: $providerAccountId,
         );
 
         $payment->metadata = array_merge($payment->metadata ?? [], [
@@ -208,12 +226,13 @@ class PaymentService
         ?Subscription $subscription,
         ?Plan $plan,
         int $amount,
+        array $ownership,
     ): Payment {
         if ($this->walletHasEnoughBalance($data->user, $currency, $amount)) {
-            return $this->createWalletPayment($data, $currency, $subscription, $plan, $amount);
+            return $this->createWalletPayment($data, $currency, $subscription, $plan, $amount, $ownership);
         }
 
-        return $this->createPaymentMethodPayment($data, $currency, $subscription, $plan, $amount, 'wallet_first');
+        return $this->createPaymentMethodPayment($data, $currency, $subscription, $plan, $amount, $ownership, 'wallet_first');
     }
 
     private function createBasePayment(
@@ -228,10 +247,16 @@ class PaymentService
         string $provider,
         string $providerReference,
         mixed $paidAt,
+        array $ownership,
+        ?int $providerAccountId = null,
     ): Payment {
         return Payment::query()->create([
             'uuid' => (string) Str::uuid(),
             'user_id' => $data->user->id,
+            'payer_user_id' => $ownership['payer_user_id'],
+            'company_id' => $ownership['company_id'],
+            'seller_id' => $ownership['seller_id'],
+            'provider_account_id' => $providerAccountId,
             'subscription_id' => $subscription?->id,
             'invoice_id' => null,
             'parent_payment_id' => null,
@@ -250,6 +275,7 @@ class PaymentService
                 'plan_slug' => $plan?->slug,
                 'idempotency_key_hash' => hash('sha256', $data->idempotencyKey),
             ]),
+            'ownership_metadata' => $ownership['ownership_metadata'],
             'paid_at' => $paidAt,
         ]);
     }
@@ -283,6 +309,8 @@ class PaymentService
                 'amount' => $payment->amount,
                 'currency' => $payment->currency,
                 'payment_source' => $source,
+                'company_id' => $payment->company_id,
+                'seller_id' => $payment->seller_id,
                 'wallet_transaction_id' => $walletTransaction?->id,
             ]);
         } catch (Throwable) {
@@ -446,15 +474,21 @@ class PaymentService
     }
 
     /**
-     * @return array{0: string, 1: string, 2: string}
+     * @return array{0: string, 1: string, 2: string, 3: ?int}
      */
     private function resolveProviderResult(
         CreatePaymentData $data,
         PaymentMethod $paymentMethod,
         int $amount,
         string $currency,
+        array $ownership,
     ): array {
-        $config = $this->paymentProviderConfigResolver->resolve($paymentMethod->provider, $data->user);
+        $config = $this->paymentProviderConfigResolver->resolve(
+            $paymentMethod->provider,
+            $data->user,
+            company: $ownership['company'],
+            seller: $ownership['seller'],
+        );
         if (! $config->enabled) {
             throw new RuntimeException($config->errorCode ?? 'provider_not_configured');
         }
@@ -478,7 +512,7 @@ class PaymentService
             throw new RuntimeException($response->errorCode ?? 'provider_charge_failed');
         }
 
-        return [$response->provider, $response->status, $response->providerReference];
+        return [$response->provider, $response->status, $response->providerReference, $config->providerAccountId];
     }
 
     private function assertWalletCanPay(User $user, string $currency, int $amount): void
@@ -514,6 +548,8 @@ class PaymentService
             'payment_strategy' => $data->paymentStrategy,
             'payment_method_id' => $data->paymentMethodId,
             'subscription_id' => $data->subscriptionId,
+            'company_id' => $data->companyId,
+            'seller_id' => $data->sellerId,
             'plan_slug' => $data->planSlug,
             'callback_url' => $data->callbackUrl,
             'description' => $data->description,

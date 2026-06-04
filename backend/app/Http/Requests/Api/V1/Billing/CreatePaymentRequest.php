@@ -29,6 +29,8 @@ class CreatePaymentRequest extends FormRequest
     {
         return [
             'subscription_id' => ['nullable', 'integer'],
+            'company_id' => ['nullable', 'integer', 'min:1'],
+            'seller_id' => ['nullable', 'integer', 'min:1'],
             'plan_slug' => ['nullable', 'string', 'max:255'],
             'amount' => ['nullable', 'integer', 'min:1', 'required_without_all:subscription_id,plan_slug'],
             'currency' => ['required', 'string', 'size:3'],

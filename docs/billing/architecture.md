@@ -115,6 +115,8 @@ External payment provider abstraction and credential boundaries are documented i
 
 Central billing write replay/conflict handling is documented in [Idempotency Support](./idempotency.md).
 
+Company/seller payment, provider, reporting, and webhook routing scope is documented in [Company / Seller Ownership Scope](./ownership-scope.md).
+
 ## app/Services/Payments
 
 Planned services:
@@ -331,6 +333,14 @@ Planned models (not created now):
 
 Placement policy:
 - keep in `app/Models` for consistency unless future domain-folder refactor is justified.
+
+Implemented additive ownership models:
+- `Company`
+- `Seller`
+- `CompanyUser`
+- `SellerCustomer`
+
+`OwnershipScopeService` keeps company/seller resolution and access checks out of controllers and payment persistence models. Existing user-scoped payments remain supported.
 
 ## Events / Listeners Placement
 

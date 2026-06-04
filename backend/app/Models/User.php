@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Services\Rbac\PermissionCacheService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -152,5 +153,26 @@ class User extends Authenticatable
     public function paymentProviderAccounts()
     {
         return $this->hasMany(PaymentProviderAccount::class);
+    }
+
+    /**
+     * Seller scopes this user directly owns.
+     *
+     * WHY: Seller ownership is additive and does not replace existing
+     * user-scoped billing behavior.
+     */
+    public function ownedSellers(): HasMany
+    {
+        return $this->hasMany(Seller::class, 'owner_user_id');
+    }
+
+    public function companyMemberships(): HasMany
+    {
+        return $this->hasMany(CompanyUser::class);
+    }
+
+    public function sellerCustomerLinks(): HasMany
+    {
+        return $this->hasMany(SellerCustomer::class);
     }
 }

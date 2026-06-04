@@ -19,6 +19,8 @@ class PaymentProviderAccountFactory extends Factory
         return [
             'uuid' => (string) Str::uuid(),
             'user_id' => User::factory(),
+            'company_id' => null,
+            'seller_id' => null,
             'provider' => 'simulator',
             'display_name' => 'Simulator account',
             'status' => 'active',

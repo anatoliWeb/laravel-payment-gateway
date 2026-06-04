@@ -2,7 +2,9 @@
 
 namespace Tests\Feature\Billing;
 
+use App\Models\Company;
 use App\Models\PaymentProviderAccount;
+use App\Models\Seller;
 use App\Models\User;
 use App\Services\Payments\Providers\PaymentProviderConfigResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -75,5 +77,38 @@ class PaymentProviderConfigResolverTest extends TestCase
         $this->assertFalse($config->enabled);
         $this->assertSame('disabled', $config->source);
         $this->assertSame('provider_disabled', $config->errorCode);
+    }
+
+    public function test_seller_then_company_then_user_provider_account_priority_and_scope_isolation(): void
+    {
+        $user = User::factory()->create();
+        $company = Company::factory()->create();
+        $seller = Seller::factory()->create(['company_id' => $company->id]);
+        $userAccount = PaymentProviderAccount::factory()->create(['user_id' => $user->id]);
+        $companyAccount = PaymentProviderAccount::factory()->create([
+            'company_id' => $company->id,
+            'seller_id' => null,
+        ]);
+        $sellerAccount = PaymentProviderAccount::factory()->create([
+            'company_id' => $company->id,
+            'seller_id' => $seller->id,
+        ]);
+        $resolver = app(PaymentProviderConfigResolver::class);
+
+        $this->assertSame($sellerAccount->id, $resolver->resolve('simulator', $user, company: $company, seller: $seller)->providerAccountId);
+        $this->assertSame($companyAccount->id, $resolver->resolve('simulator', $user, company: $company)->providerAccountId);
+        $this->assertSame($userAccount->id, $resolver->resolve('simulator', $user)->providerAccountId);
+
+        PaymentProviderAccount::factory()->create([
+            'company_id' => Company::factory()->create()->id,
+            'seller_id' => $seller->id,
+        ]);
+
+        $this->assertSame($sellerAccount->id, $resolver->resolve('simulator', $user, company: $company, seller: $seller)->providerAccountId);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('provider_account_not_accessible');
+
+        $resolver->resolve('simulator', $user, $sellerAccount, Company::factory()->create());
     }
 }

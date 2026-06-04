@@ -2,7 +2,9 @@
 
 namespace App\Services\Payments\Providers;
 
+use App\Models\Company;
 use App\Models\PaymentProviderAccount;
+use App\Models\Seller;
 use App\Models\User;
 use App\Services\Payments\Providers\DTO\ProviderConfigData;
 use RuntimeException;
@@ -13,23 +15,61 @@ class PaymentProviderConfigResolver
         string $provider,
         ?User $user = null,
         ?PaymentProviderAccount $explicitAccount = null,
+        ?Company $company = null,
+        ?Seller $seller = null,
     ): ProviderConfigData {
         $provider = strtolower($provider);
 
         if ($explicitAccount !== null) {
-            return $this->fromAccount($provider, $user, $explicitAccount);
+            return $this->fromAccount($provider, $user, $explicitAccount, $company, $seller);
         }
 
-        if ($user !== null) {
+        if ($seller !== null) {
             $account = PaymentProviderAccount::query()
-                ->where('user_id', $user->id)
+                ->where('seller_id', $seller->id)
+                ->where(function ($query) use ($seller): void {
+                    $query->whereNull('company_id');
+
+                    if ($seller->company_id !== null) {
+                        $query->orWhere('company_id', $seller->company_id);
+                    }
+                })
                 ->where('provider', $provider)
                 ->where('status', 'active')
                 ->latest('id')
                 ->first();
 
             if ($account) {
-                return $this->fromAccount($provider, $user, $account);
+                return $this->fromAccount($provider, $user, $account, $company, $seller);
+            }
+        }
+
+        if ($company !== null) {
+            $account = PaymentProviderAccount::query()
+                ->where('company_id', $company->id)
+                ->whereNull('seller_id')
+                ->where('provider', $provider)
+                ->where('status', 'active')
+                ->latest('id')
+                ->first();
+
+            if ($account) {
+                return $this->fromAccount($provider, $user, $account, $company, $seller);
+            }
+        }
+
+        if ($user !== null) {
+            $account = PaymentProviderAccount::query()
+                ->where('user_id', $user->id)
+                ->whereNull('company_id')
+                ->whereNull('seller_id')
+                ->where('provider', $provider)
+                ->where('status', 'active')
+                ->latest('id')
+                ->first();
+
+            if ($account) {
+                return $this->fromAccount($provider, $user, $account, $company, $seller);
             }
         }
 
@@ -70,8 +110,22 @@ class PaymentProviderConfigResolver
         string $provider,
         ?User $user,
         PaymentProviderAccount $account,
+        ?Company $company,
+        ?Seller $seller,
     ): ProviderConfigData {
-        if ($user === null || (int) $account->user_id !== (int) $user->id) {
+        $matchesSeller = $seller !== null
+            && (int) $account->seller_id === (int) $seller->id
+            && ($account->company_id === null
+                || (int) $account->company_id === (int) $seller->company_id);
+        $matchesCompany = $company !== null
+            && $account->seller_id === null
+            && (int) $account->company_id === (int) $company->id;
+        $matchesUser = $user !== null
+            && $account->seller_id === null
+            && $account->company_id === null
+            && (int) $account->user_id === (int) $user->id;
+
+        if (! $matchesSeller && ! $matchesCompany && ! $matchesUser) {
             throw new RuntimeException('provider_account_not_accessible');
         }
 

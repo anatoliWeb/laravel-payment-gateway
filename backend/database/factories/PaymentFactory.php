@@ -20,6 +20,10 @@ class PaymentFactory extends Factory
         return [
             'uuid' => (string) Str::uuid(),
             'user_id' => User::factory(),
+            'payer_user_id' => fn (array $attributes) => $attributes['user_id'],
+            'company_id' => null,
+            'seller_id' => null,
+            'provider_account_id' => null,
             'subscription_id' => fn (array $attributes) => Subscription::factory()->create([
                 'user_id' => $attributes['user_id'],
             ])->id,
@@ -36,6 +40,9 @@ class PaymentFactory extends Factory
             'callback_url' => 'https://example.test/billing/callback',
             'metadata' => [
                 'source' => 'factory',
+            ],
+            'ownership_metadata' => [
+                'scope' => 'user',
             ],
             'paid_at' => null,
             'failed_at' => null,

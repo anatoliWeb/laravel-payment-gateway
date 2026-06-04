@@ -24,6 +24,8 @@ Clients provide `Idempotency-Key` for payment creation, wallet top-up, and walle
 
 The registry stores a SHA-256 hash of the normalized key, never the raw client key. Keys are isolated by actor user and operation scope, so different users can safely reuse the same client key.
 
+For payment creation, requested `company_id` and `seller_id` are included in the fingerprint. Reusing a key with a different ownership context is an idempotency conflict.
+
 ## Scopes
 
 Implemented scopes:
@@ -162,3 +164,5 @@ Targeted tests cover:
 ## Status
 
 Phase 14 central idempotency support is implemented for current billing write and automation flows.
+
+Company/seller ownership remains additive to the actor-user idempotency boundary. See [Company / Seller Ownership Scope](./ownership-scope.md).
