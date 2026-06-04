@@ -128,6 +128,8 @@ Actual wallet/card payment API remains Phase 13.3.
 
 Runtime payment method and preference endpoints are documented in [Wallet/Card Payment API Interface](./payment-api.md).
 
+Future external provider adapter and credential resolution boundaries are documented in [External Payment Provider Integration Readiness](./payment-providers.md).
+
 ## Testing Strategy
 
 Tests cover:

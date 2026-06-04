@@ -255,3 +255,5 @@ Phase 13.3 API tests cover:
 ## Status
 
 Phase 13.3 implements the Wallet/Card Payment API Interface foundation.
+
+Provider adapter/config readiness is documented in [External Payment Provider Integration Readiness](./payment-providers.md).

@@ -225,6 +225,8 @@ Phase 13.3 exposes authenticated wallet and saved payment method APIs:
 
 Full endpoint behavior and safety rules are documented in [Wallet/Card Payment API Interface](./payment-api.md).
 
+Provider-neutral charge/config contracts are documented in [External Payment Provider Integration Readiness](./payment-providers.md).
+
 ### `GET /api/v1/billing/payments/{payment}`
 
 - Purpose: payment details.

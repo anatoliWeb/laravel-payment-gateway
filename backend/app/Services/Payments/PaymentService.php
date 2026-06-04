@@ -14,6 +14,9 @@ use App\Models\WalletTransaction;
 use App\Services\ActivityService;
 use App\Services\Billing\WalletService;
 use App\Services\Billing\WalletTransactionService;
+use App\Services\Payments\Providers\DTO\ProviderChargeData;
+use App\Services\Payments\Providers\PaymentProviderConfigResolver;
+use App\Services\Payments\Providers\PaymentProviderFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -26,6 +29,8 @@ class PaymentService
         private readonly WalletTransactionService $walletTransactionService,
         private readonly ActivityService $activityService,
         private readonly PaymentRiskService $paymentRiskService,
+        private readonly PaymentProviderFactory $paymentProviderFactory,
+        private readonly PaymentProviderConfigResolver $paymentProviderConfigResolver,
     ) {
     }
 
@@ -114,7 +119,7 @@ class PaymentService
         string $source = 'payment_method',
     ): Payment {
         $paymentMethod = $this->resolvePaymentMethod($data);
-        [$provider, $status, $providerReference] = $this->resolveSimulatorProviderResult($paymentMethod);
+        [$provider, $status, $providerReference] = $this->resolveProviderResult($data, $paymentMethod, $amount, $currency);
 
         $payment = $this->createBasePayment(
             data: $data,
@@ -394,14 +399,38 @@ class PaymentService
     /**
      * @return array{0: string, 1: string, 2: string}
      */
-    private function resolveSimulatorProviderResult(PaymentMethod $paymentMethod): array
+    private function resolveProviderResult(
+        CreatePaymentData $data,
+        PaymentMethod $paymentMethod,
+        int $amount,
+        string $currency,
+    ): array
     {
-        return match ($paymentMethod->type) {
-            'fake_card' => ['simulator', 'processing', 'sim_'.Str::lower(Str::random(16))],
-            'fake_manual_invoice' => ['manual', 'pending', 'manual_'.Str::lower(Str::random(16))],
-            'fake_wallet' => ['internal_wallet', 'pending', 'wallet_'.Str::lower(Str::random(16))],
-            default => throw new RuntimeException('external_provider_disabled'),
-        };
+        $config = $this->paymentProviderConfigResolver->resolve($paymentMethod->provider, $data->user);
+        if (! $config->enabled) {
+            throw new RuntimeException($config->errorCode ?? 'provider_not_configured');
+        }
+
+        $response = $this->paymentProviderFactory
+            ->make($paymentMethod->provider)
+            ->charge(new ProviderChargeData(
+                amount: $amount,
+                currency: $currency,
+                paymentMethodType: $paymentMethod->type,
+                paymentMethodReference: $paymentMethod->provider_reference,
+                customerReference: (string) $data->user->id,
+                description: $data->description,
+                metadata: $this->sanitizeMetadata($data->metadata),
+                idempotencyKey: $data->idempotencyKey,
+                callbackUrl: $data->callbackUrl,
+                providerConfig: $config->credentials,
+            ));
+
+        if (! $response->successful || $response->providerReference === null) {
+            throw new RuntimeException($response->errorCode ?? 'provider_charge_failed');
+        }
+
+        return [$response->provider, $response->status, $response->providerReference];
     }
 
     private function assertWalletCanPay(User $user, string $currency, int $amount): void

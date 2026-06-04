@@ -35,6 +35,13 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/payment-risk.md](./billing/payment-risk.md) - Demo-safe payment risk and fraud guard
 - [billing/auto-top-up.md](./billing/auto-top-up.md) - Auto top-up and auto charge foundation
 - [billing/payment-api.md](./billing/payment-api.md) - Wallet/card payment API interface
+- [billing/payment-providers.md](./billing/payment-providers.md) - External provider integration readiness
+- [billing/providers/README.md](./billing/providers/README.md) - Provider adapter documentation convention
+- [billing/providers/_template/README.md](./billing/providers/_template/README.md) - Provider adapter documentation template
+- [billing/providers/simulator/README.md](./billing/providers/simulator/README.md) - Implemented simulator provider notes
+- [billing/providers/privat24/README.md](./billing/providers/privat24/README.md) - Planned PrivatBank / Privat24 provider notes
+- [billing/providers/ukrsibbank/README.md](./billing/providers/ukrsibbank/README.md) - Planned UKRSIBBANK provider notes
+- [billing/providers/oschadbank/README.md](./billing/providers/oschadbank/README.md) - Planned Oschadbank provider notes
 - [TODO.md](../TODO.md) - Development roadmap and task tracking
 
 ---
@@ -60,6 +67,11 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Payment Risk -> [./billing/payment-risk.md](./billing/payment-risk.md)
 - Billing Auto Top-Up -> [./billing/auto-top-up.md](./billing/auto-top-up.md)
 - Billing Payment API -> [./billing/payment-api.md](./billing/payment-api.md)
+- Billing Payment Providers -> [./billing/payment-providers.md](./billing/payment-providers.md)
+- Provider Adapter Docs -> [./billing/providers/README.md](./billing/providers/README.md)
+- Provider Template -> [./billing/providers/_template/README.md](./billing/providers/_template/README.md)
+- Simulator Provider -> [./billing/providers/simulator/README.md](./billing/providers/simulator/README.md)
+- Ukrainian Provider Notes -> [./billing/providers/privat24/README.md](./billing/providers/privat24/README.md)
 - Commands -> [./commands.md](./commands.md)
 - Coding Standards -> [./coding-standards.md](./coding-standards.md)
 - TODO -> [../TODO.md](../TODO.md)
@@ -208,6 +220,7 @@ Improves developer navigation and onboarding experience.
 - [Billing Payment Risk](./billing/payment-risk.md)
 - [Billing Auto Top-Up](./billing/auto-top-up.md)
 - [Billing Payment API](./billing/payment-api.md)
+- [Billing Payment Providers](./billing/payment-providers.md)
 - [Commands](./commands.md)
 - [Coding Standards](./coding-standards.md)
 - [Main Docs](./README.md)

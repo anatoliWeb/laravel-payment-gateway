@@ -474,16 +474,16 @@ Payment methods are simulated in this portfolio project. The system must model c
 - [x] Validate saved payment method ownership
 - [x] Validate saved payment method status
 - [x] Resolve provider from payment method
-- [ ] Resolve provider account from user/customer settings if available
-- [ ] Fallback to platform provider config from `.env` if allowed
-- [ ] Use provider abstraction for payment method charges
+- [x] Resolve provider account from user/customer settings if available
+- [x] Fallback to platform provider config from `.env` if allowed
+- [x] Use provider abstraction for payment method charges
 - [x] Store provider key/source safely without storing secrets on payment
 - [x] Store provider reference safely
 - [x] Map provider response to internal payment status
 - [x] Map provider errors to stable internal error codes
 - [x] Ensure simulator provider is default in demo mode
 - [x] Ensure external providers are disabled unless explicitly configured
-- [ ] Ensure customer-owned provider config cannot access another customer's credentials
+- [x] Ensure customer-owned provider config cannot access another customer's credentials
 - [x] Validate wallet balance before wallet debit
 - [x] Create payment inside DB transaction
 - [x] Create wallet debit transaction when paying from balance
@@ -593,57 +593,57 @@ This API layer must allow users to pay from internal wallet balance, from a save
 
 ## Phase 13.4 — External Payment Provider Integration Readiness
 
-- [ ] Design `PaymentProviderInterface`
-- [ ] Design `PaymentProviderFactory`
-- [ ] Design provider request DTOs
-- [ ] Design provider response DTOs
-- [ ] Design provider error DTOs
-- [ ] Design provider webhook DTOs
-- [ ] Design provider capability map
-- [ ] Design provider configuration contract
-- [ ] Design platform-level provider config from `.env`
-- [ ] Design customer-level provider config from database
-- [ ] Design `payment_provider_accounts` table
-- [ ] Design encrypted provider credentials storage
-- [ ] Design provider config source priority
-- [ ] Support config source: platform `.env`
-- [ ] Support config source: customer database settings
-- [ ] Support config source: disabled provider
-- [ ] Add provider account status
-- [ ] Add provider account test/live mode flag
-- [ ] Add provider account owner relation if needed
-- [ ] Add provider credentials validation rules
-- [ ] Add provider credentials masking rules
-- [ ] Add provider credentials metadata safety rules
-- [ ] Add admin form readiness notes for provider settings
-- [ ] Add simulator provider adapter
-- [ ] Add fake provider charge flow
-- [ ] Add fake provider refund flow if needed
-- [ ] Add fake provider payment status lookup
-- [ ] Add fake provider webhook verification
-- [ ] Add provider timeout/retry rules
-- [ ] Add provider error mapping
-- [ ] Add provider idempotency forwarding rules
-- [ ] Add provider metadata sanitization rules
-- [ ] Add provider webhook signature verification contract
+- [x] Design `PaymentProviderInterface`
+- [x] Design `PaymentProviderFactory`
+- [x] Design provider request DTOs
+- [x] Design provider response DTOs
+- [x] Design provider error DTOs
+- [x] Design provider webhook DTOs
+- [x] Design provider capability map
+- [x] Design provider configuration contract
+- [x] Design platform-level provider config from `.env`
+- [x] Design customer-level provider config from database
+- [x] Design `payment_provider_accounts` table
+- [x] Design encrypted provider credentials storage
+- [x] Design provider config source priority
+- [x] Support config source: platform `.env`
+- [x] Support config source: customer database settings
+- [x] Support config source: disabled provider
+- [x] Add provider account status
+- [x] Add provider account test/live mode flag
+- [x] Add provider account owner relation if needed
+- [x] Add provider credentials validation rules
+- [x] Add provider credentials masking rules
+- [x] Add provider credentials metadata safety rules
+- [x] Add admin form readiness notes for provider settings
+- [x] Add simulator provider adapter
+- [x] Add fake provider charge flow
+- [x] Add fake provider refund flow if needed
+- [x] Add fake provider payment status lookup
+- [x] Add fake provider webhook verification
+- [x] Add provider timeout/retry rules
+- [x] Add provider error mapping
+- [x] Add provider idempotency forwarding rules
+- [x] Add provider metadata sanitization rules
+- [x] Add provider webhook signature verification contract
 - [ ] Add provider-specific documentation folder structure
 - [ ] Add provider integration template README
-- [ ] Add planned Stripe adapter notes
-- [ ] Add planned PayPal adapter notes
-- [ ] Add planned LiqPay adapter notes
-- [ ] Add planned WayForPay adapter notes
-- [ ] Add planned Monobank/Fondy adapter notes if useful
-- [ ] Ensure no real provider secrets are committed
-- [ ] Ensure real external charges are disabled in portfolio/demo mode
-- [ ] Add tests for simulator provider adapter
-- [ ] Add tests for provider factory
-- [ ] Add tests for provider config resolver
-- [ ] Add tests for env-based provider config
-- [ ] Add tests for DB-based provider config
-- [ ] Add tests for encrypted credential masking
-- [ ] Add tests for provider error mapping
-- [ ] Add tests for fake webhook verification
-- [ ] Document provider integration readiness in `docs/billing/payment-providers.md`
+- [x] Add planned Stripe adapter notes
+- [x] Add planned PayPal adapter notes
+- [x] Add planned LiqPay adapter notes
+- [x] Add planned WayForPay adapter notes
+- [x] Add planned Monobank/Fondy adapter notes if useful
+- [x] Ensure no real provider secrets are committed
+- [x] Ensure real external charges are disabled in portfolio/demo mode
+- [x] Add tests for simulator provider adapter
+- [x] Add tests for provider factory
+- [x] Add tests for provider config resolver
+- [x] Add tests for env-based provider config
+- [x] Add tests for DB-based provider config
+- [x] Add tests for encrypted credential masking
+- [x] Add tests for provider error mapping
+- [x] Add tests for fake webhook verification
+- [x] Document provider integration readiness in `docs/billing/payment-providers.md`
 
 This project uses a payment gateway simulator by default. Real payment providers are intentionally not connected in portfolio/demo mode. The architecture must support provider adapters, platform-level `.env` credentials, customer-level database credentials, encrypted credential storage, webhook verification, idempotency propagation, and provider-specific documentation/templates for Stripe/PayPal/LiqPay/WayForPay-style integrations.
 
@@ -651,29 +651,32 @@ This project uses a payment gateway simulator by default. Real payment providers
 
 ## Phase 13.5 — Provider Adapter Template & Documentation
 
-- [ ] Create provider adapter folder convention
-- [ ] Create simulator provider folder
-- [ ] Create provider template folder
-- [ ] Create provider README template
-- [ ] Create provider capabilities template
-- [ ] Create provider config example template
-- [ ] Create provider webhook verification guide template
-- [ ] Create provider error mapping guide template
-- [ ] Create provider testing checklist template
-- [ ] Document how to add a new payment provider
-- [ ] Document required provider adapter methods
-- [ ] Document required provider DTOs
-- [ ] Document required provider tests
-- [ ] Document required provider environment variables
-- [ ] Document required DB configuration fields
-- [ ] Document safe credential storage rules
-- [ ] Document demo/sandbox/live mode difference
-- [ ] Add example provider skeleton for `Simulator`
-- [ ] Add placeholder docs for `Stripe`
-- [ ] Add placeholder docs for `PayPal`
-- [ ] Add placeholder docs for `LiqPay`
-- [ ] Add placeholder docs for `WayForPay`
-- [ ] Add tests or static checks for provider documentation if useful
+- [x] Create provider adapter folder convention
+- [x] Create simulator provider folder
+- [x] Create provider template folder
+- [x] Create provider README template
+- [x] Create provider capabilities template
+- [x] Create provider config example template
+- [x] Create provider webhook verification guide template
+- [x] Create provider error mapping guide template
+- [x] Create provider testing checklist template
+- [x] Document how to add a new payment provider
+- [x] Document required provider adapter methods
+- [x] Document required provider DTOs
+- [x] Document required provider tests
+- [x] Document required provider environment variables
+- [x] Document required DB configuration fields
+- [x] Document safe credential storage rules
+- [x] Document demo/sandbox/live mode difference
+- [x] Add example provider skeleton for `Simulator`
+- [x] Add placeholder docs for `Stripe`
+- [x] Add placeholder docs for `PayPal`
+- [x] Add placeholder docs for `LiqPay`
+- [x] Add placeholder docs for `WayForPay`
+- [x] Add placeholder docs for `PrivatBank / Privat24`
+- [x] Add placeholder docs for `UKRSIBBANK`
+- [x] Add placeholder docs for `Oschadbank`
+- [x] Add tests or static checks for provider documentation if useful
 
 Adding a new provider should be repeatable: create a provider folder, implement the provider interface, define capabilities, document configuration fields, map errors, implement webhook verification, and add provider-specific tests. This phase prepares the project so future providers can be added without changing core payment logic.
 

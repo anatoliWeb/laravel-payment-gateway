@@ -111,6 +111,8 @@ Auto top-up and auto charge foundation is documented in [Auto Top-Up & Auto Char
 
 Wallet/card runtime API interface is documented in [Wallet/Card Payment API Interface](./payment-api.md).
 
+External payment provider abstraction and credential boundaries are documented in [External Payment Provider Integration Readiness](./payment-providers.md).
+
 ## app/Services/Payments
 
 Planned services:
