@@ -414,7 +414,7 @@ Currency support is required before wallet balances and multi-currency payments.
 - [x] Add idempotency for wallet transactions
 - [x] Add relation between wallet transactions and payments
 - [x] Add relation between wallet transactions and subscriptions if needed
-- [ ] Add wallet activity logs
+- [x] Add wallet activity logs
 - [x] Add tests for wallet balance operations
 - [x] Add tests for multi-currency wallet balances
 - [x] Document wallet balance in `docs/billing/wallets.md`
@@ -588,6 +588,33 @@ Auto top-up and auto charge require explicit user consent. In this simulator pro
 - [x] Document payment API interface in `docs/billing/payment-api.md`
 
 This API layer must allow users to pay from internal wallet balance, from a saved/simulated payment method, or by wallet-first fallback depending on user preferences. All write operations that can create charges, wallet debits, or payment attempts must be idempotent.
+
+---
+
+## Phase 13.3.1 — Permission-Gated Wallet Adjustments API
+
+- [x] Define manual wallet adjustment purpose
+- [x] Add permission-gated `POST /api/v1/billing/wallet-adjustments`
+- [x] Add granular wallet adjustment permissions
+- [x] Ensure authenticated users without permission cannot adjust balances
+- [x] Enforce direction-aware credit/debit authorization
+- [x] Allow future operator/support roles through permissions instead of an admin namespace
+- [x] Require reason and `Idempotency-Key`
+- [x] Support optional safe description, reference, and metadata
+- [x] Implement wallet adjustment credit through `WalletTransactionService`
+- [x] Implement wallet adjustment debit through `WalletTransactionService`
+- [x] Store actor ID and target user ID
+- [x] Preserve append-only ledger entries and balance snapshots
+- [x] Block insufficient wallet adjustment debit
+- [x] Reject unsafe payment and secret metadata
+- [x] Prevent duplicate balance mutation and detect idempotency conflicts
+- [x] Add wallet adjustment credit/debit activity logs
+- [x] Add targeted API, service, wallet regression, and RBAC tests
+- [x] Document wallet adjustments in `docs/billing/wallet-adjustments.md`
+- [ ] Define and enforce payment-source permissions during payment API hardening
+- [ ] Define and enforce provider-specific use permissions when real provider adapters are implemented
+
+Manual wallet adjustments are audited, permission-gated billing operations. They must never bypass the wallet ledger, create a payment implicitly, or expose a public user debit endpoint. Future payment-source and provider permissions remain planned hardening work.
 
 ---
 

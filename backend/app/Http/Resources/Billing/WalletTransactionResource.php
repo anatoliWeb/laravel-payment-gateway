@@ -17,6 +17,7 @@ class WalletTransactionResource extends JsonResource
             'currency' => $this->currency?->code,
             'status' => $this->status,
             'reason' => $this->reason,
+            'reference' => $this->metadata['reference'] ?? null,
             'payment_uuid' => $this->payment?->uuid,
             'balance_available_before' => $this->balance_available_before,
             'balance_available_after' => $this->balance_available_after,
@@ -34,6 +35,11 @@ class WalletTransactionResource extends JsonResource
             'reason',
             'auto_top_up',
             'manual_wallet_top_up',
+            'actor_id',
+            'target_user_id',
+            'description',
+            'reference',
+            'adjustment_type',
         ]));
     }
 }

@@ -39,6 +39,9 @@ Webhooks:
 Wallets:
 - `billing.wallets.view`
 - `billing.wallets.manage`
+- `billing.wallets.adjust`
+- `billing.wallets.credit`
+- `billing.wallets.debit`
 
 Currencies:
 - `billing.currencies.view`
@@ -52,6 +55,8 @@ Reports:
 The `admin` role receives all seeded billing permissions.
 
 The seeder uses idempotent permission creation and `syncWithoutDetaching` for role assignment, so repeated seed runs do not create duplicate permissions and do not remove existing admin permissions.
+
+Receiving a permission through the admin role does not make the guarded endpoint admin-specific. Future operator or support roles can receive selected billing permissions without receiving the admin role.
 
 ## Normal User Access Model
 
@@ -81,9 +86,36 @@ Expected future permission usage:
 
 ## Wallet and Currency Permissions
 
-Wallet and currency permissions are seeded ahead of roadmap phases 12.1, 12.2, and 13.2.
+Wallet and currency permissions support roadmap phases 12.1, 12.2, 13.2, and 13.3.1.
 
-They do not implement wallet, currency, or autopay logic. They only reserve stable authorization keys for future work.
+The wallet adjustment route accepts any adjustment permission at middleware level and then enforces the requested direction in the controller:
+- `billing.wallets.adjust` allows credit and debit
+- `billing.wallets.credit` allows credit only
+- `billing.wallets.debit` allows debit only
+
+The default user role receives none of these permissions.
+
+## Payment Source and Provider Permissions
+
+Sensitive payment sources and providers may require dedicated use permissions in future API/provider hardening phases.
+
+Wallet adjustment is the first implemented permission-gated billing operation. Planned naming examples include:
+- `billing.payment_sources.use.wallet`
+- `billing.payment_sources.use.payment_method`
+- `billing.payment_sources.use.manual_wallet_adjustment`
+- `billing.payment_sources.use.manual_invoice`
+- `billing.payment_sources.use.simulator`
+- `billing.payment_sources.use.external_provider`
+- `billing.providers.use.simulator`
+- `billing.providers.use.stripe`
+- `billing.providers.use.paypal`
+- `billing.providers.use.liqpay`
+- `billing.providers.use.wayforpay`
+- `billing.providers.use.privat24`
+- `billing.providers.use.ukrsibbank`
+- `billing.providers.use.oschadbank`
+
+These planned permissions are not seeded or enforced yet. Provider/source authorization is an additional security boundary and does not replace ownership checks, risk guards, provider configuration validation, or idempotency.
 
 ## Future API Usage
 
@@ -95,6 +127,7 @@ Expected future endpoint guards:
 - payment simulation endpoints require `billing.payments.simulate`
 - webhook retry endpoints require `billing.webhooks.retry`
 - wallet administration endpoints require `billing.wallets.manage`
+- manual wallet adjustment endpoints require `billing.wallets.adjust` or the matching direction permission
 - currency administration endpoints require `billing.currencies.manage`
 - billing reports require `billing.reports.view`
 

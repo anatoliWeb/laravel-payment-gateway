@@ -86,7 +86,7 @@ Service-layer operations:
 - release moves held to available
 - refund increases available balance
 
-Adjustment is supported by the ledger schema/factory as a future operator action, but no admin API is implemented in this phase.
+Adjustment is implemented as a permission-gated billing operation through the wallet adjustments API. It always writes an append-only ledger transaction and never exposes direct balance mutation.
 
 ## Idempotency Notes
 
@@ -109,6 +109,8 @@ Future payment flows can link wallet debits to payment attempts without changing
 Payment method and preference selection is documented in [Payment Methods & User Payment Preferences](./payment-methods.md).
 
 Runtime wallet endpoints and manual simulator top-up behavior are documented in [Wallet/Card Payment API Interface](./payment-api.md).
+
+Permission-gated manual credit/debit behavior is documented in [Wallet Adjustments API](./wallet-adjustments.md).
 
 ## Auto Top-Up Readiness
 
@@ -134,4 +136,4 @@ Tests cover:
 
 Phase 12.2 implements user wallet balance foundation.
 
-Runtime wallet activity logs are intentionally left for Phase 20 Activity Logging.
+Runtime manual adjustment activity logs emit `billing.wallet_manual_credit` and `billing.wallet_manual_debit`. Other wallet activity events are documented with their owning runtime flows.

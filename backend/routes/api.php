@@ -27,6 +27,7 @@ use App\Http\Controllers\Api\V1\Chat\ChatIncomingWebhookController;
 use App\Http\Controllers\Api\V1\Billing\PaymentController;
 use App\Http\Controllers\Api\V1\Billing\PaymentMethodController;
 use App\Http\Controllers\Api\V1\Billing\PaymentPreferenceController;
+use App\Http\Controllers\Api\V1\Billing\WalletAdjustmentController;
 use App\Http\Controllers\Api\V1\Billing\WalletController;
 use Illuminate\Support\Facades\Route;
 
@@ -372,6 +373,9 @@ Route::prefix('v1')
                             ->name('wallet.transactions');
                         Route::post('/wallet/top-ups', [WalletController::class, 'topUp'])
                             ->name('wallet.top-ups.store');
+                        Route::post('/wallet-adjustments', [WalletAdjustmentController::class, 'store'])
+                            ->middleware('permission:billing.wallets.adjust|billing.wallets.credit|billing.wallets.debit')
+                            ->name('wallet-adjustments.store');
 
                         Route::apiResource('payment-methods', PaymentMethodController::class)
                             ->parameters(['payment-methods' => 'paymentMethod'])

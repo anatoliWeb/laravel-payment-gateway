@@ -200,6 +200,28 @@ Planned provider notes:
 
 Real provider availability, capabilities, API details, configuration fields, and webhook verification rules must be verified against current official provider documentation before implementation.
 
+## Payment Source and Provider Permissions
+
+Sensitive source/provider use can require explicit permission in future API/provider hardening phases.
+
+Permission-gated wallet adjustment is the first implemented example of actor authorization for a financial operation. Future naming may include:
+- `billing.payment_sources.use.wallet`
+- `billing.payment_sources.use.payment_method`
+- `billing.payment_sources.use.manual_wallet_adjustment`
+- `billing.payment_sources.use.manual_invoice`
+- `billing.payment_sources.use.simulator`
+- `billing.payment_sources.use.external_provider`
+- `billing.providers.use.simulator`
+- `billing.providers.use.stripe`
+- `billing.providers.use.paypal`
+- `billing.providers.use.liqpay`
+- `billing.providers.use.wayforpay`
+- `billing.providers.use.privat24`
+- `billing.providers.use.ukrsibbank`
+- `billing.providers.use.oschadbank`
+
+These permissions are documented plans only. They are not currently seeded or enforced, and no real provider integration is enabled. Permission checks would complement ownership, risk guards, provider config validation, capability checks, and idempotency.
+
 ## Admin Form Readiness
 
 Future admin settings may display:

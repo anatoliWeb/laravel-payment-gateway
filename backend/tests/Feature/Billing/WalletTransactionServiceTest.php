@@ -4,6 +4,7 @@ namespace Tests\Feature\Billing;
 
 use App\Models\Currency;
 use App\Models\User;
+use App\Models\WalletTransaction;
 use App\Services\Billing\WalletService;
 use App\Services\Billing\WalletTransactionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -117,6 +118,86 @@ class WalletTransactionServiceTest extends TestCase
 
         $this->assertSame(700, $usd->available_amount);
         $this->assertSame(2000, $eur->available_amount);
+    }
+
+    public function test_manual_adjustment_requires_audit_context_and_is_idempotent(): void
+    {
+        $target = $this->userWithCurrency('USD');
+        $actor = User::factory()->create();
+
+        $first = app(WalletTransactionService::class)->manualCredit(
+            targetUser: $target,
+            currencyCode: 'USD',
+            amount: 1500,
+            actor: $actor,
+            reason: 'Support-approved correction',
+            reference: 'ticket-2001',
+            idempotencyKey: 'manual-credit-service-1',
+            metadata: ['secret' => 'must-not-be-stored', 'case_type' => 'support'],
+        );
+        $second = app(WalletTransactionService::class)->manualCredit(
+            targetUser: $target,
+            currencyCode: 'USD',
+            amount: 1500,
+            actor: $actor,
+            reason: 'Support-approved correction',
+            reference: 'ticket-2001',
+            idempotencyKey: 'manual-credit-service-1',
+        );
+
+        $this->assertTrue($first->is($second));
+        $this->assertSame('adjustment', $first->type);
+        $this->assertSame('credit', $first->direction);
+        $this->assertSame(0, $first->balance_available_before);
+        $this->assertSame(1500, $first->balance_available_after);
+        $this->assertSame($actor->id, $first->metadata['actor_id']);
+        $this->assertArrayNotHasKey('secret', $first->metadata);
+        $this->assertSame(1, WalletTransaction::query()->where('type', 'adjustment')->count());
+        $this->assertSame(1500, app(WalletService::class)->getBalance($target, 'USD')->available_amount);
+    }
+
+    public function test_manual_debit_blocks_insufficient_balance_and_idempotency_conflicts(): void
+    {
+        $target = $this->userWithCurrency('USD');
+        $actor = User::factory()->create();
+        $service = app(WalletTransactionService::class);
+        $service->credit($target, 'USD', 2000);
+
+        $service->manualDebit(
+            targetUser: $target,
+            currencyCode: 'USD',
+            amount: 500,
+            actor: $actor,
+            reason: 'Reverse duplicated credit',
+            idempotencyKey: 'manual-debit-service-1',
+        );
+
+        try {
+            $service->manualDebit(
+                targetUser: $target,
+                currencyCode: 'USD',
+                amount: 600,
+                actor: $actor,
+                reason: 'Conflicting retry',
+                idempotencyKey: 'manual-debit-service-1',
+            );
+
+            $this->fail('Expected an idempotency key conflict.');
+        } catch (RuntimeException $exception) {
+            $this->assertSame('idempotency_key_conflict', $exception->getMessage());
+        }
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('insufficient_wallet_balance');
+
+        $service->manualDebit(
+            targetUser: $target,
+            currencyCode: 'USD',
+            amount: 5000,
+            actor: $actor,
+            reason: 'Excessive debit attempt',
+            idempotencyKey: 'manual-debit-service-2',
+        );
     }
 
     private function userWithCurrency(string $currencyCode): User

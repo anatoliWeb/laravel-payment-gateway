@@ -74,6 +74,8 @@ No public `POST /api/v1/billing/wallet/debits` endpoint is exposed in Phase 13.3
 
 Wallet debits are allowed through payment creation with `payment_source=wallet`, where `PaymentService` validates wallet balance, creates the payment, links the wallet transaction, and preserves idempotency through the existing wallet transaction guard.
 
+Permission-gated manual credits and debits use a separate auditable billing operation documented in [Wallet Adjustments API](./wallet-adjustments.md). Authentication alone does not grant access, and the operation does not create payments or replace the user payment flow.
+
 ## Wallet Top-Up
 
 ### `POST /api/v1/billing/wallet/top-ups`
@@ -206,6 +208,7 @@ When `payment_source` is omitted, `PaymentService` resolves the source from pref
 Required now:
 - `POST /api/v1/billing/payments`
 - `POST /api/v1/billing/wallet/top-ups`
+- `POST /api/v1/billing/wallet-adjustments`
 
 Phase 13.3 uses local wallet transaction idempotency guards for balance mutation. Full request replay/conflict storage remains Phase 14.
 

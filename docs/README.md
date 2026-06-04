@@ -35,6 +35,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/payment-risk.md](./billing/payment-risk.md) - Demo-safe payment risk and fraud guard
 - [billing/auto-top-up.md](./billing/auto-top-up.md) - Auto top-up and auto charge foundation
 - [billing/payment-api.md](./billing/payment-api.md) - Wallet/card payment API interface
+- [billing/wallet-adjustments.md](./billing/wallet-adjustments.md) - Permission-gated manual wallet credit/debit API
 - [billing/payment-providers.md](./billing/payment-providers.md) - External provider integration readiness
 - [billing/providers/README.md](./billing/providers/README.md) - Provider adapter documentation convention
 - [billing/providers/_template/README.md](./billing/providers/_template/README.md) - Provider adapter documentation template
@@ -67,6 +68,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Payment Risk -> [./billing/payment-risk.md](./billing/payment-risk.md)
 - Billing Auto Top-Up -> [./billing/auto-top-up.md](./billing/auto-top-up.md)
 - Billing Payment API -> [./billing/payment-api.md](./billing/payment-api.md)
+- Wallet Adjustments -> [./billing/wallet-adjustments.md](./billing/wallet-adjustments.md)
 - Billing Payment Providers -> [./billing/payment-providers.md](./billing/payment-providers.md)
 - Provider Adapter Docs -> [./billing/providers/README.md](./billing/providers/README.md)
 - Provider Template -> [./billing/providers/_template/README.md](./billing/providers/_template/README.md)
