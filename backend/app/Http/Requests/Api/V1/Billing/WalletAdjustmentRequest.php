@@ -44,9 +44,7 @@ class WalletAdjustmentRequest extends FormRequest
         $validator->after(function (Validator $validator): void {
             $idempotencyKey = trim((string) $this->header('Idempotency-Key'));
 
-            if ($idempotencyKey === '') {
-                $validator->errors()->add('Idempotency-Key', 'The Idempotency-Key header is required.');
-            } elseif (strlen($idempotencyKey) > 255) {
+            if ($idempotencyKey !== '' && strlen($idempotencyKey) > 255) {
                 $validator->errors()->add('Idempotency-Key', 'The Idempotency-Key header must not exceed 255 characters.');
             }
 

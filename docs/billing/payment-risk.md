@@ -111,9 +111,9 @@ It does not log:
 
 Risk guard does not replace idempotency.
 
-Phase 13.1 checks whether the payment creation attempt is allowed before side effects. Phase 14 still owns full idempotency storage, replay, conflict detection, and expiry.
+Phase 13.1 checks whether the first payment creation attempt is allowed before side effects. Phase 14 owns central idempotency storage, replay, conflict detection, processing locks, and expiry.
 
-Wallet debit still uses the existing local wallet transaction idempotency key to avoid duplicate balance mutation.
+Completed replays stop before risk/provider execution. Wallet debit still uses the existing local wallet transaction idempotency key as a second protection against duplicate balance mutation.
 
 ## Relationship With Provider Integration
 

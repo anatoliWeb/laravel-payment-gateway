@@ -38,8 +38,10 @@ class WalletTopUpRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
-            if (trim((string) $this->header('Idempotency-Key')) === '') {
-                $validator->errors()->add('Idempotency-Key', 'The Idempotency-Key header is required.');
+            $idempotencyKey = trim((string) $this->header('Idempotency-Key'));
+
+            if ($idempotencyKey !== '' && strlen($idempotencyKey) > 255) {
+                $validator->errors()->add('Idempotency-Key', 'The Idempotency-Key header must not exceed 255 characters.');
             }
 
             foreach (self::FORBIDDEN_KEYS as $key) {

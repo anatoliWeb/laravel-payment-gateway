@@ -4,9 +4,11 @@ namespace App\Services\Billing;
 
 use App\DTO\Payments\CreatePaymentData;
 use App\Models\Currency;
+use App\Models\Payment;
 use App\Models\PaymentMethod;
 use App\Models\User;
 use App\Services\ActivityService;
+use App\Services\Payments\IdempotencyService;
 use App\Services\Payments\PaymentService;
 use Illuminate\Support\Str;
 use Throwable;
@@ -17,8 +19,8 @@ class AutoChargeService
         private readonly PaymentPreferenceService $paymentPreferenceService,
         private readonly PaymentService $paymentService,
         private readonly ActivityService $activityService,
-    ) {
-    }
+        private readonly IdempotencyService $idempotencyService,
+    ) {}
 
     public function canAutoCharge(User $user): array
     {
@@ -53,6 +55,17 @@ class AutoChargeService
         array $metadata = [],
         ?string $idempotencyKey = null,
     ): array {
+        $key = $idempotencyKey ?? 'auto_charge_'.Str::uuid();
+        $idempotencyPayload = [
+            'amount' => $amount,
+            'currency' => strtoupper($currencyCode),
+            'metadata' => $metadata,
+        ];
+        $replay = $this->idempotencyService->replay($key, 'auto_charge', $idempotencyPayload, $user);
+        if ($replay !== null) {
+            return $this->replayAutoCharge($replay);
+        }
+
         $this->recordActivity($user, 'billing.auto_charge_attempted', [
             'amount' => $amount,
             'currency' => strtoupper($currencyCode),
@@ -60,11 +73,13 @@ class AutoChargeService
 
         if ($amount <= 0) {
             $this->recordActivity($user, 'billing.auto_charge_failed', ['reason' => 'invalid_amount']);
+
             return $this->blocked('invalid_amount', attempted: true);
         }
 
         if (! $this->activeCurrency($currencyCode)) {
             $this->recordActivity($user, 'billing.auto_charge_failed', ['reason' => 'invalid_currency']);
+
             return $this->blocked('invalid_currency', attempted: true);
         }
 
@@ -76,6 +91,11 @@ class AutoChargeService
             $this->recordActivity($user, $action, ['reason' => $permission['reason']]);
 
             return array_merge($permission, ['attempted' => true]);
+        }
+
+        $idempotencyRecord = $this->idempotencyService->start($key, 'auto_charge', $idempotencyPayload, $user);
+        if (in_array($idempotencyRecord->status, ['completed', 'failed'], true)) {
+            return $this->replayAutoCharge((array) $idempotencyRecord->response_body);
         }
 
         try {
@@ -94,10 +114,18 @@ class AutoChargeService
                     'source' => 'auto_charge',
                     'auto_charge' => true,
                 ]),
-                idempotencyKey: $idempotencyKey ?? 'auto_charge_'.Str::uuid(),
+                idempotencyKey: 'auto_charge:'.hash('sha256', $user->id.'|'.$key).':payment',
             ));
+
+            $this->idempotencyService->complete(
+                $idempotencyRecord,
+                ['payment_id' => $payment->id],
+                $payment->id,
+                Payment::class,
+            );
         } catch (Throwable $exception) {
             $reason = $this->normalizePaymentFailure($exception->getMessage(), 'auto_charge_failed');
+            $this->idempotencyService->fail($idempotencyRecord, $reason);
             $this->recordActivity($user, 'billing.auto_charge_failed', [
                 'reason' => $reason,
                 'amount' => $amount,
@@ -113,6 +141,23 @@ class AutoChargeService
             'amount' => $payment->amount,
             'currency' => $payment->currency,
         ]);
+
+        return $this->allowed([
+            'attempted' => true,
+            'payment' => $payment,
+        ]);
+    }
+
+    private function replayAutoCharge(array $payload): array
+    {
+        if (isset($payload['error_code'])) {
+            return $this->blocked((string) $payload['error_code'], attempted: true);
+        }
+
+        $payment = Payment::query()->find($payload['payment_id'] ?? null);
+        if (! $payment) {
+            return $this->blocked('idempotency_replay_resource_missing', attempted: true);
+        }
 
         return $this->allowed([
             'attempted' => true,

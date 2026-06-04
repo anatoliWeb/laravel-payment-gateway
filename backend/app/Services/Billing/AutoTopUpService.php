@@ -4,11 +4,12 @@ namespace App\Services\Billing;
 
 use App\DTO\Payments\CreatePaymentData;
 use App\Models\Currency;
+use App\Models\Payment;
 use App\Models\PaymentMethod;
 use App\Models\User;
 use App\Models\WalletTransaction;
 use App\Services\ActivityService;
-use App\Services\Billing\BillingRestrictionService;
+use App\Services\Payments\IdempotencyService;
 use App\Services\Payments\PaymentService;
 use Illuminate\Support\Str;
 use Throwable;
@@ -22,8 +23,8 @@ class AutoTopUpService
         private readonly BillingRestrictionService $billingRestrictionService,
         private readonly PaymentService $paymentService,
         private readonly ActivityService $activityService,
-    ) {
-    }
+        private readonly IdempotencyService $idempotencyService,
+    ) {}
 
     public function shouldAutoTopUp(User $user, string $currencyCode): array
     {
@@ -89,6 +90,13 @@ class AutoTopUpService
 
     public function attemptAutoTopUp(User $user, string $currencyCode, ?string $idempotencyKey = null): array
     {
+        $key = $idempotencyKey ?? 'auto_top_up_'.Str::uuid();
+        $idempotencyPayload = ['currency' => strtoupper($currencyCode)];
+        $replay = $this->idempotencyService->replay($key, 'auto_top_up', $idempotencyPayload, $user);
+        if ($replay !== null) {
+            return $this->replayAutoTopUp($replay);
+        }
+
         $this->recordActivity($user, 'billing.auto_top_up_attempted', [
             'currency' => strtoupper($currencyCode),
         ]);
@@ -105,7 +113,10 @@ class AutoTopUpService
 
         $preference = $this->paymentPreferenceService->getOrCreatePreferences($user);
         $topUpAmount = (int) $preference->auto_top_up_amount;
-        $key = $idempotencyKey ?? 'auto_top_up_'.Str::uuid();
+        $idempotencyRecord = $this->idempotencyService->start($key, 'auto_top_up', $idempotencyPayload, $user);
+        if (in_array($idempotencyRecord->status, ['completed', 'failed'], true)) {
+            return $this->replayAutoTopUp((array) $idempotencyRecord->response_body);
+        }
 
         try {
             $payment = $this->paymentService->createPayment(new CreatePaymentData(
@@ -123,7 +134,7 @@ class AutoTopUpService
                     'source' => 'auto_top_up',
                     'auto_top_up' => true,
                 ],
-                idempotencyKey: $key,
+                idempotencyKey: 'auto_top_up:'.hash('sha256', $user->id.'|'.$key).':payment',
             ));
 
             $walletTransaction = $this->walletTransactionService->credit(
@@ -131,7 +142,7 @@ class AutoTopUpService
                 currencyCode: strtoupper($currencyCode),
                 amount: $topUpAmount,
                 type: 'top_up',
-                idempotencyKey: 'auto_top_up:'.$key,
+                idempotencyKey: 'auto_top_up:'.hash('sha256', $user->id.'|'.$key),
                 metadata: [
                     'source' => 'auto_top_up',
                     'auto_top_up' => true,
@@ -139,11 +150,23 @@ class AutoTopUpService
                     'reason' => 'automatic_wallet_top_up',
                 ],
             );
+
+            $this->idempotencyService->complete(
+                $idempotencyRecord,
+                [
+                    'payment_id' => $payment->id,
+                    'wallet_transaction_id' => $walletTransaction->id,
+                    'top_up_amount' => $topUpAmount,
+                ],
+                $walletTransaction->id,
+                WalletTransaction::class,
+            );
         } catch (Throwable $exception) {
             $reason = $exception->getMessage() === 'payment_blocked'
                 ? 'payment_risk_blocked'
                 : ($exception->getMessage() ?: 'auto_top_up_failed');
 
+            $this->idempotencyService->fail($idempotencyRecord, $reason);
             $this->recordActivity($user, 'billing.auto_top_up_failed', [
                 'reason' => $reason,
                 'amount' => $topUpAmount,
@@ -166,6 +189,26 @@ class AutoTopUpService
             'payment' => $payment,
             'wallet_transaction' => $walletTransaction,
             'top_up_amount' => $topUpAmount,
+        ]);
+    }
+
+    private function replayAutoTopUp(array $payload): array
+    {
+        if (isset($payload['error_code'])) {
+            return $this->blocked((string) $payload['error_code'], attempted: true);
+        }
+
+        $payment = Payment::query()->find($payload['payment_id'] ?? null);
+        $walletTransaction = WalletTransaction::query()->find($payload['wallet_transaction_id'] ?? null);
+        if (! $payment || ! $walletTransaction) {
+            return $this->blocked('idempotency_replay_resource_missing', attempted: true);
+        }
+
+        return $this->allowed([
+            'attempted' => true,
+            'payment' => $payment,
+            'wallet_transaction' => $walletTransaction,
+            'top_up_amount' => $payload['top_up_amount'] ?? $walletTransaction->amount,
         ]);
     }
 

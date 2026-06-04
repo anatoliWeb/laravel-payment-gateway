@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\IdempotencyKey;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -16,9 +17,11 @@ class IdempotencyKeyFactory extends Factory
     public function definition(): array
     {
         return [
-            'key' => 'idem_'.Str::lower(Str::random(24)),
-            'method' => 'POST',
-            'endpoint' => '/api/v1/billing/payments',
+            'user_id' => User::factory(),
+            'key' => hash('sha256', 'idem_'.Str::lower(Str::random(24))),
+            'scope' => 'payment.create',
+            'method' => 'SERVICE',
+            'endpoint' => 'payment.create',
             'request_hash' => hash('sha256', Str::random(40)),
             'response_body' => [
                 'success' => true,
@@ -53,12 +56,24 @@ class IdempotencyKeyFactory extends Factory
     public function conflict(): static
     {
         return $this->state(fn (array $attributes) => [
-            'status' => 'conflict',
+            'status' => 'failed',
             'response_body' => [
-                'success' => false,
-                'code' => 'idempotency_conflict',
+                'error_code' => 'idempotency_key_conflict',
             ],
             'response_status' => 409,
+            'locked_until' => null,
+        ]);
+    }
+
+    public function failed(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'status' => 'failed',
+            'response_body' => [
+                'error_code' => 'payment_creation_failed',
+            ],
+            'response_status' => 422,
+            'locked_until' => null,
         ]);
     }
 
@@ -72,4 +87,3 @@ class IdempotencyKeyFactory extends Factory
         ]);
     }
 }
-

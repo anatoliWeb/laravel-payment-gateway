@@ -220,7 +220,9 @@ Permission-gated wallet adjustment is the first implemented example of actor aut
 - `billing.providers.use.ukrsibbank`
 - `billing.providers.use.oschadbank`
 
-These permissions are documented plans only. They are not currently seeded or enforced, and no real provider integration is enabled. Permission checks would complement ownership, risk guards, provider config validation, capability checks, and idempotency.
+Current simulator/internal/manual source-provider readiness permissions are seeded for admin but are not enforced on normal payment flows. Future real-provider permissions are documentation-only, and no real provider integration is enabled. Permission checks would complement ownership, risk guards, provider config validation, capability checks, and idempotency.
+
+The simulator payment path is protected by central `payment.create` idempotency before provider execution. Future external adapters should additionally use a `provider.charge` scope and derive or safely forward a provider idempotency key. Raw unsafe metadata and credentials must never be forwarded.
 
 ## Admin Form Readiness
 

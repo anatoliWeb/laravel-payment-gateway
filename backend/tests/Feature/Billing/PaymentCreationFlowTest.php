@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Billing;
 
-use App\Models\ActivityLog;
 use App\Models\Currency;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
@@ -30,7 +29,7 @@ class PaymentCreationFlowTest extends TestCase
             'currency' => 'USD',
             'payment_source' => 'wallet',
         ])->assertStatus(422)
-            ->assertJsonPath('errors.Idempotency-Key.0', 'The Idempotency-Key header is required.');
+            ->assertJsonPath('errors.code', 'idempotency_key_required');
     }
 
     public function test_payment_creation_rejects_invalid_amount_currency_raw_fields_and_unsafe_metadata(): void

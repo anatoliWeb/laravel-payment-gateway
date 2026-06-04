@@ -72,6 +72,20 @@ class AutoTopUpServiceTest extends TestCase
         ]);
     }
 
+    public function test_repeated_auto_top_up_key_replays_without_duplicate_payment_or_credit(): void
+    {
+        [$user] = $this->userReadyForAutoTopUp();
+
+        $first = app(AutoTopUpService::class)->attemptAutoTopUp($user, 'USD', 'auto-top-up-replay');
+        $second = app(AutoTopUpService::class)->attemptAutoTopUp($user, 'USD', 'auto-top-up-replay');
+
+        $this->assertTrue($second['allowed']);
+        $this->assertTrue($first['payment']->is($second['payment']));
+        $this->assertTrue($first['wallet_transaction']->is($second['wallet_transaction']));
+        $this->assertSame(1, Payment::query()->count());
+        $this->assertSame(5000, app(WalletService::class)->getBalance($user->refresh(), 'USD')->available_amount);
+    }
+
     public function test_missing_or_inactive_payment_method_blocks_auto_top_up(): void
     {
         [$missingUser] = $this->userReadyForAutoTopUp(withPaymentMethod: false);

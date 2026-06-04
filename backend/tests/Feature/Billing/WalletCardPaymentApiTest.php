@@ -95,7 +95,7 @@ class WalletCardPaymentApiTest extends TestCase
             'currency' => 'USD',
             'payment_source' => 'payment_method',
         ])->assertStatus(422)
-            ->assertJsonValidationErrors(['Idempotency-Key']);
+            ->assertJsonPath('errors.code', 'idempotency_key_required');
     }
 
     private function actingUser(): User

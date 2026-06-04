@@ -7,6 +7,7 @@ use App\Models\Wallet;
 use App\Models\WalletBalance;
 use App\Models\WalletTransaction;
 use App\Services\ActivityService;
+use App\Services\Payments\IdempotencyService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -17,8 +18,8 @@ class WalletTransactionService
     public function __construct(
         private readonly WalletService $walletService,
         private readonly ActivityService $activityService,
-    ) {
-    }
+        private readonly IdempotencyService $idempotencyService,
+    ) {}
 
     public function credit(
         User $user,
@@ -212,102 +213,163 @@ class WalletTransactionService
         }
 
         if (trim((string) $idempotencyKey) === '') {
-            throw new RuntimeException('idempotency_key_missing');
+            throw new RuntimeException('idempotency_key_required');
         }
 
-        [$transaction, $created] = DB::transaction(function () use (
-            $targetUser,
-            $currencyCode,
-            $amount,
-            $actor,
-            $direction,
-            $reason,
-            $description,
-            $reference,
+        $ledgerIdempotencyKey = 'wallet_adjustment:'.hash('sha256', $actor->id.'|'.$idempotencyKey);
+        $idempotencyPayload = [
+            'target_user_id' => $targetUser->id,
+            'currency' => strtoupper($currencyCode),
+            'amount' => $amount,
+            'direction' => $direction,
+            'reason' => $reason,
+            'description' => $description,
+            'reference' => $reference,
+            'metadata' => $metadata,
+        ];
+        $replay = $this->idempotencyService->replay(
             $idempotencyKey,
-            $metadata,
-        ): array {
-            $balance = $this->walletService->getOrCreateBalance($targetUser, $currencyCode);
-            if (! $balance) {
-                throw new RuntimeException('wallet_currency_not_available');
-            }
+            'wallet.adjustment',
+            $idempotencyPayload,
+            $actor,
+        );
+        if ($replay !== null) {
+            return $this->replayWalletTransaction($replay);
+        }
 
-            // Manual adjustments are low-volume operator actions. Locking the
-            // wallet serializes idempotency checks across all its currencies.
-            Wallet::query()
-                ->whereKey($balance->wallet_id)
-                ->lockForUpdate()
-                ->firstOrFail();
+        $idempotencyRecord = $this->idempotencyService->start(
+            $idempotencyKey,
+            'wallet.adjustment',
+            $idempotencyPayload,
+            $actor,
+        );
+        if (in_array($idempotencyRecord->status, ['completed', 'failed'], true)) {
+            return $this->replayWalletTransaction((array) $idempotencyRecord->response_body);
+        }
 
-            $existing = WalletTransaction::query()
-                ->where('wallet_id', $balance->wallet_id)
-                ->where('idempotency_key', $idempotencyKey)
-                ->where('status', 'completed')
-                ->first();
-
-            if ($existing) {
-                if ($existing->currency_id !== $balance->currency_id
-                    || $existing->type !== 'adjustment'
-                    || $existing->direction !== $direction
-                    || $existing->amount !== $amount) {
-                    throw new RuntimeException('idempotency_key_conflict');
+        try {
+            [$transaction, $created] = DB::transaction(function () use (
+                $targetUser,
+                $currencyCode,
+                $amount,
+                $actor,
+                $direction,
+                $reason,
+                $description,
+                $reference,
+                $ledgerIdempotencyKey,
+                $metadata,
+            ): array {
+                $balance = $this->walletService->getOrCreateBalance($targetUser, $currencyCode);
+                if (! $balance) {
+                    throw new RuntimeException('wallet_currency_not_available');
                 }
 
-                return [$existing, false];
-            }
+                // Manual adjustments are low-volume operator actions. Locking the
+                // wallet serializes idempotency checks across all its currencies.
+                Wallet::query()
+                    ->whereKey($balance->wallet_id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
-            $lockedBalance = WalletBalance::query()
-                ->whereKey($balance->id)
-                ->lockForUpdate()
-                ->firstOrFail();
+                $existing = WalletTransaction::query()
+                    ->where('wallet_id', $balance->wallet_id)
+                    ->where('idempotency_key', $ledgerIdempotencyKey)
+                    ->where('status', 'completed')
+                    ->first();
 
-            if ($direction === 'debit' && $lockedBalance->available_amount < $amount) {
-                throw new RuntimeException('insufficient_wallet_balance');
-            }
+                if ($existing) {
+                    if ($existing->currency_id !== $balance->currency_id
+                        || $existing->type !== 'adjustment'
+                        || $existing->direction !== $direction
+                        || $existing->amount !== $amount) {
+                        throw new RuntimeException('idempotency_key_conflict');
+                    }
 
-            $availableBefore = $lockedBalance->available_amount;
-            $heldBefore = $lockedBalance->held_amount;
-            $lockedBalance->available_amount = $direction === 'credit'
-                ? $availableBefore + $amount
-                : $availableBefore - $amount;
-            $lockedBalance->save();
+                    return [$existing, false];
+                }
 
-            $safeMetadata = array_merge(
-                ['source' => 'manual_wallet_adjustment'],
-                $this->sanitizeMetadata($metadata),
-                [
-                    'actor_id' => $actor->id,
-                    'target_user_id' => $targetUser->id,
+                $lockedBalance = WalletBalance::query()
+                    ->whereKey($balance->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                if ($direction === 'debit' && $lockedBalance->available_amount < $amount) {
+                    throw new RuntimeException('insufficient_wallet_balance');
+                }
+
+                $availableBefore = $lockedBalance->available_amount;
+                $heldBefore = $lockedBalance->held_amount;
+                $lockedBalance->available_amount = $direction === 'credit'
+                    ? $availableBefore + $amount
+                    : $availableBefore - $amount;
+                $lockedBalance->save();
+
+                $safeMetadata = array_merge(
+                    ['source' => 'manual_wallet_adjustment'],
+                    $this->sanitizeMetadata($metadata),
+                    [
+                        'actor_id' => $actor->id,
+                        'target_user_id' => $targetUser->id,
+                        'reason' => $reason,
+                        'description' => $description,
+                        'reference' => $reference,
+                        'adjustment_type' => "manual_{$direction}",
+                    ],
+                );
+
+                $transaction = WalletTransaction::query()->create([
+                    'uuid' => (string) Str::uuid(),
+                    'wallet_id' => $lockedBalance->wallet_id,
+                    'wallet_balance_id' => $lockedBalance->id,
+                    'currency_id' => $lockedBalance->currency_id,
+                    'type' => 'adjustment',
+                    'direction' => $direction,
+                    'amount' => $amount,
+                    'balance_available_before' => $availableBefore,
+                    'balance_available_after' => $lockedBalance->available_amount,
+                    'balance_held_before' => $heldBefore,
+                    'balance_held_after' => $heldBefore,
+                    'idempotency_key' => $ledgerIdempotencyKey,
                     'reason' => $reason,
-                    'description' => $description,
-                    'reference' => $reference,
-                    'adjustment_type' => "manual_{$direction}",
-                ],
+                    'status' => 'completed',
+                    'metadata' => $safeMetadata,
+                ]);
+
+                return [$transaction, true];
+            });
+
+            $this->idempotencyService->complete(
+                $idempotencyRecord,
+                ['wallet_transaction_id' => $transaction->id],
+                $transaction->id,
+                WalletTransaction::class,
+            );
+        } catch (Throwable $exception) {
+            $this->idempotencyService->fail(
+                $idempotencyRecord,
+                $exception->getMessage() ?: 'wallet_adjustment_failed',
             );
 
-            $transaction = WalletTransaction::query()->create([
-                'uuid' => (string) Str::uuid(),
-                'wallet_id' => $lockedBalance->wallet_id,
-                'wallet_balance_id' => $lockedBalance->id,
-                'currency_id' => $lockedBalance->currency_id,
-                'type' => 'adjustment',
-                'direction' => $direction,
-                'amount' => $amount,
-                'balance_available_before' => $availableBefore,
-                'balance_available_after' => $lockedBalance->available_amount,
-                'balance_held_before' => $heldBefore,
-                'balance_held_after' => $heldBefore,
-                'idempotency_key' => $idempotencyKey,
-                'reason' => $reason,
-                'status' => 'completed',
-                'metadata' => $safeMetadata,
-            ]);
-
-            return [$transaction, true];
-        });
+            throw $exception;
+        }
 
         if ($created) {
             $this->recordManualAdjustmentActivity($transaction, $targetUser, $actor, $direction, $reference);
+        }
+
+        return $transaction;
+    }
+
+    private function replayWalletTransaction(array $payload): WalletTransaction
+    {
+        if (isset($payload['error_code'])) {
+            throw new RuntimeException((string) $payload['error_code']);
+        }
+
+        $transaction = WalletTransaction::query()->find($payload['wallet_transaction_id'] ?? null);
+        if (! $transaction) {
+            throw new RuntimeException('idempotency_replay_resource_missing');
         }
 
         return $transaction;
@@ -389,6 +451,7 @@ class WalletTransactionService
         foreach ($metadata as $key => $value) {
             if (in_array(strtolower((string) $key), $forbidden, true)) {
                 unset($metadata[$key]);
+
                 continue;
             }
 

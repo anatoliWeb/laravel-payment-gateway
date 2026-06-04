@@ -88,6 +88,8 @@ Repeating the same key with the same currency, direction, and amount returns the
 
 Reusing the key for a different adjustment returns `idempotency_key_conflict`.
 
+Phase 14 stores a central actor-scoped `wallet.adjustment` record before ledger mutation. The derived local wallet transaction key remains a second safety layer.
+
 ## Ledger Safety
 
 The API never mutates a wallet balance directly.
@@ -138,7 +140,7 @@ Planned naming examples:
 - `billing.providers.use.simulator`
 - `billing.providers.use.<provider>`
 
-These future permissions are documented but not seeded or enforced yet. A provider permission would be an additional authorization check, not a replacement for ownership, risk guards, provider configuration validation, or idempotency.
+Current simulator/internal/manual source-provider readiness permissions are seeded for admin but not enforced on normal payment flows. Future real-provider permissions remain documentation-only. A provider permission would be an additional authorization check, not a replacement for ownership, risk guards, provider configuration validation, or idempotency.
 
 ## Testing Strategy
 

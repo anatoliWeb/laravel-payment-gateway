@@ -711,25 +711,36 @@ Adding a new provider should be repeatable: create a provider folder, implement 
 
 ## Phase 14 — Idempotency Support
 
-- [ ] Require `Idempotency-Key` for payment creation
-- [ ] Create `IdempotencyService`
-- [ ] Generate request hash
-- [ ] Store idempotency key
-- [ ] Store response body
-- [ ] Store response status
-- [ ] Return previous response for same key and same payload
-- [ ] Reject same key with different payload
-- [ ] Prevent duplicate payments
-- [ ] Prevent duplicate wallet debit
-- [ ] Prevent duplicate payment method charge
-- [ ] Prevent duplicate wallet-first fallback charge
-- [ ] Prevent duplicate auto top-up
-- [ ] Store idempotency relation to payment method charge if applicable
-- [ ] Store idempotency relation to wallet transaction if applicable
-- [ ] Add tests for idempotency replay
-- [ ] Add tests for idempotency conflict
-- [ ] Add tests for duplicate prevention
-- [ ] Document idempotency in `docs/billing/idempotency.md`
+- [x] Require `Idempotency-Key` for payment creation
+- [x] Create `IdempotencyService`
+- [x] Generate deterministic safe request hash
+- [x] Store hashed idempotency key by user and scope
+- [x] Store safe response body
+- [x] Store response status
+- [x] Return previous response for same key and same payload
+- [x] Reject same key with different payload
+- [x] Block active processing requests
+- [x] Add idempotency TTL and expired-record restart
+- [x] Prevent duplicate payments
+- [x] Prevent duplicate wallet debit
+- [x] Prevent duplicate payment method charge
+- [x] Prevent duplicate wallet-first fallback charge
+- [x] Prevent duplicate wallet top-up
+- [x] Prevent duplicate wallet adjustment
+- [x] Prevent duplicate auto top-up
+- [x] Prevent duplicate auto charge
+- [x] Store idempotency relation to payment/payment-method charge
+- [x] Store idempotency relation to wallet transaction
+- [x] Add payment source permissions to seeder
+- [x] Add provider usage permissions to seeder
+- [x] Add idempotency permissions to seeder
+- [x] Add tests for payment source/provider/idempotency permissions
+- [x] Add tests for idempotency replay
+- [x] Add tests for idempotency conflict
+- [x] Add tests for duplicate prevention
+- [x] Document idempotency in `docs/billing/idempotency.md`
+
+Payment source/provider permissions are seeded as RBAC readiness and are not enforced on normal user payment flows yet. Future real provider adapters must add `provider.charge` idempotency forwarding without storing or forwarding unsafe metadata.
 
 ---
 

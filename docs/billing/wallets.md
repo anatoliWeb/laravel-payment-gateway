@@ -90,11 +90,13 @@ Adjustment is implemented as a permission-gated billing operation through the wa
 
 ## Idempotency Notes
 
-`WalletTransactionService` includes a local idempotency guard.
+`WalletTransactionService` includes a local ledger idempotency guard.
 
 If a completed wallet transaction already exists for the same wallet and idempotency key, the existing transaction is returned and the balance is not changed again.
 
-This does not replace the full payment idempotency layer planned for Phase 14.
+Phase 14 central idempotency protects payment, top-up, adjustment, and automation orchestration before side effects. The local guard remains a second protection for wallet balance mutation.
+
+See [Idempotency Support](./idempotency.md).
 
 ## Payment Integration Readiness
 

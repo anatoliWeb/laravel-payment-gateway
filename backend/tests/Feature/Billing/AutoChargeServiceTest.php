@@ -94,6 +94,28 @@ class AutoChargeServiceTest extends TestCase
         ]);
     }
 
+    public function test_repeated_auto_charge_key_replays_without_duplicate_payment(): void
+    {
+        [$user] = $this->userReadyForAutoCharge();
+
+        $first = app(AutoChargeService::class)->chargeWithDefaultMethod(
+            $user,
+            2500,
+            'USD',
+            idempotencyKey: 'auto-charge-replay',
+        );
+        $second = app(AutoChargeService::class)->chargeWithDefaultMethod(
+            $user,
+            2500,
+            'USD',
+            idempotencyKey: 'auto-charge-replay',
+        );
+
+        $this->assertTrue($second['allowed']);
+        $this->assertTrue($first['payment']->is($second['payment']));
+        $this->assertSame(1, Payment::query()->count());
+    }
+
     public function test_payment_blocked_user_cannot_auto_charge(): void
     {
         [$user] = $this->userReadyForAutoCharge();

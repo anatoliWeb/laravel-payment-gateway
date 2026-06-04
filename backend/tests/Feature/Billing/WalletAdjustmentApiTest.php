@@ -138,7 +138,7 @@ class WalletAdjustmentApiTest extends TestCase
             ->assertNotFound();
     }
 
-    public function test_request_requires_reason_idempotency_and_rejects_unsafe_metadata(): void
+    public function test_request_requires_reason_and_rejects_unsafe_metadata(): void
     {
         $this->actorWithPermissions(['billing.wallets.adjust']);
         $target = User::factory()->create();
@@ -151,7 +151,18 @@ class WalletAdjustmentApiTest extends TestCase
             'metadata' => ['secret' => 'unsafe'],
             'card_number' => '4242424242424242',
         ])->assertStatus(422)
-            ->assertJsonValidationErrors(['reason', 'Idempotency-Key', 'metadata.secret', 'card_number']);
+            ->assertJsonValidationErrors(['reason', 'metadata.secret', 'card_number']);
+    }
+
+    public function test_request_returns_stable_error_when_idempotency_key_is_missing(): void
+    {
+        $this->actorWithPermissions(['billing.wallets.adjust']);
+        $target = User::factory()->create();
+        $this->activeCurrency('USD');
+
+        $this->postJson('/api/v1/billing/wallet-adjustments', $this->payload($target, 'credit'))
+            ->assertStatus(422)
+            ->assertJsonPath('errors.code', 'idempotency_key_required');
     }
 
     public function test_repeated_idempotency_key_does_not_duplicate_adjustment_or_activity(): void

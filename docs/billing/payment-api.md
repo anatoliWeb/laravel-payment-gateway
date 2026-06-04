@@ -210,12 +210,14 @@ Required now:
 - `POST /api/v1/billing/wallet/top-ups`
 - `POST /api/v1/billing/wallet-adjustments`
 
-Phase 13.3 uses local wallet transaction idempotency guards for balance mutation. Full request replay/conflict storage remains Phase 14.
+Phase 14 adds central request replay/conflict storage. Payment creation and wallet top-up now store user-scoped, hashed idempotency keys and deterministic safe payload fingerprints.
+
+The local wallet transaction guard remains as a second ledger-level protection.
 
 ## Stable Error Codes
 
 Current stable domain codes include:
-- `idempotency_key_missing`
+- `idempotency_key_required`
 - `insufficient_wallet_balance`
 - `payment_method_not_found`
 - `payment_method_not_allowed`
@@ -236,6 +238,7 @@ Rules:
 - payment method resources expose last4 only
 - wallet transaction resources hide raw idempotency keys
 - metadata is validated and output is whitelisted
+- raw idempotency keys are hashed before registry storage
 
 ## Simulator-Only Behavior
 
@@ -260,3 +263,5 @@ Phase 13.3 API tests cover:
 Phase 13.3 implements the Wallet/Card Payment API Interface foundation.
 
 Provider adapter/config readiness is documented in [External Payment Provider Integration Readiness](./payment-providers.md).
+
+Central replay, conflict, processing, and expiration behavior is documented in [Idempotency Support](./idempotency.md).

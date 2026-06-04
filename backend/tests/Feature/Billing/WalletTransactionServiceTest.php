@@ -143,6 +143,7 @@ class WalletTransactionServiceTest extends TestCase
             reason: 'Support-approved correction',
             reference: 'ticket-2001',
             idempotencyKey: 'manual-credit-service-1',
+            metadata: ['case_type' => 'support'],
         );
 
         $this->assertTrue($first->is($second));

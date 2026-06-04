@@ -274,7 +274,7 @@ Allowed transition guidance:
 
 Stable error cases:
 - `validation_failed`
-- `idempotency_key_missing`
+- `idempotency_key_required`
 - `idempotency_conflict`
 - `payment_not_found`
 - `invalid_payment_state`

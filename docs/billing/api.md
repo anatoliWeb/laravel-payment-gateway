@@ -67,7 +67,7 @@ Auth/tracing/idempotency:
 - Recommended not required for simulation endpoints (state-machine + permission guarded admin/demo actions).
 - Same key + same payload: replay same response.
 - Same key + different payload: `409 idempotency_conflict`.
-- Missing key on required endpoints: stable error (`idempotency_key_missing`).
+- Missing key on required service operations: stable error (`idempotency_key_required`).
 - Idempotency records expire by configurable TTL.
 
 ## Common Response Envelope
@@ -109,7 +109,7 @@ Auth/tracing/idempotency:
 - `payment_already_finalized`
 - `invalid_payment_state`
 - `payment_expired`
-- `idempotency_key_missing`
+- `idempotency_key_required`
 - `idempotency_conflict`
 - `webhook_delivery_not_found`
 - `webhook_retry_not_allowed`
@@ -197,12 +197,12 @@ Auth/tracing/idempotency:
   - `wallet`: debit internal wallet balance and create a succeeded internal payment
   - `payment_method`: create a simulator-safe payment-method attempt
   - `wallet_first`: debit wallet when funds are available, otherwise fall back to default active payment method
-- Phase 13 requires `Idempotency-Key` for the write request, but full idempotency replay/conflict storage remains Phase 14.
+- Phase 14 stores central user-scoped idempotency replay/conflict state before payment side effects.
 - Phase 13 does not activate subscriptions, send webhooks, or call real providers.
 - Phase 13.1 runs demo-safe payment risk checks before wallet debit or simulator payment-method processing.
 - Response:
   - `201` on first create
-  - `200` on idempotency replay
+  - `201` on idempotency replay of the original create result
 
 Payment method and preference persistence details: [Payment Methods & User Payment Preferences](./payment-methods.md).
 Payment risk guard details: [Payment Risk & Fraud Guard](./payment-risk.md).

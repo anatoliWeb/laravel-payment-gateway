@@ -188,7 +188,7 @@ Guidance:
 - `PaymentMethod`: `fake_card`, `fake_manual_invoice`, `fake_bank_transfer`, `fake_wallet`, `fake_balance`
 - `PaymentProvider`: `simulator`
 - `PaymentFailureReason`: `insufficient_funds`, `card_declined`, `expired_card`, `provider_timeout`, `fraud_suspected`, `manual_rejection`, `unknown`
-- `IdempotencyStatus`: `processing`, `completed`, `conflict`, `expired`
+- `IdempotencyStatus`: `processing`, `completed`, `failed`, `expired`
 - `WebhookEventType`: `payment.created`, `payment.succeeded`, `payment.failed`, `payment.expired`, `subscription.activated`, `subscription.cancelled`, `invoice.paid`, `usage.limit_exceeded`
 
 ## Payment Status Transitions
@@ -256,8 +256,10 @@ Guidance:
 
 - `processing`: request in-flight/locked
 - `completed`: response persisted and replayable
-- `conflict`: same key used with mismatched payload
+- `failed`: stable operation failure persisted and replayable
 - `expired`: TTL elapsed / cleanup applied
+
+Payload conflicts return `idempotency_key_conflict` without persisting a separate conflict lifecycle row.
 
 Operational note:
 - stale `processing` locks must be recoverable via `locked_until` + cleanup policy

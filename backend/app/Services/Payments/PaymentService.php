@@ -31,32 +31,81 @@ class PaymentService
         private readonly PaymentRiskService $paymentRiskService,
         private readonly PaymentProviderFactory $paymentProviderFactory,
         private readonly PaymentProviderConfigResolver $paymentProviderConfigResolver,
-    ) {
-    }
+        private readonly IdempotencyService $idempotencyService,
+    ) {}
 
     public function createPayment(CreatePaymentData $data): Payment
     {
         if (trim($data->idempotencyKey) === '') {
-            throw new RuntimeException('idempotency_key_missing');
+            throw new RuntimeException('idempotency_key_required');
         }
 
-        $currency = $this->resolveCurrency($data->currency);
-        [$subscription, $plan, $amount] = $this->resolveContextAndAmount($data, $currency);
-        $source = $this->resolvePaymentSource($data, $amount, $currency->code);
-        $risk = $this->paymentRiskService->checkBeforePaymentCreation($data, $amount, $currency->code, $source);
-
-        if (! $risk['allowed']) {
-            throw new RuntimeException($risk['reason'] ?? 'risk_check_failed');
+        $idempotencyPayload = $this->idempotencyPayload($data);
+        $replay = $this->idempotencyService->replay(
+            $data->idempotencyKey,
+            'payment.create',
+            $idempotencyPayload,
+            $data->user,
+        );
+        if ($replay !== null) {
+            return $this->replayPayment($replay);
         }
 
-        return DB::transaction(function () use ($data, $currency, $subscription, $plan, $amount, $source): Payment {
-            return match ($source) {
-                'wallet' => $this->createWalletPayment($data, $currency->code, $subscription, $plan, $amount),
-                'payment_method' => $this->createPaymentMethodPayment($data, $currency->code, $subscription, $plan, $amount),
-                'wallet_first' => $this->createWalletFirstPayment($data, $currency->code, $subscription, $plan, $amount),
-                default => throw new RuntimeException('invalid_payment_source'),
-            };
-        });
+        $idempotencyRecord = $this->idempotencyService->start(
+            $data->idempotencyKey,
+            'payment.create',
+            $idempotencyPayload,
+            $data->user,
+        );
+        if (in_array($idempotencyRecord->status, ['completed', 'failed'], true)) {
+            return $this->replayPayment((array) $idempotencyRecord->response_body);
+        }
+
+        try {
+            $currency = $this->resolveCurrency($data->currency);
+            [$subscription, $plan, $amount] = $this->resolveContextAndAmount($data, $currency);
+            $source = $this->resolvePaymentSource($data, $amount, $currency->code);
+            $risk = $this->paymentRiskService->checkBeforePaymentCreation($data, $amount, $currency->code, $source);
+
+            if (! $risk['allowed']) {
+                throw new RuntimeException($risk['reason'] ?? 'risk_check_failed');
+            }
+
+            return DB::transaction(function () use (
+                $data,
+                $currency,
+                $subscription,
+                $plan,
+                $amount,
+                $source,
+                $idempotencyRecord,
+            ): Payment {
+                $payment = match ($source) {
+                    'wallet' => $this->createWalletPayment($data, $currency->code, $subscription, $plan, $amount),
+                    'payment_method' => $this->createPaymentMethodPayment($data, $currency->code, $subscription, $plan, $amount),
+                    'wallet_first' => $this->createWalletFirstPayment($data, $currency->code, $subscription, $plan, $amount),
+                    default => throw new RuntimeException('invalid_payment_source'),
+                };
+
+                $this->idempotencyService->complete(
+                    $idempotencyRecord,
+                    ['payment_id' => $payment->id],
+                    $payment->id,
+                    Payment::class,
+                );
+
+                return $payment;
+            });
+        } catch (Throwable $exception) {
+            if ($idempotencyRecord->fresh()?->status === 'processing') {
+                $this->idempotencyService->fail(
+                    $idempotencyRecord,
+                    $exception->getMessage() ?: 'payment_creation_failed',
+                );
+            }
+
+            throw $exception;
+        }
     }
 
     private function createWalletPayment(
@@ -404,8 +453,7 @@ class PaymentService
         PaymentMethod $paymentMethod,
         int $amount,
         string $currency,
-    ): array
-    {
+    ): array {
         $config = $this->paymentProviderConfigResolver->resolve($paymentMethod->provider, $data->user);
         if (! $config->enabled) {
             throw new RuntimeException($config->errorCode ?? 'provider_not_configured');
@@ -421,7 +469,7 @@ class PaymentService
                 customerReference: (string) $data->user->id,
                 description: $data->description,
                 metadata: $this->sanitizeMetadata($data->metadata),
-                idempotencyKey: $data->idempotencyKey,
+                idempotencyKey: $this->providerIdempotencyKey($data),
                 callbackUrl: $data->callbackUrl,
                 providerConfig: $config->credentials,
             ));
@@ -449,7 +497,42 @@ class PaymentService
 
     private function walletIdempotencyKey(CreatePaymentData $data): string
     {
-        return 'payment:'.$data->idempotencyKey.':wallet_debit';
+        return 'payment:'.hash('sha256', $data->user->id.'|'.$data->idempotencyKey).':wallet_debit';
+    }
+
+    private function providerIdempotencyKey(CreatePaymentData $data): string
+    {
+        return 'payment:'.hash('sha256', $data->user->id.'|'.$data->idempotencyKey).':provider_charge';
+    }
+
+    private function idempotencyPayload(CreatePaymentData $data): array
+    {
+        return [
+            'amount' => $data->amount,
+            'currency' => strtoupper($data->currency),
+            'payment_source' => $data->paymentSource,
+            'payment_strategy' => $data->paymentStrategy,
+            'payment_method_id' => $data->paymentMethodId,
+            'subscription_id' => $data->subscriptionId,
+            'plan_slug' => $data->planSlug,
+            'callback_url' => $data->callbackUrl,
+            'description' => $data->description,
+            'metadata' => $this->sanitizeMetadata($data->metadata),
+        ];
+    }
+
+    private function replayPayment(array $payload): Payment
+    {
+        if (isset($payload['error_code'])) {
+            throw new RuntimeException((string) $payload['error_code']);
+        }
+
+        $payment = Payment::query()->find($payload['payment_id'] ?? null);
+        if (! $payment) {
+            throw new RuntimeException('idempotency_replay_resource_missing');
+        }
+
+        return $payment;
     }
 
     private function sanitizeMetadata(array $metadata): array
@@ -469,6 +552,7 @@ class PaymentService
         foreach ($metadata as $key => $value) {
             if (in_array(strtolower((string) $key), $forbidden, true)) {
                 unset($metadata[$key]);
+
                 continue;
             }
 

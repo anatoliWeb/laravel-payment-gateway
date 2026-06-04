@@ -53,7 +53,7 @@ class WalletApiTest extends TestCase
             'amount' => 1000,
             'currency' => 'USD',
         ])->assertStatus(422)
-            ->assertJsonValidationErrors(['Idempotency-Key']);
+            ->assertJsonPath('errors.code', 'idempotency_key_required');
 
         $this->withHeader('Idempotency-Key', 'wallet-top-up-invalid')
             ->postJson('/api/v1/billing/wallet/top-ups', [

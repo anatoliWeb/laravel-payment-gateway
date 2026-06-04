@@ -43,6 +43,22 @@ Wallets:
 - `billing.wallets.credit`
 - `billing.wallets.debit`
 
+Payment source usage readiness:
+- `billing.payment_sources.use.wallet`
+- `billing.payment_sources.use.payment_method`
+- `billing.payment_sources.use.wallet_first`
+- `billing.payment_sources.use.manual_invoice`
+- `billing.payment_sources.use.simulator`
+
+Provider usage readiness:
+- `billing.providers.use.simulator`
+- `billing.providers.use.manual`
+- `billing.providers.use.internal_wallet`
+
+Idempotency operations readiness:
+- `billing.idempotency.view`
+- `billing.idempotency.manage`
+
 Currencies:
 - `billing.currencies.view`
 - `billing.currencies.manage`
@@ -115,7 +131,7 @@ Wallet adjustment is the first implemented permission-gated billing operation. P
 - `billing.providers.use.ukrsibbank`
 - `billing.providers.use.oschadbank`
 
-These planned permissions are not seeded or enforced yet. Provider/source authorization is an additional security boundary and does not replace ownership checks, risk guards, provider configuration validation, or idempotency.
+Simulator/current source and idempotency readiness permissions are seeded for the admin role but are not enforced on normal user payment flows yet. Future real-provider permission names remain documentation-only. Provider/source authorization is an additional security boundary and does not replace ownership checks, risk guards, provider configuration validation, or idempotency.
 
 ## Future API Usage
 

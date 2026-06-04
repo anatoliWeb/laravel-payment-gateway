@@ -113,6 +113,8 @@ Wallet/card runtime API interface is documented in [Wallet/Card Payment API Inte
 
 External payment provider abstraction and credential boundaries are documented in [External Payment Provider Integration Readiness](./payment-providers.md).
 
+Central billing write replay/conflict handling is documented in [Idempotency Support](./idempotency.md).
+
 ## app/Services/Payments
 
 Planned services:
@@ -120,7 +122,7 @@ Planned services:
 - `PaymentSimulationService`: success/failure simulation orchestration.
 - `PaymentStatusTransitionService`: legal transition enforcement.
 - `PaymentTransactionService`: append-only timeline writes.
-- `IdempotencyService`: replay/conflict guard for create/retry.
+- `IdempotencyService`: implemented user-scoped replay/conflict/processing/expiry guard for billing writes.
 - `WebhookDeliveryService`: delivery state + scheduling coordination.
 - `WebhookPayloadBuilder`: payload shaping/sanitization.
 - `PaymentRetryService`: new-attempt creation flow.
