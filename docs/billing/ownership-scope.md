@@ -58,6 +58,16 @@ Payments keep the existing `user_id` for backward compatibility and add:
 
 Existing user-scoped payments remain valid when all new ownership fields are null.
 
+## Invoice Ownership
+
+Invoices use the same additive ownership model as payments:
+- `payer_user_id`
+- nullable `company_id`
+- nullable `seller_id`
+- nullable `ownership_metadata`
+
+Seller scope infers company scope, and conflicting seller/company combinations are rejected before invoice creation. Existing user-scoped invoices remain valid without company or seller ownership.
+
 Payment simulation preserves ownership fields during status transitions. See [Payment Simulation Flow](./payment-simulation.md).
 
 ## Provider Account Ownership

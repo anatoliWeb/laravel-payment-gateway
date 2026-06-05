@@ -18,6 +18,7 @@ class PaymentResource extends JsonResource
             'payment_method' => $this->payment_method,
             'provider' => $this->provider,
             'provider_reference' => $this->provider_reference,
+            'invoice_id' => $this->invoice_id,
             'wallet_transaction_id' => $this->metadata['wallet_transaction_id'] ?? null,
             'payment_method_summary' => $this->when(
                 isset($this->metadata['payment_method_id']),

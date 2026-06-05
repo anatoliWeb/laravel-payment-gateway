@@ -865,20 +865,30 @@ Phase 16 implements outbound billing webhooks only. Inbound provider webhook end
 
 ---
 
-## Phase 17 — Queue Integration
+## Phase 17 — Invoice Flow
 
-- [ ] Verify Redis queue connection
-- [ ] Verify queue-worker container
-- [ ] Add payment webhook job
-- [ ] Add payment activity job if needed
-- [ ] Add subscription activation job if needed
-- [ ] Add failed job handling
-- [ ] Add retry/backoff strategy
-- [ ] Add queue tests with fake queue
-- [ ] Add docs for queue commands
-- [ ] Add docs for queue-worker Docker usage
-
----
+- [x] Design invoices table
+- [x] Design invoice_items table
+- [x] Create Invoice model
+- [x] Create InvoiceItem model
+- [x] Add invoice relations
+- [x] Add invoice item relations
+- [x] Add invoice lifecycle statuses
+- [x] Add invoice total calculation
+- [x] Add invoice issuing
+- [x] Add invoice voiding
+- [x] Add payment pending state
+- [x] Link invoice to payment
+- [x] Link invoice to subscription if needed
+- [x] Add ownership scope to invoices
+- [x] Add invoice permissions
+- [x] Add invoice activity logs
+- [x] Add tests for invoices
+- [x] Add tests for invoice payment flow
+- [x] Document invoice flow in `docs/billing/invoices.md`
+- [x] Add invoice API endpoints
+- [x] Add invoice resources/requests
+- [x] Add invoice API tests
 
 ## Phase 18 — Cron / Scheduler
 

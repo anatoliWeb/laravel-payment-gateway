@@ -36,6 +36,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/auto-top-up.md](./billing/auto-top-up.md) - Auto top-up and auto charge foundation
 - [billing/payment-api.md](./billing/payment-api.md) - Wallet/card payment API interface
 - [billing/payment-simulation.md](./billing/payment-simulation.md) - Simulator-safe payment status transition flow
+- [billing/invoices.md](./billing/invoices.md) - Invoice lifecycle, ownership, and payment linking
 - [billing/wallet-adjustments.md](./billing/wallet-adjustments.md) - Permission-gated manual wallet credit/debit API
 - [billing/idempotency.md](./billing/idempotency.md) - Central billing write replay and conflict protection
 - [billing/ownership-scope.md](./billing/ownership-scope.md) - Company/seller ownership foundation and demo seed data
@@ -73,6 +74,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Auto Top-Up -> [./billing/auto-top-up.md](./billing/auto-top-up.md)
 - Billing Payment API -> [./billing/payment-api.md](./billing/payment-api.md)
 - Billing Payment Simulation -> [./billing/payment-simulation.md](./billing/payment-simulation.md)
+- Billing Invoices -> [./billing/invoices.md](./billing/invoices.md)
 - Billing Webhooks -> [./billing/webhooks.md](./billing/webhooks.md)
 - Wallet Adjustments -> [./billing/wallet-adjustments.md](./billing/wallet-adjustments.md)
 - Billing Idempotency -> [./billing/idempotency.md](./billing/idempotency.md)

@@ -64,6 +64,11 @@ class Seller extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
     public function providerAccounts(): HasMany
     {
         return $this->hasMany(PaymentProviderAccount::class);

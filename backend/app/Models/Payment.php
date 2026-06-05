@@ -86,6 +86,11 @@ class Payment extends Model
         return $this->belongsTo(Subscription::class);
     }
 
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
+    }
+
     // WHY: Retry attempts are modeled as new payment rows so the original
     // attempt stays immutable and audit-friendly.
     public function parentPayment(): BelongsTo

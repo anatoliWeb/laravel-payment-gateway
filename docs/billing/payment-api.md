@@ -6,6 +6,8 @@ Phase 13.3 exposes the runtime API surface for wallet balance, wallet top-up, sa
 
 The API is simulator-safe and uses the existing service layer instead of embedding billing logic in controllers.
 
+Phase 17 adds invoice payment creation through `POST /api/v1/billing/invoices/{invoice}/pay`. The generated payment amount equals invoice `due_amount`, currency must match the invoice, and the invoice moves to `payment_pending` until a later safe payment-success transition marks it paid.
+
 ## Non-Goals
 
 This phase does not implement:

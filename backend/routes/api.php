@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\V1\Chat\ChatPresenceController;
 use App\Http\Controllers\Api\V1\Chat\ChatWebhookEndpointController;
 use App\Http\Controllers\Api\V1\Chat\ChatIncomingWebhookController;
 use App\Http\Controllers\Api\V1\Billing\PaymentController;
+use App\Http\Controllers\Api\V1\Billing\InvoiceController;
 use App\Http\Controllers\Api\V1\Billing\PaymentMethodController;
 use App\Http\Controllers\Api\V1\Billing\PaymentPreferenceController;
 use App\Http\Controllers\Api\V1\Billing\PaymentSimulationController;
@@ -392,6 +393,21 @@ Route::prefix('v1')
 
                         Route::post('/payments', [PaymentController::class, 'store'])
                             ->name('payments.store');
+                        Route::get('/invoices', [InvoiceController::class, 'index'])
+                            ->name('invoices.index');
+                        Route::post('/invoices', [InvoiceController::class, 'store'])
+                            ->middleware('permission:billing.invoices.create')
+                            ->name('invoices.store');
+                        Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])
+                            ->name('invoices.show');
+                        Route::post('/invoices/{invoice}/issue', [InvoiceController::class, 'issue'])
+                            ->middleware('permission:billing.invoices.manage')
+                            ->name('invoices.issue');
+                        Route::post('/invoices/{invoice}/void', [InvoiceController::class, 'void'])
+                            ->middleware('permission:billing.invoices.manage')
+                            ->name('invoices.void');
+                        Route::post('/invoices/{invoice}/pay', [InvoiceController::class, 'pay'])
+                            ->name('invoices.pay');
                         Route::post('/payments/{payment}/simulate/success', [PaymentSimulationController::class, 'success'])
                             ->middleware('permission:billing.payments.simulate')
                             ->name('payments.simulate.success');

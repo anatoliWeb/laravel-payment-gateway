@@ -135,6 +135,11 @@ class User extends Authenticatable
         return $this->hasMany(Subscription::class);
     }
 
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class, 'payer_user_id');
+    }
+
     public function wallet()
     {
         return $this->hasOne(Wallet::class);

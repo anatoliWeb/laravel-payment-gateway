@@ -3,6 +3,7 @@
 namespace App\Services\Billing;
 
 use App\Models\Company;
+use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Seller;
 use App\Models\User;
@@ -102,6 +103,20 @@ class OwnershipScopeService
 
         return $payment->company !== null
             && $this->canActorAccessCompany($actor, $payment->company);
+    }
+
+    public function canActorAccessInvoice(User $actor, Invoice $invoice): bool
+    {
+        if ((int) ($invoice->payer_user_id ?? $invoice->user_id) === (int) $actor->id) {
+            return true;
+        }
+
+        if ($invoice->seller !== null && $this->canActorAccessSeller($actor, $invoice->seller)) {
+            return true;
+        }
+
+        return $invoice->company !== null
+            && $this->canActorAccessCompany($actor, $invoice->company);
     }
 
     /**

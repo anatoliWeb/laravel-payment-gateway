@@ -79,7 +79,7 @@ Planned services:
 - `FeatureUsageService`: usage read/update/reset orchestration.
 - `UsageLimitService`: limit policy evaluation and threshold decisions.
 - `BillingCycleService`: period/cycle window calculations.
-- `InvoiceService` (future): invoice lifecycle coordination.
+- `InvoiceService`: invoice lifecycle coordination, integer total calculation, ownership preservation, and payment linking.
 - `PaymentMethodService`: simulator-safe user payment method management.
 - `PaymentPreferenceService`: payment strategy and explicit consent management.
 - `PaymentRiskService`: demo-safe guard before payment creation side effects.

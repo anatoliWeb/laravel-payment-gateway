@@ -423,6 +423,59 @@ Recommended indexes/constraints:
 - index: (`status`, `created_at`)
 - index: `provider_reference` (if provider correlation used)
 
+## invoices Table
+
+Implemented fields:
+- `id`
+- `uuid`
+- `number` (nullable unique until issued)
+- `user_id` (nullable legacy owner)
+- `payer_user_id` (nullable payer)
+- `company_id` (nullable)
+- `seller_id` (nullable)
+- `subscription_id` (nullable)
+- `payment_id` (nullable latest payment attempt)
+- `status`
+- `currency`
+- `subtotal_amount`
+- `discount_amount`
+- `tax_amount`
+- `total_amount`
+- `paid_amount`
+- `due_amount`
+- lifecycle timestamps: `issued_at`, `due_at`, `paid_at`, `voided_at`, `overdue_at`
+- `description`
+- `metadata`
+- `ownership_metadata`
+- timestamps
+
+Notes:
+- all amounts use integer minor units
+- subscription linkage does not activate or renew subscriptions
+- payment linkage marks invoice `payment_pending` only
+- company/seller ownership supports future reports
+
+## invoice_items Table
+
+Implemented fields:
+- `id`
+- `invoice_id`
+- `item_type`
+- `description`
+- `quantity`
+- `unit_amount`
+- `subtotal_amount`
+- `discount_amount`
+- `tax_amount`
+- `total_amount`
+- `metadata`
+- timestamps
+
+Notes:
+- no floats
+- quantity is service-validated as positive
+- totals are recalculated by `InvoiceService`
+
 ## payment_transactions Table
 
 Planned fields:

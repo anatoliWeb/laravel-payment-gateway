@@ -127,6 +127,25 @@ Retry policy:
 - allowed: `failed`
 - optionally allowed by admin policy: `permanently_failed`
 
+## InvoiceStatus
+
+Values:
+- `draft`
+- `issued`
+- `payment_pending`
+- `paid`
+- `failed`
+- `void`
+- `overdue`
+- `cancelled`
+
+Final statuses:
+- `paid`
+- `void`
+- `cancelled`
+
+Phase 17 enforces invoice transitions in `InvoiceService`.
+
 ## BillingFeature
 
 Decision:
