@@ -11,13 +11,13 @@ use App\Models\Subscription;
 use App\Models\User;
 use App\Models\WalletTransaction;
 use App\Services\Billing\WalletTransactionService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class PaymentCreationFlowTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_payment_creation_requires_idempotency_key(): void
     {

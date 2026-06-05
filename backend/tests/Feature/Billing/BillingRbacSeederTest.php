@@ -6,12 +6,12 @@ use App\Models\Permission;
 use App\Models\Role;
 use Database\Seeders\BillingPermissionSeeder;
 use Database\Seeders\UserSeeder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class BillingRbacSeederTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_billing_permissions_are_seeded_and_assigned_to_admin_role(): void
     {

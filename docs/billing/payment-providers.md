@@ -151,7 +151,9 @@ No external retry execution exists because no real adapter is connected.
 
 The contract includes webhook verification, and the simulator has predictable fake signature validation for direct tests.
 
-No public provider webhook endpoint is created in Phase 13.4. Inbound routes and delivery processing remain Phase 16.
+No public provider webhook endpoint is created in Phase 13.4.
+
+Phase 16 implements outbound billing webhooks only: our system sends signed delivery callbacks to client URLs after simulator payment status changes. Real inbound provider webhooks remain future provider-specific work.
 
 ## Planned Provider Adapters
 

@@ -40,6 +40,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/idempotency.md](./billing/idempotency.md) - Central billing write replay and conflict protection
 - [billing/ownership-scope.md](./billing/ownership-scope.md) - Company/seller ownership foundation and demo seed data
 - [billing/payment-providers.md](./billing/payment-providers.md) - External provider integration readiness
+- [billing/webhooks.md](./billing/webhooks.md) - Outbound billing webhook delivery flow
 - [billing/providers/README.md](./billing/providers/README.md) - Provider adapter documentation convention
 - [billing/providers/_template/README.md](./billing/providers/_template/README.md) - Provider adapter documentation template
 - [billing/providers/simulator/README.md](./billing/providers/simulator/README.md) - Implemented simulator provider notes
@@ -72,6 +73,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Auto Top-Up -> [./billing/auto-top-up.md](./billing/auto-top-up.md)
 - Billing Payment API -> [./billing/payment-api.md](./billing/payment-api.md)
 - Billing Payment Simulation -> [./billing/payment-simulation.md](./billing/payment-simulation.md)
+- Billing Webhooks -> [./billing/webhooks.md](./billing/webhooks.md)
 - Wallet Adjustments -> [./billing/wallet-adjustments.md](./billing/wallet-adjustments.md)
 - Billing Idempotency -> [./billing/idempotency.md](./billing/idempotency.md)
 - Billing Ownership Scope -> [./billing/ownership-scope.md](./billing/ownership-scope.md)
@@ -229,6 +231,7 @@ Improves developer navigation and onboarding experience.
 - [Billing Auto Top-Up](./billing/auto-top-up.md)
 - [Billing Payment API](./billing/payment-api.md)
 - [Billing Payment Simulation](./billing/payment-simulation.md)
+- [Billing Webhooks](./billing/webhooks.md)
 - [Billing Ownership Scope](./billing/ownership-scope.md)
 - [Billing Payment Providers](./billing/payment-providers.md)
 - [Commands](./commands.md)

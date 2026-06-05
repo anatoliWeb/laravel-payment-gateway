@@ -38,6 +38,7 @@ class PaymentSimulationService
 
     public function __construct(
         private readonly ActivityService $activityService,
+        private readonly WebhookDeliveryService $webhookDeliveryService,
     ) {}
 
     public function simulateSuccess(Payment $payment, User $actor, array $metadata = []): Payment
@@ -118,6 +119,7 @@ class PaymentSimulationService
             ]);
 
             $this->recordActivity($locked, $actor, $previousStatus, $targetStatus, $reason, $safeMetadata);
+            $this->recordWebhookDelivery($locked, $targetStatus, $safeMetadata);
 
             return $locked->refresh();
         });
@@ -195,5 +197,27 @@ class PaymentSimulationService
         }
 
         return $metadata;
+    }
+
+    private function recordWebhookDelivery(Payment $payment, string $targetStatus, array $metadata): void
+    {
+        $eventType = match ($targetStatus) {
+            'succeeded' => 'payment.succeeded',
+            'failed' => 'payment.failed',
+            default => null,
+        };
+
+        if ($eventType === null) {
+            return;
+        }
+
+        $delivery = $this->webhookDeliveryService->createForPaymentEvent($payment, $eventType, [
+            'source' => 'payment_simulation_service',
+            'simulation_metadata' => $metadata,
+        ]);
+
+        if ($delivery !== null) {
+            $this->webhookDeliveryService->dispatch($delivery);
+        }
     }
 }

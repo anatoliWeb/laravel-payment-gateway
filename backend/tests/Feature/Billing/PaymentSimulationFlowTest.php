@@ -10,13 +10,13 @@ use App\Models\Permission;
 use App\Models\Seller;
 use App\Models\Subscription;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class PaymentSimulationFlowTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_user_with_simulate_permission_can_simulate_success(): void
     {

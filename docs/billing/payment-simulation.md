@@ -132,9 +132,13 @@ Simulation endpoints do not create new payments, charges, wallet debits, or wall
 
 ## Relationship With Webhooks
 
-Phase 15 does not dispatch webhook delivery jobs.
+Phase 16 dispatches outbound webhook delivery jobs after successful simulator state transitions:
+- `payment.succeeded`
+- `payment.failed`
 
-The payment state and transaction history now provide the event source that Phase 16 can use when webhook delivery is implemented.
+Repeated same-target final simulation remains a no-op and does not create duplicate webhook deliveries.
+
+Webhook delivery details are documented in [Webhook Delivery Flow](./webhooks.md).
 
 ## Relationship With Subscription Activation
 

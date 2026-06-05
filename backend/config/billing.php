@@ -45,4 +45,17 @@ return [
             ],
         ],
     ],
+
+    'webhooks' => [
+        'secret' => env('BILLING_WEBHOOK_SECRET', env('APP_KEY')),
+        'timeout_seconds' => env('BILLING_WEBHOOK_TIMEOUT_SECONDS', 5),
+        'max_attempts' => env('BILLING_WEBHOOK_MAX_ATTEMPTS', 5),
+        'response_body_limit' => env('BILLING_WEBHOOK_RESPONSE_BODY_LIMIT', 2000),
+        'headers' => [
+            'event' => 'X-Billing-Event',
+            'delivery' => 'X-Billing-Delivery',
+            'signature' => 'X-Billing-Signature',
+            'timestamp' => 'X-Billing-Timestamp',
+        ],
+    ],
 ];

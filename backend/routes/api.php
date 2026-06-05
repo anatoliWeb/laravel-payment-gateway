@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\V1\Billing\PaymentPreferenceController;
 use App\Http\Controllers\Api\V1\Billing\PaymentSimulationController;
 use App\Http\Controllers\Api\V1\Billing\WalletAdjustmentController;
 use App\Http\Controllers\Api\V1\Billing\WalletController;
+use App\Http\Controllers\Api\V1\Billing\WebhookDeliveryController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -397,6 +398,12 @@ Route::prefix('v1')
                         Route::post('/payments/{payment}/simulate/failure', [PaymentSimulationController::class, 'failure'])
                             ->middleware('permission:billing.payments.simulate')
                             ->name('payments.simulate.failure');
+                        Route::get('/payments/{payment}/webhooks', [WebhookDeliveryController::class, 'indexForPayment'])
+                            ->middleware('permission:billing.webhooks.view')
+                            ->name('payments.webhooks.index');
+                        Route::post('/webhooks/{webhookDelivery}/retry', [WebhookDeliveryController::class, 'retry'])
+                            ->middleware('permission:billing.webhooks.retry')
+                            ->name('webhooks.retry');
                     });
 
                 /**

@@ -236,6 +236,22 @@ Simulates a demo-safe payment transition from `pending` or `processing` to `fail
 
 Simulation behavior is documented in [Payment Simulation Flow](./payment-simulation.md).
 
+## Webhook Delivery API
+
+### `GET /api/v1/billing/payments/{payment}/webhooks`
+
+Requires `billing.webhooks.view`.
+
+Returns safe outbound webhook delivery history for a payment. Full callback URLs, signatures, and secrets are not exposed.
+
+### `POST /api/v1/billing/webhooks/{webhookDelivery}/retry`
+
+Requires `billing.webhooks.retry`.
+
+Retries failed, retrying, or permanently failed outbound delivery records. Delivered, pending, and processing records return `webhook_retry_not_allowed`.
+
+Webhook behavior is documented in [Webhook Delivery Flow](./webhooks.md).
+
 ## Idempotency Requirements
 
 Required now:
@@ -269,6 +285,8 @@ Current stable domain codes include:
 - `payment_not_simulatable`
 - `payment_invalid_transition`
 - `payment_already_final`
+- `webhook_event_not_supported`
+- `webhook_retry_not_allowed`
 
 ## Security and Data Safety
 

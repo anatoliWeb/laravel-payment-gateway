@@ -828,19 +828,19 @@ Subscription activation remains a later billing lifecycle phase. Webhook dispatc
 ## Phase 16 — Webhook Delivery
 
 - [ ] Create `WebhookPayloadBuilder`
-- [ ] Create `WebhookDeliveryService`
-- [ ] Create `SendPaymentWebhookJob`
-- [ ] Create webhook delivery record
-- [ ] Send payment success webhook
-- [ ] Send payment failure webhook
-- [ ] Store webhook payload
-- [ ] Store response status
-- [ ] Store response body
-- [ ] Store attempts count
-- [ ] Mark webhook as delivered
-- [ ] Mark webhook as failed
-- [ ] Configure retry attempts
-- [ ] Configure backoff
+- [x] Create `WebhookDeliveryService`
+- [x] Create `SendPaymentWebhookJob`
+- [x] Create webhook delivery record
+- [x] Send payment success webhook
+- [x] Send payment failure webhook
+- [x] Store webhook payload
+- [x] Store response status
+- [x] Store response body
+- [x] Store attempts count
+- [x] Mark webhook as delivered
+- [x] Mark webhook as failed
+- [x] Configure retry attempts
+- [x] Configure backoff
 - [ ] Design inbound provider webhook endpoint
 - [ ] Design inbound provider webhook verification
 - [ ] Resolve provider account for inbound webhook
@@ -849,12 +849,19 @@ Subscription activation remains a later billing lifecycle phase. Webhook dispatc
 - [ ] Ignore duplicate provider webhook events safely
 - [ ] Store provider webhook reference
 - [ ] Store provider account reference for webhook event
-- [ ] Add manual retry endpoint
-- [ ] Add tests for webhook job dispatch
-- [ ] Add tests for successful webhook delivery
-- [ ] Add tests for failed webhook delivery
+- [x] Add manual retry endpoint
+- [x] Add tests for webhook job dispatch
+- [x] Add tests for successful webhook delivery
+- [x] Add tests for failed webhook delivery
 - [ ] Add tests for fake provider webhook verification
-- [ ] Document webhooks in `docs/billing/webhooks.md`
+- [x] Add webhook listing endpoint
+- [x] Add webhook signature
+- [x] Add permanently failed status
+- [x] Add webhook delivery activity logs
+- [x] Add tests for webhook retry
+- [x] Document webhooks in `docs/billing/webhooks.md`
+
+Phase 16 implements outbound billing webhooks only. Inbound provider webhook endpoint, provider signature verification, provider event mapping, and fake provider webhook verification remain future provider-specific work because real providers are intentionally disabled in demo mode. `WebhookPayloadBuilder` remains unchecked because the current payload builder is private inside `WebhookDeliveryService`; extract it only if webhook event families expand beyond payments.
 
 ---
 

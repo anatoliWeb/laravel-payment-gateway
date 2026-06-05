@@ -119,6 +119,8 @@ Company/seller payment, provider, reporting, and webhook routing scope is docume
 
 Simulator-safe payment status transitions are documented in [Payment Simulation Flow](./payment-simulation.md).
 
+Outbound payment webhook delivery is documented in [Webhook Delivery Flow](./webhooks.md).
+
 ## app/Services/Payments
 
 Planned services:

@@ -13,14 +13,14 @@ use App\Services\Billing\WalletService;
 use App\Services\Billing\WalletTransactionService;
 use App\Services\Payments\IdempotencyService;
 use App\Services\Payments\PaymentService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Sanctum\Sanctum;
 use RuntimeException;
 use Tests\TestCase;
 
 class PaymentIdempotencyTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_same_key_and_payload_replays_payment_method_payment(): void
     {
