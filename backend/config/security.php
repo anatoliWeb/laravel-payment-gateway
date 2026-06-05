@@ -16,8 +16,19 @@ return [
             'report_only' => (bool) env('SECURITY_CSP_REPORT_ONLY', false),
             'value' => env(
                 'SECURITY_CSP_VALUE',
-                "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; img-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' ws: wss: http://localhost:* http://127.0.0.1:*;"
+                "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; img-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self';"
             ),
+            'dev_vite' => [
+                'enabled' => (bool) env('SECURITY_CSP_DEV_VITE_ENABLED', true),
+                'http_origins' => array_filter(array_map(
+                    'trim',
+                    explode(',', (string) env('SECURITY_CSP_DEV_VITE_HTTP_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173'))
+                )),
+                'ws_origins' => array_filter(array_map(
+                    'trim',
+                    explode(',', (string) env('SECURITY_CSP_DEV_VITE_WS_ORIGINS', 'ws://localhost:5173,ws://127.0.0.1:5173'))
+                )),
+            ],
         ],
     ],
     'rate_limits' => [

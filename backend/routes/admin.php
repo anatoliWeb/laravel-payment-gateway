@@ -17,14 +17,15 @@ use App\Http\Controllers\Admin\PermissionController;
 Route::group([], function () {
 
         /**
-         * Vue SPA login entrypoint.
+         * Admin login entrypoint.
          *
          * WHY:
-         * The admin SPA is now rooted at /admin/*, so guest users need a
-         * first-class /admin/login route that mounts the same SPA shell.
+         * Login must stay renderable even when the Vue dev server or SPA
+         * runtime fails. Returning the server-rendered auth view prevents a
+         * blank /admin/login page while keeping the protected admin area SPA-first.
          */
         Route::middleware('guest')->get('/login', function () {
-            return view('admin.vue-app');
+            return view('auth.login');
         })->name('login');
 
         /**
