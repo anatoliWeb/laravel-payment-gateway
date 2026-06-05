@@ -3,6 +3,7 @@
 namespace App\Services\Payments;
 
 use App\DTO\Payments\CreatePaymentData;
+use App\Events\Billing\PaymentCreated;
 use App\Models\Currency;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
@@ -77,7 +78,7 @@ class PaymentService
                 throw new RuntimeException($risk['reason'] ?? 'risk_check_failed');
             }
 
-            return DB::transaction(function () use (
+            $payment = DB::transaction(function () use (
                 $data,
                 $currency,
                 $subscription,
@@ -103,6 +104,10 @@ class PaymentService
 
                 return $payment;
             });
+
+            event(new PaymentCreated($payment));
+
+            return $payment;
         } catch (Throwable $exception) {
             if ($idempotencyRecord->fresh()?->status === 'processing') {
                 $this->idempotencyService->fail(

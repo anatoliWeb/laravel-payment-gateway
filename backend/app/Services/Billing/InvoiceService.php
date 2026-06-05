@@ -3,6 +3,10 @@
 namespace App\Services\Billing;
 
 use App\DTO\Payments\CreatePaymentData;
+use App\Events\Billing\InvoiceFailed;
+use App\Events\Billing\InvoiceIssued;
+use App\Events\Billing\InvoicePaid;
+use App\Events\Billing\InvoicePaymentPending;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\User;
@@ -102,7 +106,7 @@ class InvoiceService
 
     public function issueInvoice(Invoice $invoice, User $actor): Invoice
     {
-        return DB::transaction(function () use ($invoice, $actor): Invoice {
+        $issued = DB::transaction(function () use ($invoice, $actor): Invoice {
             $invoice = $invoice->lockForUpdate()->firstWhere('id', $invoice->id);
             if (! $invoice) {
                 throw new RuntimeException('invoice_not_found');
@@ -128,11 +132,15 @@ class InvoiceService
 
             return $invoice->refresh()->load('items');
         });
+
+        event(new InvoiceIssued($issued));
+
+        return $issued;
     }
 
     public function markPaymentPending(Invoice $invoice, Payment $payment): Invoice
     {
-        return DB::transaction(function () use ($invoice, $payment): Invoice {
+        [$pending, $changed] = DB::transaction(function () use ($invoice, $payment): array {
             $invoice = $invoice->lockForUpdate()->firstWhere('id', $invoice->id);
             if (! $invoice) {
                 throw new RuntimeException('invoice_not_found');
@@ -142,7 +150,7 @@ class InvoiceService
                 && (int) $invoice->payment_id === (int) $payment->id) {
                 $payment->update(['invoice_id' => $invoice->id]);
 
-                return $invoice->refresh()->load('items', 'payment');
+                return [$invoice->refresh()->load('items', 'payment'), false];
             }
 
             $this->assertTransition($invoice, Invoice::STATUS_PAYMENT_PENDING);
@@ -157,13 +165,19 @@ class InvoiceService
 
             $this->recordActivity($invoice->refresh(), 'billing.invoice_payment_pending', 'Billing invoice payment pending', $payment);
 
-            return $invoice->refresh()->load('items', 'payment');
+            return [$invoice->refresh()->load('items', 'payment'), true];
         });
+
+        if ($changed) {
+            event(new InvoicePaymentPending($pending));
+        }
+
+        return $pending;
     }
 
     public function markPaid(Invoice $invoice, Payment $payment): Invoice
     {
-        return DB::transaction(function () use ($invoice, $payment): Invoice {
+        $paid = DB::transaction(function () use ($invoice, $payment): Invoice {
             $invoice = $invoice->lockForUpdate()->firstWhere('id', $invoice->id);
             if (! $invoice) {
                 throw new RuntimeException('invoice_not_found');
@@ -187,11 +201,15 @@ class InvoiceService
 
             return $invoice->refresh()->load('items', 'payment');
         });
+
+        event(new InvoicePaid($paid));
+
+        return $paid;
     }
 
     public function markFailed(Invoice $invoice, ?Payment $payment = null, ?string $reason = null): Invoice
     {
-        return DB::transaction(function () use ($invoice, $payment, $reason): Invoice {
+        $failed = DB::transaction(function () use ($invoice, $payment, $reason): Invoice {
             $invoice = $invoice->lockForUpdate()->firstWhere('id', $invoice->id);
             if (! $invoice) {
                 throw new RuntimeException('invoice_not_found');
@@ -211,6 +229,10 @@ class InvoiceService
 
             return $invoice->refresh()->load('items', 'payment');
         });
+
+        event(new InvoiceFailed($failed));
+
+        return $failed;
     }
 
     public function voidInvoice(Invoice $invoice, User $actor, string $reason): Invoice

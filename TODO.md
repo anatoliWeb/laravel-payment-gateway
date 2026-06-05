@@ -890,6 +890,51 @@ Phase 16 implements outbound billing webhooks only. Inbound provider webhook end
 - [x] Add invoice resources/requests
 - [x] Add invoice API tests
 
+---
+
+## Phase 17.1 - Billing Domain Events & Post-Event Actions
+
+- [x] Define billing domain event purpose
+- [x] Define post-event action boundaries
+- [x] Define payment lifecycle events
+- [x] Define invoice lifecycle events
+- [x] Define wallet lifecycle events
+- [x] Define future subscription lifecycle events
+- [x] Create `PaymentCreated` event
+- [x] Create `PaymentSucceeded` event
+- [x] Create `PaymentFailed` event
+- [x] Create `PaymentExpired` event
+- [x] Create `PaymentCancelled` event
+- [x] Create `InvoiceIssued` event
+- [x] Create `InvoicePaymentPending` event
+- [x] Create `InvoicePaid` event
+- [x] Create `InvoiceFailed` event
+- [x] Create `WalletCredited` event
+- [x] Create `WalletDebited` event
+- [x] Add listener structure for payment notifications
+- [x] Add listener structure for invoice notifications
+- [x] Add listener structure for receipt/document generation
+- [x] Add listener structure for webhook dispatch
+- [x] Add listener structure for seller/company notifications
+- [x] Add future hook for subscription activation
+- [x] Add placeholder job for receipt/document generation
+- [x] Add placeholder job for SMS notification
+- [x] Add placeholder job for email notification
+- [x] Ensure post-event actions are queued where appropriate
+- [x] Ensure post-event actions do not break payment transactions
+- [x] Ensure event payloads are safe and do not expose secrets
+- [x] Ensure idempotency/replay does not duplicate post-event actions
+- [x] Add tests for payment events
+- [x] Add tests for invoice events
+- [x] Add tests for wallet events
+- [x] Add tests that failed payment can trigger failure actions
+- [x] Add tests that repeated idempotent replay does not duplicate actions
+- [x] Document billing events in `docs/billing/payment-events.md`
+
+Billing events must support more than successful payments. The event layer prepares the project for receipts, SMS/email notifications, webhooks, seller/company notifications, documents/checks, and future subscription lifecycle actions without coupling those side effects directly to PaymentService or InvoiceService.
+
+---
+
 ## Phase 18 — Cron / Scheduler
 
 - [ ] Configure Laravel scheduler in Docker if not configured

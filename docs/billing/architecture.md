@@ -40,6 +40,7 @@ Boundary rules:
 - Payments must not depend on chat internals.
 - Chat depends on Billing feature-access abstractions, not payment internals.
 - Future Dialer reuses Billing usage/access model instead of duplicating it.
+- Billing domain events separate state transitions from post-event side effects such as notifications, receipt hooks, webhook migration hooks, and seller/company notifications.
 
 ## Target Namespace Map
 

@@ -2,6 +2,8 @@
 
 namespace App\Services\Payments;
 
+use App\Events\Billing\PaymentFailed;
+use App\Events\Billing\PaymentSucceeded;
 use App\Models\Payment;
 use App\Models\PaymentTransaction;
 use App\Models\User;
@@ -60,7 +62,7 @@ class PaymentSimulationService
         ?string $reason,
         array $metadata,
     ): Payment {
-        return DB::transaction(function () use ($payment, $actor, $targetStatus, $reason, $metadata): Payment {
+        [$transitioned, $changed] = DB::transaction(function () use ($payment, $actor, $targetStatus, $reason, $metadata): array {
             $locked = Payment::query()
                 ->whereKey($payment->id)
                 ->lockForUpdate()
@@ -69,7 +71,7 @@ class PaymentSimulationService
             $this->assertSimulatable($locked);
 
             if ($locked->status === $targetStatus && in_array($locked->status, self::FINAL_STATUSES, true)) {
-                return $locked->refresh();
+                return [$locked->refresh(), false];
             }
 
             if (in_array($locked->status, self::FINAL_STATUSES, true)) {
@@ -121,8 +123,18 @@ class PaymentSimulationService
             $this->recordActivity($locked, $actor, $previousStatus, $targetStatus, $reason, $safeMetadata);
             $this->recordWebhookDelivery($locked, $targetStatus, $safeMetadata);
 
-            return $locked->refresh();
+            return [$locked->refresh(), true];
         });
+
+        if ($changed && $targetStatus === 'succeeded') {
+            event(new PaymentSucceeded($transitioned));
+        }
+
+        if ($changed && $targetStatus === 'failed') {
+            event(new PaymentFailed($transitioned));
+        }
+
+        return $transitioned;
     }
 
     private function assertSimulatable(Payment $payment): void

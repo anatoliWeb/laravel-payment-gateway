@@ -1,5 +1,7 @@
 # Webhook Delivery Flow
 
+Phase 17.1 adds a billing webhook listener boundary, but it intentionally does not create webhook deliveries yet. Phase 16 already dispatches outbound payment webhooks directly from payment simulation, so listener-owned webhook dispatch is documented as a future migration path to avoid duplicate callbacks. See [Billing Payment Events](./payment-events.md).
+
 ## Purpose
 
 Phase 16 implements outbound billing webhooks for payment lifecycle events.

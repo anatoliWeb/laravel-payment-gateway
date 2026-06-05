@@ -7,13 +7,13 @@ use App\Models\User;
 use App\Models\WalletTransaction;
 use App\Services\Billing\WalletService;
 use App\Services\Billing\WalletTransactionService;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use RuntimeException;
 use Tests\TestCase;
 
 class WalletTransactionServiceTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_credit_increases_available_balance_and_writes_ledger(): void
     {

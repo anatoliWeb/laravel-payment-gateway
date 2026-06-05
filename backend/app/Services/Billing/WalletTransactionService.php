@@ -2,6 +2,8 @@
 
 namespace App\Services\Billing;
 
+use App\Events\Billing\WalletCredited;
+use App\Events\Billing\WalletDebited;
 use App\Models\User;
 use App\Models\Wallet;
 use App\Models\WalletBalance;
@@ -356,6 +358,7 @@ class WalletTransactionService
 
         if ($created) {
             $this->recordManualAdjustmentActivity($transaction, $targetUser, $actor, $direction, $reference);
+            $this->dispatchWalletMutationEvent($transaction);
         }
 
         return $transaction;
@@ -385,7 +388,7 @@ class WalletTransactionService
         array $metadata,
         callable $mutator,
     ): WalletTransaction {
-        return DB::transaction(function () use ($user, $currencyCode, $amount, $type, $direction, $idempotencyKey, $metadata, $mutator): WalletTransaction {
+        [$transaction, $created] = DB::transaction(function () use ($user, $currencyCode, $amount, $type, $direction, $idempotencyKey, $metadata, $mutator): array {
             $balance = $this->walletService->getOrCreateBalance($user, $currencyCode);
             if (! $balance) {
                 throw new RuntimeException('wallet_currency_not_available');
@@ -399,7 +402,7 @@ class WalletTransactionService
                     ->first();
 
                 if ($existing) {
-                    return $existing;
+                    return [$existing, false];
                 }
             }
 
@@ -413,7 +416,7 @@ class WalletTransactionService
             $lockedBalance->save();
 
             // WHY: Transactions are ledger history; balance rows hold current state.
-            return WalletTransaction::query()->create([
+            return [WalletTransaction::query()->create([
                 'uuid' => (string) Str::uuid(),
                 'wallet_id' => $lockedBalance->wallet_id,
                 'wallet_balance_id' => $lockedBalance->id,
@@ -433,8 +436,14 @@ class WalletTransactionService
                 'reason' => $metadata['reason'] ?? null,
                 'status' => 'completed',
                 'metadata' => array_merge(['source' => 'wallet_transaction_service'], $metadata),
-            ]);
+            ]), true];
         });
+
+        if ($created) {
+            $this->dispatchWalletMutationEvent($transaction);
+        }
+
+        return $transaction;
     }
 
     private function assertPositiveAmount(int $amount): void
@@ -486,6 +495,17 @@ class WalletTransactionService
             ]);
         } catch (Throwable) {
             // Ledger integrity must not depend on activity logging availability.
+        }
+    }
+
+    private function dispatchWalletMutationEvent(WalletTransaction $transaction): void
+    {
+        if ($transaction->direction === 'credit') {
+            event(new WalletCredited($transaction->refresh()));
+        }
+
+        if ($transaction->direction === 'debit') {
+            event(new WalletDebited($transaction->refresh()));
         }
     }
 }

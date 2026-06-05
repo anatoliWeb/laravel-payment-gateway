@@ -1,5 +1,7 @@
 # Idempotency Support
 
+Billing domain events respect current idempotency boundaries: payment creation replay, wallet adjustment replay, and invoice payment replay return existing records without dispatching duplicate post-event actions.
+
 ## Purpose
 
 Phase 14 adds a central idempotency registry for sensitive billing write operations.

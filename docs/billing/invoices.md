@@ -14,6 +14,9 @@ Invoices provide financial context for payment attempts. They group line items, 
 
 ## Invoice Lifecycle
 
+Invoice lifecycle transitions dispatch domain events for post-event actions:
+`InvoiceIssued`, `InvoicePaymentPending`, `InvoicePaid`, and `InvoiceFailed`.
+
 Statuses:
 - `draft`
 - `issued`

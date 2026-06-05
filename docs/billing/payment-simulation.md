@@ -1,5 +1,9 @@
 # Payment Simulation Flow
 
+Payment simulation dispatches billing domain events after successful state changes:
+`PaymentSucceeded` for simulator success and `PaymentFailed` for simulator failure.
+Repeated final-state no-ops do not dispatch duplicate events.
+
 ## Purpose
 
 Phase 15 adds simulator-safe payment status transitions for demo payment attempts.
