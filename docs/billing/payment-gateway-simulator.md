@@ -67,6 +67,8 @@ Design notes:
 
 ## Payment Success Simulation Flow
 
+Implemented runtime details are documented in [Payment Simulation Flow](./payment-simulation.md).
+
 1. Authorized caller requests simulate-success.
 2. System validates current payment state.
 3. System locks payment row / prevents concurrent conflicting transitions.
@@ -83,6 +85,8 @@ Behavior rules:
 - Finalized `failed/cancelled/expired` payments should not be force-converted to succeeded via same attempt.
 
 ## Payment Failure Simulation Flow
+
+Implemented runtime details are documented in [Payment Simulation Flow](./payment-simulation.md).
 
 1. Authorized caller requests simulate-failure.
 2. System validates failure reason.

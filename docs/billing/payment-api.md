@@ -209,6 +209,33 @@ These fields are shape-validated by the FormRequest and business-validated by `O
 
 When `payment_source` is omitted, `PaymentService` resolves the source from preference strategy or available default method/wallet balance.
 
+## Payment Simulation API
+
+### `POST /api/v1/billing/payments/{payment}/simulate/success`
+
+Requires `billing.payments.simulate`.
+
+Simulates a demo-safe payment transition from `pending` or `processing` to `succeeded`.
+
+### `POST /api/v1/billing/payments/{payment}/simulate/failure`
+
+Requires `billing.payments.simulate`.
+
+Body:
+
+```json
+{
+  "reason": "card_declined",
+  "metadata": {
+    "scenario": "demo_decline"
+  }
+}
+```
+
+Simulates a demo-safe payment transition from `pending` or `processing` to `failed`.
+
+Simulation behavior is documented in [Payment Simulation Flow](./payment-simulation.md).
+
 ## Idempotency Requirements
 
 Required now:
@@ -239,6 +266,9 @@ Current stable domain codes include:
 - `seller_not_found`
 - `seller_not_active`
 - `payment_ownership_scope_conflict`
+- `payment_not_simulatable`
+- `payment_invalid_transition`
+- `payment_already_final`
 
 ## Security and Data Safety
 

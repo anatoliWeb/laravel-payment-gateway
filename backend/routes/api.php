@@ -27,6 +27,7 @@ use App\Http\Controllers\Api\V1\Chat\ChatIncomingWebhookController;
 use App\Http\Controllers\Api\V1\Billing\PaymentController;
 use App\Http\Controllers\Api\V1\Billing\PaymentMethodController;
 use App\Http\Controllers\Api\V1\Billing\PaymentPreferenceController;
+use App\Http\Controllers\Api\V1\Billing\PaymentSimulationController;
 use App\Http\Controllers\Api\V1\Billing\WalletAdjustmentController;
 use App\Http\Controllers\Api\V1\Billing\WalletController;
 use Illuminate\Support\Facades\Route;
@@ -390,6 +391,12 @@ Route::prefix('v1')
 
                         Route::post('/payments', [PaymentController::class, 'store'])
                             ->name('payments.store');
+                        Route::post('/payments/{payment}/simulate/success', [PaymentSimulationController::class, 'success'])
+                            ->middleware('permission:billing.payments.simulate')
+                            ->name('payments.simulate.success');
+                        Route::post('/payments/{payment}/simulate/failure', [PaymentSimulationController::class, 'failure'])
+                            ->middleware('permission:billing.payments.simulate')
+                            ->name('payments.simulate.failure');
                     });
 
                 /**

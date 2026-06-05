@@ -117,6 +117,8 @@ Central billing write replay/conflict handling is documented in [Idempotency Sup
 
 Company/seller payment, provider, reporting, and webhook routing scope is documented in [Company / Seller Ownership Scope](./ownership-scope.md).
 
+Simulator-safe payment status transitions are documented in [Payment Simulation Flow](./payment-simulation.md).
+
 ## app/Services/Payments
 
 Planned services:

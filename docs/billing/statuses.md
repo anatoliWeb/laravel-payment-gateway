@@ -193,6 +193,8 @@ Guidance:
 
 ## Payment Status Transitions
 
+Phase 15 implements simulator-safe success/failure transitions for `pending` and `processing` payments. See [Payment Simulation Flow](./payment-simulation.md).
+
 | From | To | Allowed | Trigger | Notes |
 | --- | --- | --- | --- | --- |
 | `null` | `pending` | yes | create payment | initial attempt |

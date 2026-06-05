@@ -58,6 +58,8 @@ Payments keep the existing `user_id` for backward compatibility and add:
 
 Existing user-scoped payments remain valid when all new ownership fields are null.
 
+Payment simulation preserves ownership fields during status transitions. See [Payment Simulation Flow](./payment-simulation.md).
+
 ## Provider Account Ownership
 
 Provider accounts add nullable `company_id` and `seller_id`.

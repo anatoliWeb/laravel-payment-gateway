@@ -799,22 +799,29 @@ The demo ownership graph is deterministic and local/demo-safe. It must not conve
 
 ## Phase 15 — Payment Simulation Flow
 
-- [ ] Create `PaymentSimulationService`
-- [ ] Add success simulation
-- [ ] Add failure simulation
-- [ ] Add invalid state protection
-- [ ] Add payment row locking if needed
-- [ ] Mark payment as succeeded
-- [ ] Mark payment as failed
-- [ ] Store failure reason
-- [ ] Create payment transaction for success
-- [ ] Create payment transaction for failure
+- [x] Create `PaymentSimulationService`
+- [x] Add success simulation
+- [x] Add failure simulation
+- [x] Add invalid state protection
+- [x] Add payment row locking if needed
+- [x] Mark payment as succeeded
+- [x] Mark payment as failed
+- [x] Store failure reason
+- [x] Create payment transaction for success
+- [x] Create payment transaction for failure
 - [ ] Activate subscription after successful payment
-- [ ] Do not activate subscription after failed payment
+- [x] Do not activate subscription after failed payment
 - [ ] Dispatch webhook job after payment status change
-- [ ] Add tests for successful payment
-- [ ] Add tests for failed payment
-- [ ] Add tests for invalid state transitions
+- [x] Add tests for successful payment
+- [x] Add tests for failed payment
+- [x] Add tests for invalid state transitions
+- [x] Add simulation endpoints
+- [x] Add permission checks for simulation
+- [x] Add activity log for simulated success
+- [x] Add activity log for simulated failure
+- [x] Document simulation flow in `docs/billing/payment-simulation.md`
+
+Subscription activation remains a later billing lifecycle phase. Webhook dispatch remains Phase 16. Phase 15 only records simulator-safe payment state transitions, transaction history, and activity logs.
 
 ---
 
