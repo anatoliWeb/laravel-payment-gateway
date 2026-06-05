@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Application;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -64,6 +65,39 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->group(base_path('routes/admin.php'));
         },
     )
+
+    /**
+     * ------------------------------------------------------------
+     * Scheduler Configuration
+     * ------------------------------------------------------------
+     *
+     * Registers operational billing maintenance tasks.
+     */
+    ->withSchedule(function (Schedule $schedule): void {
+        // WHY: Payment expiration mutates financial state, so overlapping
+        // scheduler ticks must not race on the same pending payment rows.
+        $schedule->command('billing:expire-pending-payments')
+            ->everyFiveMinutes()
+            ->withoutOverlapping();
+
+        $schedule->command('billing:retry-webhooks')
+            ->everyMinute()
+            ->withoutOverlapping();
+
+        $schedule->command('billing:reset-usage')
+            ->hourly()
+            ->withoutOverlapping();
+
+        $schedule->command('billing:check-subscription-expiration')
+            ->hourly()
+            ->withoutOverlapping();
+
+        // WHY: Cleanup is limited to non-ledger runtime data and never deletes
+        // financial history such as payments, invoices, or wallet movements.
+        $schedule->command('billing:cleanup')
+            ->dailyAt('03:30')
+            ->withoutOverlapping();
+    })
 
     /**
      * ------------------------------------------------------------

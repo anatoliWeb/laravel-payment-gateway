@@ -80,7 +80,9 @@ Concurrent requests with the same fingerprint are blocked while the lock is acti
 
 Records receive a 24-hour TTL.
 
-After `expires_at`, replay stops and the same key/scope can start a new processing lifecycle. Cleanup jobs and management endpoints remain future work.
+After `expires_at`, replay stops and the same key/scope can start a new processing lifecycle. Management endpoints remain future work.
+
+Phase 18 adds scheduler cleanup for expired idempotency records after an explicit retention window. Financial ledgers are not deleted by cleanup. See [Cron / Scheduler](./scheduler.md).
 
 ## Payment Creation
 

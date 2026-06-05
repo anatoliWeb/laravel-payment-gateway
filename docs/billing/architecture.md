@@ -41,6 +41,7 @@ Boundary rules:
 - Chat depends on Billing feature-access abstractions, not payment internals.
 - Future Dialer reuses Billing usage/access model instead of duplicating it.
 - Billing domain events separate state transitions from post-event side effects such as notifications, receipt hooks, webhook migration hooks, and seller/company notifications.
+- Scheduler commands provide operational maintenance for expiration, retry, usage reset, and cleanup without replacing service-layer lifecycle rules.
 
 ## Target Namespace Map
 
@@ -121,6 +122,8 @@ Company/seller payment, provider, reporting, and webhook routing scope is docume
 Simulator-safe payment status transitions are documented in [Payment Simulation Flow](./payment-simulation.md).
 
 Outbound payment webhook delivery is documented in [Webhook Delivery Flow](./webhooks.md).
+
+Cron and scheduled billing maintenance are documented in [Cron / Scheduler](./scheduler.md).
 
 ## app/Services/Payments
 
@@ -396,12 +399,14 @@ Planned permission keys:
 - Scheduler commands orchestrate services (idempotent by design).
 - Keep command handlers orchestration-focused.
 
-Planned commands:
+Implemented Phase 18 commands:
 - `billing:expire-pending-payments`
 - `billing:reset-usage`
 - `billing:retry-webhooks`
-- `billing:cleanup-idempotency`
-- `billing:expire-subscriptions`
+- `billing:cleanup`
+- `billing:check-subscription-expiration`
+
+Scheduler details are documented in [Cron / Scheduler](./scheduler.md).
 
 ## API Response Integration
 

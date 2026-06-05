@@ -37,6 +37,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/payment-api.md](./billing/payment-api.md) - Wallet/card payment API interface
 - [billing/payment-simulation.md](./billing/payment-simulation.md) - Simulator-safe payment status transition flow
 - [billing/payment-events.md](./billing/payment-events.md) - Billing domain events and post-event action hooks
+- [billing/scheduler.md](./billing/scheduler.md) - Cron and scheduler commands for billing runtime maintenance
 - [billing/invoices.md](./billing/invoices.md) - Invoice lifecycle, ownership, and payment linking
 - [billing/wallet-adjustments.md](./billing/wallet-adjustments.md) - Permission-gated manual wallet credit/debit API
 - [billing/idempotency.md](./billing/idempotency.md) - Central billing write replay and conflict protection
@@ -76,6 +77,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Payment API -> [./billing/payment-api.md](./billing/payment-api.md)
 - Billing Payment Simulation -> [./billing/payment-simulation.md](./billing/payment-simulation.md)
 - Billing Payment Events -> [./billing/payment-events.md](./billing/payment-events.md)
+- Billing Scheduler -> [./billing/scheduler.md](./billing/scheduler.md)
 - Billing Invoices -> [./billing/invoices.md](./billing/invoices.md)
 - Billing Webhooks -> [./billing/webhooks.md](./billing/webhooks.md)
 - Wallet Adjustments -> [./billing/wallet-adjustments.md](./billing/wallet-adjustments.md)
@@ -236,6 +238,7 @@ Improves developer navigation and onboarding experience.
 - [Billing Payment API](./billing/payment-api.md)
 - [Billing Payment Simulation](./billing/payment-simulation.md)
 - [Billing Webhooks](./billing/webhooks.md)
+- [Billing Scheduler](./billing/scheduler.md)
 - [Billing Ownership Scope](./billing/ownership-scope.md)
 - [Billing Payment Providers](./billing/payment-providers.md)
 - [Commands](./commands.md)

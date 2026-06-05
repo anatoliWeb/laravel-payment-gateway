@@ -28,7 +28,7 @@ Implemented:
 - `PaymentExpired`
 - `PaymentCancelled`
 
-`PaymentExpired` and `PaymentCancelled` are foundation events for future scheduler/cancellation flows. Current runtime integration dispatches created, succeeded, and failed events.
+`PaymentExpired` and `PaymentCancelled` are foundation events for scheduler/cancellation flows. Current runtime integration dispatches created, succeeded, failed, and scheduler-driven expired events.
 
 ## Invoice Events
 
@@ -106,3 +106,5 @@ Targeted tests cover payment events, invoice events, wallet events, placeholder 
 ## Status
 
 Phase 17.1 adds the event-driven foundation and placeholder post-event action layer. Real providers, PDF generation, and subscription lifecycle actions remain future work.
+
+Scheduler integration details are documented in [Cron / Scheduler](./scheduler.md).

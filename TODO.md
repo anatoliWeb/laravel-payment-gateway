@@ -935,17 +935,17 @@ Billing events must support more than successful payments. The event layer prepa
 
 ---
 
-## Phase 18 — Cron / Scheduler
+## Phase 18 - Cron / Scheduler
 
-- [ ] Configure Laravel scheduler in Docker if not configured
-- [ ] Add scheduled command for expired pending payments
-- [ ] Add scheduled command for usage reset
-- [ ] Add scheduled command for subscription expiration check
-- [ ] Add scheduled command for failed webhook retry if needed
-- [ ] Add scheduled command for billing cleanup if needed
-- [ ] Add command tests
-- [ ] Add scheduler docs
-- [ ] Document cron architecture in `docs/billing/scheduler.md`
+- [x] Configure Laravel scheduler in Docker if not configured
+- [x] Add scheduled command for expired pending payments
+- [x] Add scheduled command for usage reset
+- [x] Add scheduled command for subscription expiration check
+- [x] Add scheduled command for failed webhook retry if needed
+- [x] Add scheduled command for billing cleanup if needed
+- [x] Add command tests
+- [x] Add scheduler docs
+- [x] Document cron architecture in `docs/billing/scheduler.md`
 
 ---
 

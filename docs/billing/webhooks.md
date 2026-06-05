@@ -63,6 +63,8 @@ Delivery records use `pending`, `processing`, `delivered`, `retrying`, and `perm
 
 Max attempts default to `5`. Backoff starts at 30 seconds, doubles by attempt, and caps at 300 seconds.
 
+The billing scheduler queues due `pending`, `failed`, and `retrying` deliveries through `billing:retry-webhooks`. See [Cron / Scheduler](./scheduler.md).
+
 ## Manual Retry API
 
 `POST /api/v1/billing/webhooks/{webhookDelivery}/retry`

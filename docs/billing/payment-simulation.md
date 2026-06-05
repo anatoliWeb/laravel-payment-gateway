@@ -40,6 +40,7 @@ Allowed Phase 15 transitions:
 - `processing -> failed`
 
 The documented broader matrix still reserves `expired` and `cancelled` for future scheduler/admin flows.
+Phase 18 implements scheduler-driven `expired` transitions for stale simulator-safe pending/processing payments.
 
 Final statuses:
 - `succeeded`

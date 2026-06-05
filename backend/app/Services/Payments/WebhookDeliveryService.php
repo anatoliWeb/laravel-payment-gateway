@@ -133,7 +133,7 @@ class WebhookDeliveryService
 
     public function shouldRetry(WebhookDelivery $delivery): bool
     {
-        return in_array($delivery->status, ['pending', 'failed', 'retrying'], true)
+        return in_array($delivery->status, ['pending', 'queued', 'failed', 'retrying'], true)
             && (int) $delivery->attempts < (int) $delivery->max_attempts;
     }
 

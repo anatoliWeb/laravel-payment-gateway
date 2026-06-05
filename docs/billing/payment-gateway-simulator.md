@@ -323,12 +323,12 @@ Planned simulator-related scheduled tasks:
 - detect stuck processing payments
 - future recurring invoice/payment generation
 
-Planned command names (design only):
+Implemented/foundation command names:
 - `billing:expire-pending-payments`
 - `billing:retry-webhooks`
-- `billing:cleanup-idempotency`
-- `billing:cleanup-webhooks`
-- `billing:detect-stuck-payments`
+- `billing:reset-usage`
+- `billing:check-subscription-expiration`
+- `billing:cleanup`
 
 ## Activity Logging Strategy
 

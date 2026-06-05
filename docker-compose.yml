@@ -71,6 +71,24 @@ services:
       - mysql
     logging: *default-logging
 
+  scheduler:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: payment_gateway_scheduler
+    working_dir: /var/www
+    restart: unless-stopped
+    volumes:
+      - ./backend:/var/www
+    command: sh /var/www/docker/scheduler/entrypoint.sh
+    env_file:
+      - .env
+    depends_on:
+      - backend
+      - redis
+      - mysql
+    logging: *default-logging
+
   horizon:
     build:
       context: .
