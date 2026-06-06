@@ -9,7 +9,7 @@ Billing domain events create a boundary between financial state transitions and 
 - No real SMS provider integration.
 - No real email provider integration.
 - No PDF or receipt document generation.
-- No subscription activation, renewal, expiration, or cancellation.
+- No standalone subscription event classes yet.
 - No real payment provider integration.
 - No duplicate webhook delivery beyond the existing Phase 16 flow.
 
@@ -54,7 +54,7 @@ Planned names:
 - `SubscriptionExpired`
 - `SubscriptionCancelled`
 
-These are documented only. Subscription activation remains Phase 19.
+These are documented only. Phase 19 uses existing `PaymentSucceeded` and `PaymentFailed` events to trigger subscription activation, renewal, and past-due handling through [Subscription Lifecycle](./subscription-lifecycle.md). Dedicated subscription events should be added later only when more external subscribers need them.
 
 ## Post-Event Actions
 
@@ -105,6 +105,6 @@ Targeted tests cover payment events, invoice events, wallet events, placeholder 
 
 ## Status
 
-Phase 17.1 adds the event-driven foundation and placeholder post-event action layer. Real providers, PDF generation, and subscription lifecycle actions remain future work.
+Phase 17.1 adds the event-driven foundation and placeholder post-event action layer. Phase 19 consumes payment events for subscription lifecycle actions. Real providers and PDF generation remain future work.
 
 Scheduler integration details are documented in [Cron / Scheduler](./scheduler.md).

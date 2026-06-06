@@ -821,7 +821,7 @@ The demo ownership graph is deterministic and local/demo-safe. It must not conve
 - [x] Add activity log for simulated failure
 - [x] Document simulation flow in `docs/billing/payment-simulation.md`
 
-Subscription activation remains a later billing lifecycle phase. Webhook dispatch remains Phase 16. Phase 15 only records simulator-safe payment state transitions, transaction history, and activity logs.
+Subscription activation is implemented in Phase 19 through payment events. Webhook dispatch remains Phase 16. Phase 15 owns simulator-safe payment state transitions, transaction history, and activity logs.
 
 ---
 
@@ -951,22 +951,22 @@ Billing events must support more than successful payments. The event layer prepa
 
 ## Phase 19 — Subscription Lifecycle
 
-- [ ] Create subscription in pending state before payment if needed
-- [ ] Activate subscription after successful payment
-- [ ] Keep subscription inactive after failed payment
-- [ ] Handle plan upgrade
-- [ ] Handle plan downgrade
-- [ ] Handle subscription cancellation
-- [ ] Handle subscription expiration
-- [ ] Handle subscription renewal simulation
-- [ ] Renew subscription from wallet balance if user preference allows
-- [ ] Renew subscription by automatic payment method charge if user consent exists
-- [ ] Keep subscription past_due if wallet/card renewal fails
-- [ ] Add activity log for automatic renewal attempt
-- [ ] Create activity logs for subscription changes
-- [ ] Add tests for subscription activation
-- [ ] Add tests for subscription cancellation
-- [ ] Add tests for expired subscription
+- [x] Create subscription in pending state before payment if needed
+- [x] Activate subscription after successful payment
+- [x] Keep subscription inactive after failed payment
+- [x] Handle plan upgrade
+- [x] Handle plan downgrade
+- [x] Handle subscription cancellation
+- [x] Handle subscription expiration
+- [x] Handle subscription renewal simulation
+- [x] Renew subscription from wallet balance if user preference allows
+- [x] Renew subscription by automatic payment method charge if user consent exists
+- [x] Keep subscription past_due if wallet/card renewal fails
+- [x] Add activity log for automatic renewal attempt
+- [x] Create activity logs for subscription changes
+- [x] Add tests for subscription activation
+- [x] Add tests for subscription cancellation
+- [x] Add tests for expired subscription
 
 ---
 

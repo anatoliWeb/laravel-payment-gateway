@@ -8,6 +8,8 @@ The API is simulator-safe and uses the existing service layer instead of embeddi
 
 Phase 17 adds invoice payment creation through `POST /api/v1/billing/invoices/{invoice}/pay`. The generated payment amount equals invoice `due_amount`, currency must match the invoice, and the invoice moves to `payment_pending` until a later safe payment-success transition marks it paid.
 
+Phase 19 links successful payments to subscription activation and renewal through [Subscription Lifecycle](./subscription-lifecycle.md).
+
 ## Non-Goals
 
 This phase does not implement:
@@ -16,7 +18,7 @@ This phase does not implement:
 - full idempotency replay/conflict storage
 - payment success/failure simulation state machine
 - webhook delivery
-- subscription activation or renewal
+- real provider subscription activation or renewal outside the simulator lifecycle
 - frontend screens
 
 ## Authentication

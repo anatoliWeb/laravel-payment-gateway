@@ -4,6 +4,7 @@ namespace App\Services\Payments;
 
 use App\DTO\Payments\CreatePaymentData;
 use App\Events\Billing\PaymentCreated;
+use App\Events\Billing\PaymentSucceeded;
 use App\Models\Currency;
 use App\Models\Payment;
 use App\Models\PaymentMethod;
@@ -106,6 +107,10 @@ class PaymentService
             });
 
             event(new PaymentCreated($payment));
+
+            if ($payment->status === 'succeeded') {
+                event(new PaymentSucceeded($payment));
+            }
 
             return $payment;
         } catch (Throwable $exception) {

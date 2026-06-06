@@ -129,7 +129,9 @@ When exceeded:
 
 ## Subscription Lifecycle
 
-Planned statuses:
+Runtime behavior is implemented in [Subscription Lifecycle](./subscription-lifecycle.md).
+
+Statuses:
 - `none/free`
 - `pending`
 - `active`

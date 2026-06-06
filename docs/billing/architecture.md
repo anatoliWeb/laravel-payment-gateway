@@ -87,6 +87,7 @@ Planned services:
 - `PaymentRiskService`: demo-safe guard before payment creation side effects.
 - `AutoTopUpService`: simulator-safe wallet top-up automation with consent and limits.
 - `AutoChargeService`: simulator-safe automatic payment-method charge orchestration.
+- `SubscriptionLifecycleService`: pending creation, payment-gated activation, plan changes, cancellation, expiration, renewal, and past-due handling.
 - `BillingSchedulerService` (optional): command-level orchestration helpers.
 - `BillingActivityService` (optional): adapter around existing ActivityLog service.
 
@@ -118,6 +119,8 @@ External payment provider abstraction and credential boundaries are documented i
 Central billing write replay/conflict handling is documented in [Idempotency Support](./idempotency.md).
 
 Company/seller payment, provider, reporting, and webhook routing scope is documented in [Company / Seller Ownership Scope](./ownership-scope.md).
+
+Runtime subscription lifecycle behavior is documented in [Subscription Lifecycle](./subscription-lifecycle.md).
 
 Simulator-safe payment status transitions are documented in [Payment Simulation Flow](./payment-simulation.md).
 

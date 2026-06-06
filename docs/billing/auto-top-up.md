@@ -102,9 +102,7 @@ No external provider calls are made in this phase.
 
 ## Relationship With Subscription Renewal
 
-Auto charge can create a payment, but it does not activate, renew, or upgrade subscriptions.
-
-Subscription renewal and activation remain Phase 19.
+Auto charge can create a payment attempt. Subscription activation, renewal, and past-due handling are owned by [Subscription Lifecycle](./subscription-lifecycle.md) after a safe payment success or failure signal.
 
 Manual wallet top-up and runtime payment preference endpoints are documented in [Wallet/Card Payment API Interface](./payment-api.md).
 

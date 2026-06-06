@@ -147,9 +147,11 @@ Webhook delivery details are documented in [Webhook Delivery Flow](./webhooks.md
 
 ## Relationship With Subscription Activation
 
-Phase 15 does not activate, renew, upgrade, or cancel subscriptions.
+Phase 15 itself does not own subscription lifecycle rules.
 
-Successful payment simulation leaves linked subscriptions unchanged. Subscription side effects remain a later phase.
+After Phase 19, successful payment simulation dispatches `PaymentSucceeded`, and the subscription lifecycle listener may activate or renew a linked subscription. Failed simulation dispatches `PaymentFailed`, which keeps an initial pending subscription inactive or marks renewal failures as `past_due`.
+
+Subscription lifecycle details are documented in [Subscription Lifecycle](./subscription-lifecycle.md).
 
 ## Testing Strategy
 

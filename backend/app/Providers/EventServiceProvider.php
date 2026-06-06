@@ -27,6 +27,8 @@ use App\Listeners\Billing\DispatchInvoiceNotificationActions;
 use App\Listeners\Billing\DispatchPaymentNotificationActions;
 use App\Listeners\Billing\DispatchReceiptGenerationAction;
 use App\Listeners\Billing\DispatchSellerCompanyNotificationAction;
+use App\Listeners\Billing\ActivateSubscriptionAfterPaymentSucceeded;
+use App\Listeners\Billing\MarkSubscriptionPaymentFailed;
 use App\Listeners\Notifications\LogNotificationCreatedActivity;
 use App\Listeners\Rbac\InvalidatePermissionCache;
 use App\Listeners\Users\LogUserCreatedActivity;
@@ -72,12 +74,14 @@ class EventServiceProvider extends ServiceProvider
             DispatchSellerCompanyNotificationAction::class,
         ],
         PaymentSucceeded::class => [
+            ActivateSubscriptionAfterPaymentSucceeded::class,
             DispatchPaymentNotificationActions::class,
             DispatchReceiptGenerationAction::class,
             DispatchBillingWebhookAction::class,
             DispatchSellerCompanyNotificationAction::class,
         ],
         PaymentFailed::class => [
+            MarkSubscriptionPaymentFailed::class,
             DispatchPaymentNotificationActions::class,
             DispatchBillingWebhookAction::class,
             DispatchSellerCompanyNotificationAction::class,

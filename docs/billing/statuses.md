@@ -58,6 +58,8 @@ Access guidance:
 - terminal-like: `expired` (and often `cancelled` after period end).
 - restorable: `past_due`, `suspended`; `cancelled` by policy.
 
+Runtime transition handling is implemented in [Subscription Lifecycle](./subscription-lifecycle.md). Payment success activates or renews a linked subscription; payment failure keeps an initial subscription inactive or moves renewal failures to `past_due`.
+
 ## PaymentStatus
 
 Values:

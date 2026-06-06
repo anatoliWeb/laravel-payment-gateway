@@ -5,22 +5,25 @@ namespace App\Console\Commands\Billing;
 use App\Console\Commands\BaseCommand;
 use App\Models\Subscription;
 use App\Services\ActivityService;
-use Illuminate\Support\Facades\DB;
+use App\Services\Billing\PaymentPreferenceService;
+use App\Services\Billing\SubscriptionLifecycleService;
 use Throwable;
 
 /**
- * Performs the Phase 18 subscription expiration check without renewal logic.
+ * Performs subscription expiration and simulator-safe renewal checks.
  */
 class BillingCheckSubscriptionExpirationCommand extends BaseCommand
 {
     protected $signature = 'billing:check-subscription-expiration {--limit=100}';
 
-    protected $description = 'Mark safely expired subscriptions without renewal or charging.';
+    protected $description = 'Mark safely expired subscriptions and attempt configured simulator renewals.';
 
     private const EXPIRABLE_STATUSES = ['active', 'trialing', 'past_due', 'cancelled'];
 
     public function __construct(
         private readonly ActivityService $activityService,
+        private readonly SubscriptionLifecycleService $subscriptionLifecycleService,
+        private readonly PaymentPreferenceService $paymentPreferenceService,
     ) {
         parent::__construct();
     }
@@ -47,35 +50,31 @@ class BillingCheckSubscriptionExpirationCommand extends BaseCommand
 
         foreach ($ids as $subscriptionId) {
             try {
-                $expired = DB::transaction(function () use ($subscriptionId): ?Subscription {
-                    $subscription = Subscription::query()
-                        ->whereKey($subscriptionId)
-                        ->lockForUpdate()
-                        ->first();
+                $subscription = Subscription::query()->with('user', 'plan')->find($subscriptionId);
 
-                    if (! $subscription || ! $this->isStillExpirable($subscription)) {
-                        return null;
-                    }
-
-                    // WHY: Phase 18 may close clearly elapsed access windows, but
-                    // renewal, charging, and recovery states belong to Phase 19.
-                    $subscription->forceFill([
-                        'status' => 'expired',
-                        'ended_at' => $subscription->ended_at ?? now(),
-                        'metadata' => array_merge($subscription->metadata ?? [], [
-                            'expired_by' => 'billing_scheduler',
-                            'expired_checked_at' => now()->toISOString(),
-                        ]),
-                    ])->save();
-
-                    return $subscription->refresh();
-                });
-
-                if (! $expired) {
+                if (! $subscription || ! $this->isStillExpirable($subscription)) {
                     $skipped++;
                     continue;
                 }
 
+                if ($this->shouldAttemptRenewal($subscription)) {
+                    $result = $this->subscriptionLifecycleService->attemptRenewal($subscription);
+
+                    if ($result['attempted']) {
+                        $this->recordActivity($result['subscription']);
+                        $processed++;
+                        continue;
+                    }
+                }
+
+                if ($subscription->status === 'past_due' && $subscription->ended_at === null) {
+                    $skipped++;
+                    continue;
+                }
+
+                // WHY: Expiration is delegated to the lifecycle service so
+                // manual and scheduled paths share the same final-state behavior.
+                $expired = $this->subscriptionLifecycleService->expireSubscription($subscription, 'scheduler_period_elapsed');
                 $this->recordActivity($expired);
                 $processed++;
             } catch (Throwable $exception) {
@@ -102,6 +101,22 @@ class BillingCheckSubscriptionExpirationCommand extends BaseCommand
 
         return ($subscription->current_period_end !== null && $subscription->current_period_end->lessThanOrEqualTo(now()))
             || ($subscription->ended_at !== null && $subscription->ended_at->lessThanOrEqualTo(now()));
+    }
+
+    private function shouldAttemptRenewal(Subscription $subscription): bool
+    {
+        if (! in_array($subscription->status, ['active', 'trialing'], true)) {
+            return false;
+        }
+
+        if ((bool) data_get($subscription->metadata ?? [], 'auto_renew', false)) {
+            return true;
+        }
+
+        $preference = $this->paymentPreferenceService->getOrCreatePreferences($subscription->user);
+
+        return (bool) $preference->auto_charge_enabled
+            || in_array($preference->strategy, ['wallet_only', 'wallet_first'], true);
     }
 
     private function recordActivity(Subscription $subscription): void

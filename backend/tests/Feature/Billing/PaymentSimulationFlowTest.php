@@ -156,7 +156,7 @@ class PaymentSimulationFlowTest extends TestCase
         $this->assertSame(0, PaymentTransaction::query()->where('payment_id', $payment->id)->count());
     }
 
-    public function test_subscription_is_not_activated_and_ownership_fields_are_preserved(): void
+    public function test_subscription_is_activated_after_success_and_ownership_fields_are_preserved(): void
     {
         $this->actorWithSimulatePermission();
         $payer = User::factory()->create();
@@ -181,7 +181,11 @@ class PaymentSimulationFlowTest extends TestCase
 
         $payment->refresh();
 
-        $this->assertSame('pending', $subscription->refresh()->status);
+        $subscription->refresh();
+
+        $this->assertSame('active', $subscription->status);
+        $this->assertNotNull($subscription->current_period_start);
+        $this->assertNotNull($subscription->current_period_end);
         $this->assertSame($payer->id, $payment->payer_user_id);
         $this->assertSame($company->id, $payment->company_id);
         $this->assertSame($seller->id, $payment->seller_id);

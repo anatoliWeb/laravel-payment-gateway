@@ -13,6 +13,8 @@ This is a planning document, not implementation code.
 - Support both chat billing now and dialer billing later.
 - Keep MVP simple (one plan per subscription) while leaving extension points.
 
+Runtime subscription activation, upgrades, downgrades, cancellation, expiration, and renewal are implemented in [Subscription Lifecycle](./subscription-lifecycle.md).
+
 ## Planned Database Tables
 
 - `plans`

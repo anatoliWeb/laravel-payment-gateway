@@ -77,15 +77,16 @@ Safety rules:
 
 ## Subscription Expiration Check
 
-`billing:check-subscription-expiration` is a Phase 18 foundation command.
+`billing:check-subscription-expiration` delegates subscription decisions to the Phase 19 lifecycle service.
 
-It can mark clearly elapsed subscriptions as `expired` when existing period fields indicate access has ended. It does not:
-- renew subscriptions
-- charge wallet or card
-- activate pending subscriptions
-- implement past-due recovery
+It can:
+- expire elapsed subscriptions when no renewal is configured
+- attempt wallet renewal when user preferences and balance allow it
+- create simulator-safe automatic payment attempts when auto-charge consent exists
+- move failed renewal attempts to `past_due`
+- leave already `past_due` subscriptions recoverable
 
-Full subscription lifecycle and renewal simulation belong to Phase 19.
+Full lifecycle behavior is documented in [Subscription Lifecycle](./subscription-lifecycle.md).
 
 ## Webhook Retry
 

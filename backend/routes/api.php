@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\V1\Chat\ChatPresenceController;
 use App\Http\Controllers\Api\V1\Chat\ChatWebhookEndpointController;
 use App\Http\Controllers\Api\V1\Chat\ChatIncomingWebhookController;
 use App\Http\Controllers\Api\V1\Billing\PaymentController;
+use App\Http\Controllers\Api\V1\Billing\SubscriptionController;
 use App\Http\Controllers\Api\V1\Billing\InvoiceController;
 use App\Http\Controllers\Api\V1\Billing\PaymentMethodController;
 use App\Http\Controllers\Api\V1\Billing\PaymentPreferenceController;
@@ -393,6 +394,14 @@ Route::prefix('v1')
 
                         Route::post('/payments', [PaymentController::class, 'store'])
                             ->name('payments.store');
+                        Route::post('/subscriptions', [SubscriptionController::class, 'store'])
+                            ->name('subscriptions.store');
+                        Route::get('/subscriptions/{subscription}', [SubscriptionController::class, 'show'])
+                            ->name('subscriptions.show');
+                        Route::post('/subscriptions/{subscription}/change-plan', [SubscriptionController::class, 'changePlan'])
+                            ->name('subscriptions.change-plan');
+                        Route::post('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])
+                            ->name('subscriptions.cancel');
                         Route::get('/invoices', [InvoiceController::class, 'index'])
                             ->name('invoices.index');
                         Route::post('/invoices', [InvoiceController::class, 'store'])

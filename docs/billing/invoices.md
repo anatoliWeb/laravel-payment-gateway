@@ -82,7 +82,9 @@ Payments remain separate attempts with their own lifecycle. Invoice status summa
 
 ## Subscription Relationship
 
-Invoices may reference `subscription_id`, but Phase 17 does not activate, renew, cancel, or change subscriptions. Subscription activation remains Phase 19.
+Invoices may reference `subscription_id`. Phase 19 can activate or renew a linked subscription after a safe payment-success signal. Invoice creation and payment creation still do not grant access by themselves.
+
+Subscription runtime behavior is documented in [Subscription Lifecycle](./subscription-lifecycle.md).
 
 ## Permissions
 

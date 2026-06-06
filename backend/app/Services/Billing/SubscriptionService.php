@@ -32,6 +32,18 @@ class SubscriptionService
             ->exists();
     }
 
+    /**
+     * Return the latest subscription regardless of access status.
+     */
+    public function getLatestSubscription(User $user): ?Subscription
+    {
+        return $user->subscriptions()
+            ->with('plan')
+            ->latest('created_at')
+            ->latest('id')
+            ->first();
+    }
+
     public function getCurrentPlan(User $user): ?Plan
     {
         return $this->getCurrentSubscription($user)?->plan;

@@ -47,6 +47,8 @@ Access rules:
 - Admin/system roles: broader visibility/operations.
 - Simulator endpoints are not public.
 
+Implemented subscription lifecycle endpoints and behavior are documented in [Subscription Lifecycle](./subscription-lifecycle.md).
+
 ## Common Headers
 
 JSON:
@@ -63,6 +65,7 @@ Auth/tracing/idempotency:
 - Required:
   - `POST /payments`
   - `POST /payments/{payment}/retry`
+  - `POST /subscriptions` when a paid plan creates a linked payment
 - Not required for `GET`.
 - Recommended not required for simulation endpoints (state-machine + permission guarded admin/demo actions).
 - Same key + same payload: replay same response.
