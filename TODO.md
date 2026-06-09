@@ -1059,6 +1059,152 @@ Billing events must support more than successful payments. The event layer prepa
 
 ---
 
+## Phase 22.1 - Billing User Portal UI
+
+- [ ] Design user billing dashboard page
+- [ ] Show current subscription
+- [ ] Show current plan and limits
+- [ ] Show available plans
+- [ ] Show usage limits and remaining usage
+- [ ] Show payment history
+- [ ] Show invoice history
+- [ ] Show wallet balance
+- [ ] Show wallet transaction history
+- [ ] Show payment methods
+- [ ] Allow user to add simulator payment method
+- [ ] Allow user to set default payment method
+- [ ] Allow user to remove/deactivate payment method
+- [ ] Show payment preferences
+- [ ] Allow user to choose wallet-only strategy
+- [ ] Allow user to choose card/payment-method-only strategy
+- [ ] Allow user to choose wallet-first strategy
+- [ ] Allow user to enable/disable auto-charge
+- [ ] Allow user to enable/disable auto top-up
+- [ ] Show auto-charge consent state
+- [ ] Show auto top-up settings
+- [ ] Add loading/empty/error states
+- [ ] Add frontend tests if project structure supports it
+- [ ] Document user billing portal UI
+
+Note:
+This phase makes billing visible to end users. It should consume existing billing APIs and must not duplicate billing business logic on the frontend.
+
+---
+
+## Phase 22.2 - Billing Checkout / Payment UI
+
+- [ ] Design checkout page for plan purchase
+- [ ] Design invoice payment page
+- [ ] Design wallet top-up page
+- [ ] Support payment source: wallet
+- [ ] Support payment source: payment method
+- [ ] Support payment source: wallet-first
+- [ ] Show invoice summary before payment
+- [ ] Show payment amount and currency
+- [ ] Show selected seller/company context if present
+- [ ] Show payment status after creation
+- [ ] Show pending payment state
+- [ ] Show succeeded payment state
+- [ ] Show failed payment state
+- [ ] Show expired/cancelled payment state
+- [ ] Add button to simulate payment success in demo/admin mode if allowed
+- [ ] Add button to simulate payment failure in demo/admin mode if allowed
+- [ ] Prevent duplicate submit with UI lock/idempotency key
+- [ ] Display stable API error messages
+- [ ] Add frontend tests if project structure supports it
+- [ ] Document checkout/payment UI flow
+
+Note:
+Checkout UI must use idempotency keys and existing payment APIs. It must not call provider logic directly.
+
+---
+
+## Phase 22.3 - Admin / Operator Billing Management UI
+
+- [ ] Design admin billing dashboard
+- [ ] Show payments list
+- [ ] Show payment details
+- [ ] Show payment transaction history
+- [ ] Show invoices list
+- [ ] Show invoice details
+- [ ] Show subscriptions list
+- [ ] Show subscription details
+- [ ] Show wallet balances by user
+- [ ] Show wallet transaction history by user
+- [ ] Add permission-gated wallet adjustment UI
+- [ ] Allow manual wallet credit with required reason
+- [ ] Allow manual wallet debit with required reason
+- [ ] Show activity logs for billing entities
+- [ ] Show webhook deliveries
+- [ ] Allow manual webhook retry if permission exists
+- [ ] Show idempotency records if permission exists
+- [ ] Show provider accounts
+- [ ] Add provider account form readiness UI
+- [ ] Show billing restrictions / blacklist
+- [ ] Add billing restriction creation UI
+- [ ] Add billing restriction disable/expire UI
+- [ ] Show feature overrides
+- [ ] Add feature override creation UI
+- [ ] Add feature override disable/expire UI
+- [ ] Enforce frontend permission checks
+- [ ] Enforce backend permission checks through API
+- [ ] Add loading/empty/error states
+- [ ] Add frontend tests if project structure supports it
+- [ ] Document admin/operator billing UI
+
+Note:
+Frontend permission checks are only UX helpers. Backend permissions remain the source of truth.
+
+---
+
+## Phase 22.4 - Seller / Company Billing Views
+
+- [ ] Design company billing overview page
+- [ ] Design seller billing overview page
+- [ ] Show company-scoped payment history
+- [ ] Show seller-scoped payment history
+- [ ] Show company-scoped invoices
+- [ ] Show seller-scoped invoices
+- [ ] Show company-scoped customers if available
+- [ ] Show seller customers
+- [ ] Show seller revenue/payment summary
+- [ ] Show company revenue/payment summary
+- [ ] Show provider account status for seller/company
+- [ ] Show webhook delivery status for seller/company payments
+- [ ] Add filters by date/status/currency/seller/customer
+- [ ] Add export-ready table structure if useful
+- [ ] Enforce ownership scope in UI/API calls
+- [ ] Add tests if project structure supports it
+- [ ] Document seller/company billing views
+
+Note:
+These views prepare the project for reporting, but full reports/analytics can remain a later phase.
+
+---
+
+## Phase 22.5 - Billing Demo Flows
+
+- [ ] Add demo flow for free plan limits
+- [ ] Add demo flow for paid plan purchase
+- [ ] Add demo flow for wallet top-up
+- [ ] Add demo flow for wallet payment
+- [ ] Add demo flow for payment method payment
+- [ ] Add demo flow for wallet-first fallback
+- [ ] Add demo flow for invoice payment
+- [ ] Add demo flow for subscription activation
+- [ ] Add demo flow for failed payment
+- [ ] Add demo flow for webhook delivery history
+- [ ] Add demo flow for billing restriction / blacklist
+- [ ] Add demo flow for feature override
+- [ ] Add demo flow for seller/company scoped payment
+- [ ] Add screenshots or notes for portfolio README if useful
+- [ ] Document demo billing flows
+
+Note:
+Demo flows should make the portfolio easy to review without requiring Postman.
+
+---
+
 ## Phase 23 — Testing Strategy
 
 - [ ] Add feature tests for plans API
@@ -1139,3 +1285,10 @@ Billing events must support more than successful payments. The event layer prepa
 - [ ] Explain transaction boundaries
 - [ ] Explain webhook retry strategy
 - [ ] Explain idempotency strategy
+- [ ] Add screenshots or GIF notes for billing user portal
+- [ ] Add screenshots or GIF notes for checkout/payment flow
+- [ ] Add screenshots or GIF notes for admin billing management
+- [ ] Add screenshots or GIF notes for seller/company billing views
+- [ ] Add explanation of permission-gated wallet adjustments
+- [ ] Add explanation of blacklist/restrictions and feature overrides
+- [ ] Add explanation of demo payment simulator UI
