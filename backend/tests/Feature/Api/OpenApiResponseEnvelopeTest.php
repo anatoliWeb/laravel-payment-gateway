@@ -4,13 +4,13 @@ namespace Tests\Feature\Api;
 
 use App\Models\Permission;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class OpenApiResponseEnvelopeTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_success_endpoint_returns_standardized_success_envelope(): void
     {
@@ -96,4 +96,3 @@ class OpenApiResponseEnvelopeTest extends TestCase
         $this->assertStringContainsString('## Common Response Envelope', $contents);
     }
 }
-

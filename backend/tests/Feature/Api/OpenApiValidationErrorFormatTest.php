@@ -4,13 +4,13 @@ namespace Tests\Feature\Api;
 
 use App\Models\Permission;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class OpenApiValidationErrorFormatTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_form_request_endpoint_returns_standardized_422_validation_shape(): void
     {
