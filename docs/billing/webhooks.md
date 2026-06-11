@@ -93,6 +93,8 @@ Repeated same-target final simulation remains a no-op and does not create duplic
 
 If a payment has no `callback_url`, no delivery record is created.
 
+Webhook creation, dispatch, delivery, failure, permanent failure, and manual retry activity actions are documented in [Activity Logging](./activity-logging.md).
+
 ## Ownership Scope
 
 Webhook payloads include `payer_user_id`, `company_id`, and `seller_id` when present. Listing and retry endpoints use the existing payment ownership access service in addition to route permissions.

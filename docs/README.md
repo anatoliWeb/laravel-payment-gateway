@@ -37,6 +37,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/payment-api.md](./billing/payment-api.md) - Wallet/card payment API interface
 - [billing/payment-simulation.md](./billing/payment-simulation.md) - Simulator-safe payment status transition flow
 - [billing/payment-events.md](./billing/payment-events.md) - Billing domain events and post-event action hooks
+- [billing/activity-logging.md](./billing/activity-logging.md) - Billing activity log action catalog and metadata safety rules
 - [billing/scheduler.md](./billing/scheduler.md) - Cron and scheduler commands for billing runtime maintenance
 - [billing/subscription-lifecycle.md](./billing/subscription-lifecycle.md) - Subscription activation, plan changes, cancellation, renewal, and past-due handling
 - [billing/invoices.md](./billing/invoices.md) - Invoice lifecycle, ownership, and payment linking
@@ -78,6 +79,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Payment API -> [./billing/payment-api.md](./billing/payment-api.md)
 - Billing Payment Simulation -> [./billing/payment-simulation.md](./billing/payment-simulation.md)
 - Billing Payment Events -> [./billing/payment-events.md](./billing/payment-events.md)
+- Billing Activity Logging -> [./billing/activity-logging.md](./billing/activity-logging.md)
 - Billing Scheduler -> [./billing/scheduler.md](./billing/scheduler.md)
 - Billing Subscription Lifecycle -> [./billing/subscription-lifecycle.md](./billing/subscription-lifecycle.md)
 - Billing Invoices -> [./billing/invoices.md](./billing/invoices.md)
@@ -240,6 +242,7 @@ Improves developer navigation and onboarding experience.
 - [Billing Payment API](./billing/payment-api.md)
 - [Billing Payment Simulation](./billing/payment-simulation.md)
 - [Billing Webhooks](./billing/webhooks.md)
+- [Billing Activity Logging](./billing/activity-logging.md)
 - [Billing Scheduler](./billing/scheduler.md)
 - [Billing Subscription Lifecycle](./billing/subscription-lifecycle.md)
 - [Billing Ownership Scope](./billing/ownership-scope.md)

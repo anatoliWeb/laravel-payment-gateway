@@ -28,6 +28,8 @@ The registry stores a SHA-256 hash of the normalized key, never the raw client k
 
 For payment creation, requested `company_id` and `seller_id` are included in the fingerprint. Reusing a key with a different ownership context is an idempotency conflict.
 
+Replays and conflicts write safe activity logs. Metadata stores the persisted key hash and resource references, never the raw client key. See [Activity Logging](./activity-logging.md).
+
 ## Scopes
 
 Implemented scopes:

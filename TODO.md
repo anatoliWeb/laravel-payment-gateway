@@ -973,19 +973,21 @@ Billing events must support more than successful payments. The event layer prepa
 ## Phase 20 — Activity Logging
 
 - [ ] Log plan viewed if needed
-- [ ] Log subscription created
-- [ ] Log subscription activated
-- [ ] Log subscription cancelled
-- [ ] Log payment created
-- [ ] Log payment succeeded
-- [ ] Log payment failed
-- [ ] Log idempotency replay
-- [ ] Log idempotency conflict
-- [ ] Log webhook dispatched
-- [ ] Log webhook delivered
-- [ ] Log webhook failed
-- [ ] Log usage limit exceeded
-- [ ] Add tests for critical activity logs
+- [x] Log subscription created
+- [x] Log subscription activated
+- [x] Log subscription cancelled
+- [x] Log payment created
+- [x] Log payment succeeded
+- [x] Log payment failed
+- [x] Log idempotency replay
+- [x] Log idempotency conflict
+- [x] Log webhook dispatched
+- [x] Log webhook delivered
+- [x] Log webhook failed
+- [x] Log usage limit exceeded
+- [x] Add tests for critical activity logs
+
+Plan viewed is intentionally not logged because catalog browsing can create high-volume noise; plan selection, payment creation, and subscription lifecycle actions are logged instead.
 
 ---
 

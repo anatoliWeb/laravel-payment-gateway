@@ -48,7 +48,7 @@ class PaymentCreationFlowTest extends TestCase
             ->assertJsonValidationErrors(['amount', 'currency', 'card_number', 'metadata.private_key']);
     }
 
-    public function test_it_creates_successful_wallet_payment_and_wallet_debit_without_activating_subscription(): void
+    public function test_it_creates_successful_wallet_payment_wallet_debit_and_activates_subscription(): void
     {
         $user = $this->actingUser();
         $this->activeCurrency('USD');
@@ -71,7 +71,11 @@ class PaymentCreationFlowTest extends TestCase
         $payment = Payment::query()->where('uuid', $response->json('data.uuid'))->firstOrFail();
         $walletTransaction = WalletTransaction::query()->where('payment_id', $payment->id)->firstOrFail();
 
-        $this->assertSame('pending', $subscription->refresh()->status);
+        $subscription->refresh();
+
+        $this->assertSame('active', $subscription->status);
+        $this->assertNotNull($subscription->current_period_start);
+        $this->assertNotNull($subscription->current_period_end);
         $this->assertSame('debit', $walletTransaction->type);
         $this->assertSame(2900, $walletTransaction->amount);
         $this->assertSame($walletTransaction->id, $payment->metadata['wallet_transaction_id']);

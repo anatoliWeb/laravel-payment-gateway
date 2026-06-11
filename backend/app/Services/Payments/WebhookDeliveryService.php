@@ -94,6 +94,8 @@ class WebhookDeliveryService
 
     public function dispatch(WebhookDelivery $delivery): void
     {
+        $this->recordActivity(null, 'billing.webhook_dispatched', $delivery);
+
         SendWebhookDeliveryJob::dispatch($delivery->id)->afterCommit();
     }
 

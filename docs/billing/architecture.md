@@ -396,6 +396,8 @@ Planned permission keys:
 - Avoid noisy per-action logs when they add little operational value.
 - Always sanitize metadata.
 
+Implemented action names and metadata safety rules are documented in [Activity Logging](./activity-logging.md).
+
 ## Queue / Scheduler Integration
 
 - Async jobs for webhook callbacks and billing notifications.

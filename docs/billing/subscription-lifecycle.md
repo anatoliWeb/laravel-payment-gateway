@@ -158,6 +158,8 @@ Lifecycle actions use stable activity keys:
 
 Activity logging is best-effort and must not break subscription state changes.
 
+The complete billing activity action catalog is documented in [Activity Logging](./activity-logging.md).
+
 ## Design Trade-Offs
 
 Plan change details are stored in `subscriptions.metadata.pending_plan_change` for Phase 19.

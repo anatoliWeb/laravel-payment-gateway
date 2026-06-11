@@ -37,6 +37,8 @@ Responses use the shared API envelope:
 
 Domain failures return stable error codes under `errors.code`.
 
+Critical payment creation, idempotency, and wallet/payment audit events are documented in [Activity Logging](./activity-logging.md).
+
 ## Wallet API
 
 ### `GET /api/v1/billing/wallet`

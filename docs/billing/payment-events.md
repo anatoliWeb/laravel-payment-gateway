@@ -99,6 +99,8 @@ Current protections:
 
 Event payloads include stable identifiers, amounts, currency, status, payer, company, seller, subscription, invoice, and payment references. They do not include raw idempotency keys, provider secrets, raw card data, or unsafe metadata.
 
+Activity log metadata follows the same safety rules and is cataloged in [Activity Logging](./activity-logging.md).
+
 ## Testing Strategy
 
 Targeted tests cover payment events, invoice events, wallet events, placeholder queued jobs, webhook duplicate prevention, and payload safety.

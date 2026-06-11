@@ -15,7 +15,7 @@ use App\Models\Plan;
 use App\Models\PlanFeature;
 use App\Models\Subscription;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
@@ -25,7 +25,7 @@ use Tests\TestCase;
 
 class PaidChatFeaturesTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     protected function setUp(): void
     {

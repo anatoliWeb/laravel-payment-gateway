@@ -4,9 +4,11 @@ namespace App\Services\Payments;
 
 use App\Models\IdempotencyKey;
 use App\Models\User;
+use App\Services\ActivityService;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
+use Throwable;
 
 class IdempotencyService
 {
@@ -28,6 +30,10 @@ class IdempotencyService
         'provider_config',
         'credentials',
     ];
+
+    public function __construct(
+        private readonly ActivityService $activityService,
+    ) {}
 
     public function start(string $key, string $scope, array $payload, User $user): IdempotencyKey
     {
@@ -125,6 +131,8 @@ class IdempotencyService
         }
 
         if (in_array($record->status, ['completed', 'failed'], true)) {
+            $this->recordActivity($record, 'billing.idempotency_replayed', 'Billing idempotency request replayed');
+
             return (array) $record->response_body;
         }
 
@@ -167,6 +175,8 @@ class IdempotencyService
     private function assertHashMatches(IdempotencyKey $record, string $requestHash): void
     {
         if (! hash_equals($record->request_hash, $requestHash)) {
+            $this->recordActivity($record, 'billing.idempotency_conflict', 'Billing idempotency key conflict');
+
             throw new RuntimeException('idempotency_key_conflict');
         }
     }
@@ -204,6 +214,27 @@ class IdempotencyService
     private function keyHash(string $key): string
     {
         return hash('sha256', trim($key));
+    }
+
+    private function recordActivity(IdempotencyKey $record, string $action, string $description): void
+    {
+        try {
+            // WHY: Raw idempotency keys can be client secrets. Audit metadata
+            // stores only the persisted hash and safe resource references.
+            $this->activityService->log($record->user_id, $action, $description, [
+                'source' => 'idempotency_service',
+                'module' => 'billing',
+                'idempotency_key_id' => $record->id,
+                'key_hash' => $record->key,
+                'scope' => $record->scope,
+                'status' => $record->status,
+                'resource_type' => $record->related_type,
+                'resource_id' => $record->related_id,
+                'response_status' => $record->response_status,
+            ]);
+        } catch (Throwable) {
+            // Activity logging must not change idempotency behavior.
+        }
     }
 
     private function normalizeErrorCode(string $errorCode): string
