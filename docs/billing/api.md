@@ -95,6 +95,8 @@ Auth/tracing/idempotency:
 }
 ```
 
+Stable billing error codes and response rules are documented in [Billing API Errors](./api-errors.md).
+
 ## Error Codes
 
 - `validation_failed`

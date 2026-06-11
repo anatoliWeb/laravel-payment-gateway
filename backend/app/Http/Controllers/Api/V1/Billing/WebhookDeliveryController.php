@@ -26,7 +26,7 @@ class WebhookDeliveryController extends BaseController
         $actor = $request->user();
 
         if (! $this->ownershipScopeService->canActorAccessPayment($actor, $payment)) {
-            return $this->errorResponse('Payment not found.', null, 404);
+            return $this->errorResponse('Payment not found.', null, 404, 'payment_not_found');
         }
 
         $perPage = max(1, min((int) $request->query('per_page', 25), 100));
@@ -35,22 +35,11 @@ class WebhookDeliveryController extends BaseController
             ->orderByDesc('id')
             ->paginate($perPage);
 
-        $items = collect($paginator->items())
-            ->map(fn (WebhookDelivery $delivery) => (new WebhookDeliveryResource($delivery))->resolve())
-            ->values()
-            ->all();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Request successful',
-            'data' => $items,
-            'meta' => [
-                'current_page' => $paginator->currentPage(),
-                'last_page' => $paginator->lastPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
-            ],
-        ]);
+        return $this->paginatedResponse(
+            paginator: $paginator,
+            message: 'Webhook deliveries fetched successfully.',
+            resourceClass: WebhookDeliveryResource::class,
+        );
     }
 
     public function retry(Request $request, WebhookDelivery $webhookDelivery): JsonResponse
@@ -60,7 +49,7 @@ class WebhookDeliveryController extends BaseController
         $payment = $webhookDelivery->payment;
 
         if ($payment !== null && ! $this->ownershipScopeService->canActorAccessPayment($actor, $payment)) {
-            return $this->errorResponse('Webhook delivery not found.', null, 404);
+            return $this->errorResponse('Webhook delivery not found.', null, 404, 'webhook_delivery_not_found');
         }
 
         try {

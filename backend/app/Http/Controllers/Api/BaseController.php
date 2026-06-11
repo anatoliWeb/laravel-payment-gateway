@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Support\Api\ApiResponse;
+use App\Support\Billing\BillingErrorCatalog;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 
@@ -41,9 +42,12 @@ class BaseController extends Controller
     protected function errorResponse(
         string $message = 'Request failed',
         mixed $errors = null,
-        int $statusCode = 400
+        int $statusCode = 400,
+        ?string $code = null
     ): JsonResponse {
-        return ApiResponse::error($message, $errors, $statusCode);
+        $code ??= $this->inferErrorCode($errors);
+
+        return ApiResponse::error($message, $errors, $statusCode, $code);
     }
 
     /**
@@ -63,5 +67,28 @@ class BaseController extends Controller
         ?string $resourceClass = null
     ): JsonResponse {
         return ApiResponse::paginated($paginator, $message, $statusCode, $resourceClass);
+    }
+
+    /**
+     * Infer a stable error code from structured error payloads.
+     *
+     * WHY:
+     * Many billing services already return a compact `errors.code` payload.
+     * Promoting that value to the top-level envelope keeps the new contract
+     * backward-compatible without rewriting every controller branch.
+     *
+     * @param mixed $errors
+     */
+    protected function inferErrorCode(mixed $errors): ?string
+    {
+        if (! is_array($errors)) {
+            return null;
+        }
+
+        $code = $errors['code'] ?? null;
+
+        return is_string($code) && $code !== ''
+            ? BillingErrorCatalog::normalizeCode($code)
+            : null;
     }
 }

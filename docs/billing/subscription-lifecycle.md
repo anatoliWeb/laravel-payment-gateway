@@ -118,6 +118,8 @@ Subscription activation is event-driven.
 
 This keeps payment state mutation inside the payment flow and subscription access mutation inside the lifecycle service.
 
+Subscription and plan-change failures use the unified billing error envelope documented in [Billing API Errors](./api-errors.md).
+
 ## Renewal Simulation
 
 `SubscriptionLifecycleService::attemptRenewal()` handles due subscriptions:

@@ -83,6 +83,8 @@ Requires `billing.webhooks.view`.
 
 The response exposes safe delivery history only and does not return full callback URLs, signatures, or secrets.
 
+Webhook retry and delivery errors reuse the unified billing error envelope documented in [Billing API Errors](./api-errors.md).
+
 ## Payment Simulation Integration
 
 Successful simulation creates and dispatches `payment.succeeded`.

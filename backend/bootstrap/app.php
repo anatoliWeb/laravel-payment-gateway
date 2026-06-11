@@ -15,11 +15,13 @@ use App\Http\Middleware\LogRequestMiddleware;
 use App\Http\Middleware\SecurityHeadersMiddleware;
 use App\Http\Middleware\SetRequestLocale;
 use App\Http\Middleware\ExternalChatScopeMiddleware;
+use App\Support\Api\ApiResponse;
 
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -231,12 +233,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ) {
 
             if ($request->is('api/*')) {
-
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $e->errors(),
-                ], 422);
+                return ApiResponse::error(
+                    message: 'Validation failed',
+                    errors: $e->errors(),
+                    statusCode: 422,
+                    code: 'validation_failed',
+                );
             }
         });
 
@@ -252,12 +254,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ) {
 
             if ($request->is('api/*')) {
-
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Unauthenticated',
-                    'errors' => [],
-                ], 401);
+                return ApiResponse::error(
+                    message: 'Unauthenticated',
+                    errors: (object) [],
+                    statusCode: 401,
+                    code: 'unauthenticated',
+                );
             }
         });
 
@@ -274,12 +276,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ) {
 
             if ($request->is('api/*')) {
-
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Forbidden',
-                    'errors' => [],
-                ], 403);
+                return ApiResponse::error(
+                    message: 'Forbidden',
+                    errors: (object) [],
+                    statusCode: 403,
+                    code: 'forbidden',
+                );
             }
         });
 
@@ -296,12 +298,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ) {
 
             if ($request->is('api/*')) {
-
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Resource not found',
-                    'errors' => [],
-                ], 404);
+                return ApiResponse::error(
+                    message: 'Resource not found',
+                    errors: (object) [],
+                    statusCode: 404,
+                    code: 'resource_not_found',
+                );
             }
         });
 
@@ -318,12 +320,12 @@ return Application::configure(basePath: dirname(__DIR__))
         ) {
 
             if ($request->is('api/*')) {
-
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Endpoint not found',
-                    'errors' => [],
-                ], 404);
+                return ApiResponse::error(
+                    message: 'Endpoint not found',
+                    errors: (object) [],
+                    statusCode: 404,
+                    code: 'endpoint_not_found',
+                );
             }
         });
 
@@ -341,6 +343,9 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*')) {
                 $status = $e->getStatusCode();
                 $message = $e->getMessage();
+                $code = $message !== ''
+                    ? Str::of($message)->lower()->replace(['.', '/', '\\', ' '], '_')->toString()
+                    : "http_{$status}";
 
                 if ($message === '') {
                     $message = match ($status) {
@@ -351,11 +356,12 @@ return Application::configure(basePath: dirname(__DIR__))
                     };
                 }
 
-                return response()->json([
-                    'success' => false,
-                    'message' => $message,
-                    'errors' => [],
-                ], $status);
+                return ApiResponse::error(
+                    message: $message,
+                    errors: (object) [],
+                    statusCode: $status,
+                    code: $code,
+                );
             }
         });
 
@@ -381,11 +387,12 @@ return Application::configure(basePath: dirname(__DIR__))
                     ? 'Server error'
                     : $e->getMessage();
 
-                return response()->json([
-                    'success' => false,
-                    'message' => $message,
-                    'errors' => [],
-                ], 500);
+                return ApiResponse::error(
+                    message: $message,
+                    errors: (object) [],
+                    statusCode: 500,
+                    code: 'server_error',
+                );
             }
         });
 

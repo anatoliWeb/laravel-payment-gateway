@@ -68,11 +68,13 @@ class ApiResponse
         string $message = 'Request failed',
         mixed $errors = null,
         int $statusCode = 400,
+        ?string $code = null,
         ?array $meta = null
     ): JsonResponse {
         $payload = [
             'success' => false,
             'message' => $message,
+            'code' => $code ?? 'request_failed',
             'errors' => $errors ?? (object) [],
         ];
 

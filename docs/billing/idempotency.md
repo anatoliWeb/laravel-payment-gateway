@@ -155,6 +155,8 @@ Operation-specific failures such as `insufficient_wallet_balance` are stored and
 
 Reserved duplicate diagnostics such as `duplicate_wallet_debit`, `duplicate_payment_charge`, and `duplicate_auto_top_up` are not emitted because replay prevents the duplicate before it occurs.
 
+Billing replay and conflict errors follow the unified API error envelope documented in [Billing API Errors](./api-errors.md).
+
 ## Testing Strategy
 
 Targeted tests cover:

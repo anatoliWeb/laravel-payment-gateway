@@ -993,33 +993,33 @@ Plan viewed is intentionally not logged because catalog browsing can create high
 
 ## Phase 21 — Unified API Response & Errors
 
-- [ ] Review current BaseController/API response format
-- [ ] Decide final response contract
-- [ ] Ensure billing endpoints use unified success response
-- [ ] Ensure billing endpoints use unified error response
-- [ ] Add domain exceptions
-- [ ] Add payment already processed exception
-- [ ] Add invalid payment state exception
-- [ ] Add idempotency conflict exception
-- [ ] Add subscription inactive exception
-- [ ] Add feature limit exceeded exception
-- [ ] Add insufficient wallet balance exception
-- [ ] Add payment method not found exception
-- [ ] Add payment method not allowed exception
-- [ ] Add payment preference invalid exception
-- [ ] Add duplicate wallet debit exception
-- [ ] Add auto charge consent required exception
-- [ ] Add provider not configured exception
-- [ ] Add provider disabled exception
-- [ ] Add provider credentials invalid exception
-- [ ] Add provider account not found exception
-- [ ] Add provider account forbidden exception
-- [ ] Add provider charge failed exception
-- [ ] Add provider timeout exception
-- [ ] Add provider webhook signature invalid exception
-- [ ] Add provider unsupported operation exception
-- [ ] Add tests for API errors
-- [ ] Document error responses
+- [x] Review current BaseController/API response format
+- [x] Decide final response contract
+- [x] Ensure billing endpoints use unified success response
+- [x] Ensure billing endpoints use unified error response
+- [x] Add domain exceptions
+- [x] Add payment already processed exception
+- [x] Add invalid payment state exception
+- [x] Add idempotency conflict exception
+- [x] Add subscription inactive exception
+- [x] Add feature limit exceeded exception
+- [x] Add insufficient wallet balance exception
+- [x] Add payment method not found exception
+- [x] Add payment method not allowed exception
+- [x] Add payment preference invalid exception
+- [x] Add duplicate wallet debit exception
+- [x] Add auto charge consent required exception
+- [x] Add provider not configured exception
+- [x] Add provider disabled exception
+- [x] Add provider credentials invalid exception
+- [x] Add provider account not found exception
+- [x] Add provider account forbidden exception
+- [x] Add provider charge failed exception
+- [x] Add provider timeout exception
+- [x] Add provider webhook signature invalid exception
+- [x] Add provider unsupported operation exception
+- [x] Add tests for API errors
+- [x] Document error responses
 
 ---
 
