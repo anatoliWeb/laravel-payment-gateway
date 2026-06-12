@@ -3,6 +3,8 @@ import { map } from 'rxjs';
 import { ApiClientService } from '../../../api/services/api-client.service';
 import type { ApiResponse } from '../../../api/models/api-response.model';
 import type {
+  BillingActivityLog,
+  BillingAdminActivityFilters,
   BillingInvoice,
   BillingInvoicePaymentPayload,
   BillingPayment,
@@ -12,10 +14,13 @@ import type {
   BillingPaymentPreferencesPayload,
   BillingPaymentPayload,
   BillingPortalError,
+  BillingSubscription,
   BillingWallet,
+  BillingWalletAdjustmentPayload,
   BillingWalletTopUpPayload,
   BillingWalletTopUpResponse,
   BillingWalletTransaction,
+  BillingWebhookDelivery,
 } from '../models/billing.model';
 
 @Injectable({ providedIn: 'root' })
@@ -53,6 +58,50 @@ export class BillingService {
         items: Array.isArray(response.data) ? response.data : [],
         meta: response.meta ?? null,
       })),
+    );
+  }
+
+  loadSubscription(subscriptionId: number) {
+    return this.apiClient.get<BillingSubscription>(`/v1/billing/subscriptions/${subscriptionId}`).pipe(
+      map((response: ApiResponse<BillingSubscription>) => response.data ?? null),
+    );
+  }
+
+  loadActivityLogs(filters: BillingAdminActivityFilters = {}, page = 1) {
+    const params = Object.fromEntries(
+      Object.entries({
+        ...filters,
+        page,
+      }).filter(([, value]) => value !== null && value !== undefined && value !== ''),
+    ) as Record<string, string | number | boolean>;
+
+    return this.apiClient.get<BillingActivityLog[]>('/v1/activity', {
+      params,
+    }).pipe(
+      map((response: ApiResponse<BillingActivityLog[]>) => ({
+        items: Array.isArray(response.data) ? response.data : [],
+        meta: response.meta ?? null,
+      })),
+    );
+  }
+
+  loadWebhookDeliveries(paymentId: number, page = 1, perPage = 10) {
+    return this.apiClient.get<BillingWebhookDelivery[]>(`/v1/billing/payments/${paymentId}/webhooks`, {
+      params: { page, per_page: perPage },
+    }).pipe(
+      map((response: ApiResponse<BillingWebhookDelivery[]>) => ({
+        items: Array.isArray(response.data) ? response.data : [],
+        meta: response.meta ?? null,
+      })),
+    );
+  }
+
+  retryWebhookDelivery(webhookDeliveryId: number) {
+    return this.apiClient.post<BillingWebhookDelivery, Record<string, never>>(
+      `/v1/billing/webhooks/${webhookDeliveryId}/retry`,
+      {},
+    ).pipe(
+      map((response: ApiResponse<BillingWebhookDelivery>) => response.data ?? null),
     );
   }
 
@@ -137,6 +186,20 @@ export class BillingService {
       payload,
     ).pipe(
       map((response: ApiResponse<BillingPaymentPreference>) => response.data ?? null),
+    );
+  }
+
+  adjustWallet(payload: BillingWalletAdjustmentPayload, idempotencyKey: string) {
+    return this.apiClient.post<BillingWalletTransaction, BillingWalletAdjustmentPayload>(
+      '/v1/billing/wallet-adjustments',
+      payload,
+      {
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
+      },
+    ).pipe(
+      map((response: ApiResponse<BillingWalletTransaction>) => response.data ?? null),
     );
   }
 

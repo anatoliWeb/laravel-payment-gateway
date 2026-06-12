@@ -47,6 +47,18 @@ export interface BillingWalletTransaction {
   created_at: string | null;
 }
 
+export interface BillingPaginationMeta {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+}
+
+export interface BillingPaginatedResult<TItem> {
+  items: TItem[];
+  meta: BillingPaginationMeta | null;
+}
+
 export interface BillingPaymentMethod {
   id: number;
   uuid: string;
@@ -116,15 +128,74 @@ export interface BillingInvoice {
   number: string;
   status: BillingInvoiceStatus;
   currency: string;
+  subtotal_amount?: number | null;
+  discount_amount?: number | null;
+  tax_amount?: number | null;
   total_amount: number;
   due_amount: number;
   paid_amount: number;
+  payer_user_id?: number | null;
+  company_id?: number | null;
+  seller_id?: number | null;
   description: string | null;
+  issued_at?: string | null;
   due_at: string | null;
   payment_id: number | null;
   subscription_id: number | null;
+  paid_at?: string | null;
+  voided_at?: string | null;
+  overdue_at?: string | null;
   created_at: string | null;
   items?: BillingInvoiceItem[];
+}
+
+export interface BillingSubscription {
+  id: number;
+  uuid: string;
+  user_id: number;
+  plan_id: number;
+  plan_slug?: string | null;
+  status: BillingSubscriptionStatus;
+  started_at: string | null;
+  current_period_start: string | null;
+  current_period_end: string | null;
+  trial_ends_at: string | null;
+  cancelled_at: string | null;
+  cancel_at_period_end: boolean;
+  ended_at: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string | null;
+}
+
+export interface BillingActivityLog {
+  id: number;
+  user_id: number | null;
+  user: {
+    id: number;
+    name: string;
+    email: string;
+  } | null;
+  action: string;
+  description: string;
+  meta: Record<string, unknown>;
+  created_at: string | null;
+}
+
+export interface BillingWebhookDelivery {
+  id: number;
+  uuid: string;
+  payment_id: number;
+  event_type: string;
+  status: string;
+  attempts: number;
+  max_attempts: number;
+  next_attempt_at: string | null;
+  delivered_at: string | null;
+  failed_at: string | null;
+  last_error: string | null;
+  status_code: number | null;
+  callback_host: string | null;
+  created_at: string | null;
 }
 
 export interface BillingPaymentMethodPayload {
@@ -174,6 +245,17 @@ export interface BillingWalletTopUpResponse {
   wallet_transaction: BillingWalletTransaction;
 }
 
+export interface BillingWalletAdjustmentPayload {
+  user_id: number;
+  currency: string;
+  amount: number;
+  direction: 'credit' | 'debit';
+  reason: string;
+  description?: string | null;
+  reference?: string | null;
+  metadata: Record<string, unknown>;
+}
+
 export interface BillingPaymentPreferencesPayload {
   strategy: BillingPaymentStrategy;
   default_payment_method_id: number | null;
@@ -216,4 +298,15 @@ export interface BillingUsageReference {
 
 export interface BillingCheckoutResult {
   payment: BillingPayment;
+}
+
+export interface BillingAdminActivityFilters {
+  per_page?: number;
+  search?: string;
+  action?: string;
+  user_id?: number | null;
+  subject_type?: string;
+  model?: string;
+  date_from?: string | null;
+  date_to?: string | null;
 }

@@ -1,0 +1,444 @@
+<section class="admin-billing-page">
+  <ui-card>
+    <header class="hero">
+      <div class="hero__copy">
+        <p class="eyebrow">Admin billing</p>
+        <h2>Billing Management</h2>
+        <p>
+          Operator-focused billing view for invoices, subscriptions, webhook deliveries, audit logs, and permission-gated wallet adjustments.
+        </p>
+      </div>
+
+      <div class="hero__actions">
+        <app-button [disabled]="invoicesLoading || activityLoading" (click)="refresh()">
+          Refresh dashboard
+        </app-button>
+        <a class="secondary-link" routerLink="/billing">User billing portal</a>
+        <a class="secondary-link" routerLink="/billing/checkout">Checkout UI</a>
+      </div>
+    </header>
+  </ui-card>
+
+  <div class="summary-grid">
+    <article class="summary-card" *ngFor="let card of summaryCards">
+      <span class="summary-card__label">{{ card.label }}</span>
+      <strong class="summary-card__value">{{ card.value }}</strong>
+      <small class="summary-card__hint">{{ card.hint }}</small>
+    </article>
+  </div>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Invoices</h3>
+        <p>Invoice list and details are available through the existing API.</p>
+      </div>
+      <span class="status" [ngClass]="invoicesLoading ? 'status--pending' : 'status--neutral'">{{ invoicesCount }}</span>
+    </div>
+
+    <div *ngIf="invoicesError" class="error-block">
+      <p class="error-line"><strong>{{ invoicesError.code || 'invoices_error' }}</strong><span>{{ invoicesError.message }}</span></p>
+      <ul class="error-fields" *ngIf="errorFieldLines(invoicesError).length">
+        <li *ngFor="let field of errorFieldLines(invoicesError)">{{ field }}</li>
+      </ul>
+    </div>
+
+    <app-loading-state [visible]="invoicesLoading" [message]="'Loading invoices...'"></app-loading-state>
+
+    <ng-container *ngIf="!invoicesLoading && invoices.length > 0">
+      <app-data-table>
+        <table>
+          <thead>
+            <tr>
+              <th>Invoice</th>
+              <th>Status</th>
+              <th>Amount</th>
+              <th>Due</th>
+              <th>Payment</th>
+              <th>Owner</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let invoice of invoices; trackBy: trackByInvoiceId">
+              <td>
+                <strong>{{ invoice.number }}</strong>
+                <small>{{ invoice.uuid }}</small>
+              </td>
+              <td><span class="status" [ngClass]="statusClass(invoice.status)">{{ invoice.status }}</span></td>
+              <td>{{ formatAmount(invoice.total_amount, invoice.currency) }}</td>
+              <td>{{ formatAmount(invoice.due_amount, invoice.currency) }}</td>
+              <td>{{ invoice.payment_id || '-' }}</td>
+              <td>{{ invoice.payer_user_id || '-' }}</td>
+              <td>{{ invoice.created_at || '-' }}</td>
+              <td>
+                <button type="button" class="secondary-link secondary-link--button" (click)="inspectInvoice(invoice)">
+                  Inspect
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </app-data-table>
+
+      <app-pagination
+        *ngIf="invoicesMeta"
+        [currentPage]="invoicesMeta.current_page"
+        [lastPage]="invoicesMeta.last_page"
+        [perPage]="invoicesMeta.per_page"
+        [total]="invoicesMeta.total"
+        (pageChange)="loadInvoices($event)"
+      ></app-pagination>
+    </ng-container>
+
+    <app-empty-state *ngIf="!invoicesLoading && invoices.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+
+    <div class="detail-panel" *ngIf="selectedInvoice || selectedInvoiceLoading || selectedInvoiceError">
+      <div class="section-head">
+        <div>
+          <h4>Invoice detail</h4>
+          <p>Loaded from the existing invoice show endpoint.</p>
+        </div>
+        <span class="status" [ngClass]="statusClass(selectedInvoice?.status)">{{ selectedInvoice?.status || 'waiting' }}</span>
+      </div>
+
+      <app-loading-state [visible]="selectedInvoiceLoading" [message]="'Loading invoice detail...'"></app-loading-state>
+      <div *ngIf="selectedInvoiceError" class="error-block">
+        <p class="error-line"><strong>{{ selectedInvoiceError.code || 'invoice_error' }}</strong><span>{{ selectedInvoiceError.message }}</span></p>
+      </div>
+
+      <ng-container *ngIf="selectedInvoice && !selectedInvoiceLoading">
+        <div class="kv-grid">
+          <div class="kv"><span>Invoice number</span><strong>{{ selectedInvoice.number }}</strong></div>
+          <div class="kv"><span>Subtotal</span><strong>{{ formatAmount(selectedInvoice.subtotal_amount || 0, selectedInvoice.currency) }}</strong></div>
+          <div class="kv"><span>Tax</span><strong>{{ formatAmount(selectedInvoice.tax_amount || 0, selectedInvoice.currency) }}</strong></div>
+          <div class="kv"><span>Discount</span><strong>{{ formatAmount(selectedInvoice.discount_amount || 0, selectedInvoice.currency) }}</strong></div>
+          <div class="kv"><span>Total</span><strong>{{ formatAmount(selectedInvoice.total_amount, selectedInvoice.currency) }}</strong></div>
+          <div class="kv"><span>Due</span><strong>{{ formatAmount(selectedInvoice.due_amount, selectedInvoice.currency) }}</strong></div>
+          <div class="kv"><span>Paid</span><strong>{{ formatAmount(selectedInvoice.paid_amount, selectedInvoice.currency) }}</strong></div>
+          <div class="kv"><span>Payment</span><strong>{{ selectedInvoice.payment_id || '-' }}</strong></div>
+          <div class="kv"><span>Subscription</span><strong>{{ selectedInvoice.subscription_id || '-' }}</strong></div>
+          <div class="kv"><span>Company</span><strong>{{ selectedInvoice.company_id || '-' }}</strong></div>
+          <div class="kv"><span>Seller</span><strong>{{ selectedInvoice.seller_id || '-' }}</strong></div>
+          <div class="kv"><span>Due at</span><strong>{{ selectedInvoice.due_at || '-' }}</strong></div>
+        </div>
+
+        <app-data-table *ngIf="selectedInvoice.items && selectedInvoice.items.length > 0">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Discount</th>
+                <th>Tax</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of selectedInvoice.items">
+                <td>{{ item.description }}</td>
+                <td>{{ item.quantity || 1 }}</td>
+                <td>{{ formatAmount(item.unit_amount, selectedInvoice.currency) }}</td>
+                <td>{{ formatAmount(item.discount_amount || 0, selectedInvoice.currency) }}</td>
+                <td>{{ formatAmount(item.tax_amount || 0, selectedInvoice.currency) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </app-data-table>
+      </ng-container>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Subscriptions</h3>
+        <p>Subscription detail lookup is available, but a subscription list endpoint is not exposed yet.</p>
+      </div>
+      <span class="status status--pending">List gap</span>
+    </div>
+
+    <div class="admin-split">
+      <form class="panel-form" [formGroup]="subscriptionLookupForm" (ngSubmit)="lookupSubscription()">
+        <h4>Lookup subscription</h4>
+        <label>
+          <span>Subscription id</span>
+          <input type="number" formControlName="subscription_id" min="1" />
+        </label>
+        <app-button type="submit" [disabled]="subscriptionLoading">Inspect subscription</app-button>
+      </form>
+
+      <div class="panel-detail">
+        <app-loading-state [visible]="subscriptionLoading" [message]="'Loading subscription detail...'"></app-loading-state>
+        <div *ngIf="subscriptionError" class="error-block">
+          <p class="error-line"><strong>{{ subscriptionError.code || 'subscription_error' }}</strong><span>{{ subscriptionError.message }}</span></p>
+        </div>
+
+        <ng-container *ngIf="subscription && !subscriptionLoading">
+          <div class="section-head">
+            <div>
+              <h4>Subscription detail</h4>
+              <p>Loaded from the existing subscription show endpoint.</p>
+            </div>
+            <span class="status" [ngClass]="statusClass(subscription.status)">{{ subscription.status }}</span>
+          </div>
+
+          <div class="kv-grid">
+            <div class="kv"><span>Subscription id</span><strong>{{ subscription.id }}</strong></div>
+            <div class="kv"><span>UUID</span><strong>{{ subscription.uuid }}</strong></div>
+            <div class="kv"><span>User</span><strong>{{ subscription.user_id }}</strong></div>
+            <div class="kv"><span>Plan</span><strong>{{ subscription.plan_slug || subscription.plan_id }}</strong></div>
+            <div class="kv"><span>Current period start</span><strong>{{ subscription.current_period_start || '-' }}</strong></div>
+            <div class="kv"><span>Current period end</span><strong>{{ subscription.current_period_end || '-' }}</strong></div>
+            <div class="kv"><span>Cancel at period end</span><strong>{{ subscription.cancel_at_period_end ? 'Yes' : 'No' }}</strong></div>
+            <div class="kv"><span>Ended at</span><strong>{{ subscription.ended_at || '-' }}</strong></div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Wallet adjustments</h3>
+        <p>Permission-gated credit and debit actions require a reason and use client-generated idempotency keys.</p>
+      </div>
+      <span class="status" [ngClass]="canAdjustWallet ? 'status--positive' : 'status--negative'">
+        {{ canAdjustWallet ? 'Allowed' : 'Permission required' }}
+      </span>
+    </div>
+
+    <div *ngIf="!canAdjustWallet" class="gap-callout">
+      Wallet adjustments stay hidden unless the runtime RBAC context grants `billing.wallets.adjust`, `billing.wallets.credit`, or `billing.wallets.debit`.
+    </div>
+
+    <form *ngIf="canAdjustWallet" class="panel-form panel-form--wide" [formGroup]="walletAdjustmentForm" (ngSubmit)="submitWalletAdjustment()">
+      <div class="row">
+        <label>
+          <span>User id</span>
+          <input type="number" formControlName="user_id" min="1" />
+        </label>
+        <label>
+          <span>Currency</span>
+          <input type="text" formControlName="currency" maxlength="3" />
+        </label>
+        <label>
+          <span>Amount</span>
+          <input type="number" formControlName="amount" min="1" />
+        </label>
+        <label>
+          <span>Direction</span>
+          <select formControlName="direction">
+            <option value="credit">Credit</option>
+            <option value="debit">Debit</option>
+          </select>
+        </label>
+      </div>
+
+      <label>
+        <span>Reason</span>
+        <input type="text" formControlName="reason" maxlength="255" />
+      </label>
+
+      <label>
+        <span>Description</span>
+        <input type="text" formControlName="description" maxlength="255" />
+      </label>
+
+      <label>
+        <span>Reference</span>
+        <input type="text" formControlName="reference" maxlength="255" />
+      </label>
+
+      <small class="form-note">A stable idempotency key is attached automatically. Raw keys are never displayed.</small>
+
+      <div *ngIf="walletAdjustmentError" class="error-block">
+        <p class="error-line"><strong>{{ walletAdjustmentError.code || 'wallet_adjustment_error' }}</strong><span>{{ walletAdjustmentError.message }}</span></p>
+        <ul class="error-fields" *ngIf="errorFieldLines(walletAdjustmentError).length">
+          <li *ngFor="let field of errorFieldLines(walletAdjustmentError)">{{ field }}</li>
+        </ul>
+      </div>
+
+      <p *ngIf="walletAdjustmentMessage" class="success-line">{{ walletAdjustmentMessage }}</p>
+
+      <app-button type="submit" [disabled]="walletAdjustmentLoading">Submit adjustment</app-button>
+    </form>
+
+    <div *ngIf="walletAdjustmentSuccess" class="result-card">
+      <div class="section-head">
+        <div>
+          <h4>Adjustment result</h4>
+          <p>Returned from the wallet adjustment endpoint.</p>
+        </div>
+        <span class="status" [ngClass]="statusClass(walletAdjustmentSuccess.status)">{{ walletAdjustmentSuccess.status }}</span>
+      </div>
+
+      <div class="kv-grid">
+        <div class="kv"><span>UUID</span><strong>{{ walletAdjustmentSuccess.uuid }}</strong></div>
+        <div class="kv"><span>Type</span><strong>{{ walletAdjustmentSuccess.type }}</strong></div>
+        <div class="kv"><span>Direction</span><strong>{{ walletAdjustmentSuccess.direction }}</strong></div>
+        <div class="kv"><span>Amount</span><strong>{{ formatAmount(walletAdjustmentSuccess.amount, walletAdjustmentSuccess.currency) }}</strong></div>
+        <div class="kv"><span>Reason</span><strong>{{ walletAdjustmentSuccess.reason || '-' }}</strong></div>
+        <div class="kv"><span>Reference</span><strong>{{ walletAdjustmentSuccess.reference || '-' }}</strong></div>
+      </div>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Activity logs</h3>
+        <p>Billing and platform audit data are available through the generic activity endpoint.</p>
+      </div>
+      <span class="status" [ngClass]="activityLoading ? 'status--pending' : 'status--neutral'">{{ activityCount }}</span>
+    </div>
+
+    <form class="filters" [formGroup]="activityFiltersForm" (ngSubmit)="loadActivityLogs(1)">
+      <label><span>Search</span><input type="text" formControlName="search" /></label>
+      <label><span>Action</span><input type="text" formControlName="action" /></label>
+      <label><span>User id</span><input type="number" formControlName="user_id" min="1" /></label>
+      <label><span>Model</span><input type="text" formControlName="model" /></label>
+      <label><span>Subject type</span><input type="text" formControlName="subject_type" /></label>
+      <label><span>Date from</span><input type="date" formControlName="date_from" /></label>
+      <label><span>Date to</span><input type="date" formControlName="date_to" /></label>
+      <app-button type="submit" [disabled]="activityLoading">Filter</app-button>
+    </form>
+
+    <div *ngIf="activityError" class="error-block">
+      <p class="error-line"><strong>{{ activityError.code || 'activity_error' }}</strong><span>{{ activityError.message }}</span></p>
+    </div>
+
+    <app-loading-state [visible]="activityLoading" [message]="'Loading activity logs...'"></app-loading-state>
+
+    <app-data-table *ngIf="!activityLoading && activityLogs.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Action</th>
+            <th>User</th>
+            <th>Description</th>
+            <th>Source</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of activityLogs; trackBy: trackByActivityId">
+            <td><code>{{ log.action }}</code></td>
+            <td>{{ log.user?.name || log.user_id || '-' }}</td>
+            <td>{{ log.description }}</td>
+            <td>{{ log.meta['source'] || log.meta['module'] || '-' }}</td>
+            <td>{{ log.created_at || '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </app-data-table>
+
+    <app-empty-state *ngIf="!activityLoading && activityLogs.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+
+    <app-pagination
+      *ngIf="activityMeta"
+      [currentPage]="activityMeta.current_page"
+      [lastPage]="activityMeta.last_page"
+      [perPage]="activityMeta.per_page"
+      [total]="activityMeta.total"
+      (pageChange)="loadActivityLogs($event)"
+    ></app-pagination>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Webhook deliveries</h3>
+        <p>Deliveries are loaded per payment id, and failed rows can be retried when permissions allow.</p>
+      </div>
+      <span class="status" [ngClass]="canRetryWebhooks ? 'status--positive' : 'status--negative'">
+        {{ canRetryWebhooks ? 'Retry enabled' : 'Permission required' }}
+      </span>
+    </div>
+
+    <form class="filters filters--single" [formGroup]="webhookLookupForm" (ngSubmit)="lookupWebhookDeliveries()">
+      <label><span>Payment id</span><input type="number" formControlName="payment_id" min="1" /></label>
+      <app-button type="submit" [disabled]="webhookLoading">Load deliveries</app-button>
+    </form>
+
+    <div *ngIf="webhookError" class="error-block">
+      <p class="error-line"><strong>{{ webhookError.code || 'webhook_error' }}</strong><span>{{ webhookError.message }}</span></p>
+    </div>
+    <div *ngIf="webhookRetryError" class="error-block">
+      <p class="error-line"><strong>{{ webhookRetryError.code || 'webhook_retry_error' }}</strong><span>{{ webhookRetryError.message }}</span></p>
+    </div>
+    <p *ngIf="webhookRetryMessage" class="success-line">{{ webhookRetryMessage }}</p>
+
+    <app-loading-state [visible]="webhookLoading" [message]="'Loading webhook deliveries...'"></app-loading-state>
+
+    <app-data-table *ngIf="!webhookLoading && webhookDeliveries.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Status</th>
+            <th>Attempts</th>
+            <th>Response</th>
+            <th>Callback host</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let delivery of webhookDeliveries; trackBy: trackByWebhookId">
+            <td>
+              <strong>{{ delivery.event_type }}</strong>
+              <small>{{ delivery.uuid }}</small>
+            </td>
+            <td><span class="status" [ngClass]="statusClass(delivery.status)">{{ delivery.status }}</span></td>
+            <td>{{ delivery.attempts }} / {{ delivery.max_attempts }}</td>
+            <td>{{ delivery.status_code || '-' }}</td>
+            <td>{{ delivery.callback_host || '-' }}</td>
+            <td>{{ delivery.created_at || '-' }}</td>
+            <td>
+              <button
+                type="button"
+                class="secondary-link secondary-link--button"
+                [disabled]="!canRetry(delivery)"
+                (click)="retryWebhook(delivery)"
+              >
+                {{ retryButtonLabel(delivery) }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </app-data-table>
+
+    <app-empty-state *ngIf="!webhookLoading && webhookMeta && webhookDeliveries.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+
+    <app-pagination
+      *ngIf="webhookMeta"
+      [currentPage]="webhookMeta.current_page"
+      [lastPage]="webhookMeta.last_page"
+      [perPage]="webhookMeta.per_page"
+      [total]="webhookMeta.total"
+      (pageChange)="lookupWebhookDeliveries($event)"
+    ></app-pagination>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Payments</h3>
+        <p>Payments are operationally important, but the API does not expose a list or detail endpoint yet.</p>
+      </div>
+      <span class="status status--pending">Gap note</span>
+    </div>
+
+    <div class="gap-grid">
+      <article class="gap-card" *ngFor="let card of gapCards">
+        <span class="status" [ngClass]="card.status === 'gap' ? 'status--pending' : 'status--neutral'">{{ card.status }}</span>
+        <h4>{{ card.title }}</h4>
+        <p>{{ card.note }}</p>
+      </article>
+    </div>
+  </ui-card>
+</section>

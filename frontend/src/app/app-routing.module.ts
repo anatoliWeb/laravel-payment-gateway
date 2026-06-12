@@ -39,6 +39,11 @@ const routes: Routes = [
         loadChildren: () => import('./features/billing/billing.module').then((m) => m.BillingModule),
       },
       {
+        path: 'admin',
+        canActivate: [AuthGuard],
+        loadChildren: () => import('./features/admin-billing/admin-billing.module').then((m) => m.AdminBillingModule),
+      },
+      {
         path: 'chat',
         loadChildren: () => import('./features/chat/chat.module').then((m) => m.ChatModule),
       },

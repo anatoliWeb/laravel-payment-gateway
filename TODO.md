@@ -1123,22 +1123,22 @@ Checkout UI must use idempotency keys and existing payment APIs. It must not cal
 
 ## Phase 22.3 - Admin / Operator Billing Management UI
 
-- [ ] Design admin billing dashboard
+- [x] Design admin billing dashboard
 - [ ] Show payments list
 - [ ] Show payment details
 - [ ] Show payment transaction history
-- [ ] Show invoices list
-- [ ] Show invoice details
+- [x] Show invoices list
+- [x] Show invoice details
 - [ ] Show subscriptions list
-- [ ] Show subscription details
+- [x] Show subscription details
 - [ ] Show wallet balances by user
 - [ ] Show wallet transaction history by user
-- [ ] Add permission-gated wallet adjustment UI
-- [ ] Allow manual wallet credit with required reason
-- [ ] Allow manual wallet debit with required reason
-- [ ] Show activity logs for billing entities
-- [ ] Show webhook deliveries
-- [ ] Allow manual webhook retry if permission exists
+- [x] Add permission-gated wallet adjustment UI
+- [x] Allow manual wallet credit with required reason
+- [x] Allow manual wallet debit with required reason
+- [x] Show activity logs for billing entities
+- [x] Show webhook deliveries
+- [x] Allow manual webhook retry if permission exists
 - [ ] Show idempotency records if permission exists
 - [ ] Show provider accounts
 - [ ] Add provider account form readiness UI
@@ -1148,13 +1148,15 @@ Checkout UI must use idempotency keys and existing payment APIs. It must not cal
 - [ ] Show feature overrides
 - [ ] Add feature override creation UI
 - [ ] Add feature override disable/expire UI
-- [ ] Enforce frontend permission checks
+- [x] Enforce frontend permission checks
 - [ ] Enforce backend permission checks through API
-- [ ] Add loading/empty/error states
-- [ ] Add frontend tests if project structure supports it
-- [ ] Document admin/operator billing UI
+- [x] Add loading/empty/error states
+- [x] Add frontend tests if project structure supports it
+- [x] Document admin/operator billing UI
 
 Note:
+Payments, payment transaction history, idempotency records, provider accounts, restrictions, and feature overrides remain gap notes because the backend does not expose dedicated admin list/detail CRUD endpoints yet.
+
 Frontend permission checks are only UX helpers. Backend permissions remain the source of truth.
 
 ---

@@ -26,6 +26,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/api.md](./billing/api.md) - Billing runtime API examples and flows
 - [billing/user-portal-ui.md](./billing/user-portal-ui.md) - Angular billing portal UI reference
 - [billing/checkout-payment-ui.md](./billing/checkout-payment-ui.md) - Angular billing checkout and payment UI reference
+- [billing/admin-operator-ui.md](./billing/admin-operator-ui.md) - Angular admin/operator billing management UI reference
 - [billing/api-errors.md](./billing/api-errors.md) - Billing API error envelope and stable code catalog
 - [billing/statuses.md](./billing/statuses.md) - Billing enums, statuses, and transition rules
 - [billing/seeders.md](./billing/seeders.md) - Billing seed data and idempotent seeding strategy
@@ -72,6 +73,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing API -> [./billing/api.md](./billing/api.md)
 - Billing User Portal UI -> [./billing/user-portal-ui.md](./billing/user-portal-ui.md)
 - Billing Checkout / Payment UI -> [./billing/checkout-payment-ui.md](./billing/checkout-payment-ui.md)
+- Billing Admin / Operator UI -> [./billing/admin-operator-ui.md](./billing/admin-operator-ui.md)
 - Billing API Errors -> [./billing/api-errors.md](./billing/api-errors.md)
 - Billing Testing -> [./billing/testing.md](./billing/testing.md)
 - Billing Statuses -> [./billing/statuses.md](./billing/statuses.md)
