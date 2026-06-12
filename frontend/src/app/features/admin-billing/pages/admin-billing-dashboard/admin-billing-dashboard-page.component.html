@@ -573,15 +573,510 @@
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Remaining admin gaps</h3>
-        <p>These items stay intentionally documented until we decide whether the portfolio needs dedicated CRUD APIs for them.</p>
+        <h3>Wallets</h3>
+        <p>Admin-safe wallet balances and transaction history are read from the dedicated admin endpoints.</p>
       </div>
-      <span class="status status--pending">Gap note</span>
+      <span class="status" [ngClass]="walletsLoading ? 'status--pending' : 'status--neutral'">{{ walletCount }}</span>
+    </div>
+
+    <div *ngIf="walletsError" class="error-block">
+      <p class="error-line"><strong>{{ walletsError.code || 'wallets_error' }}</strong><span>{{ walletsError.message }}</span></p>
+      <ul class="error-fields" *ngIf="errorFieldLines(walletsError).length">
+        <li *ngFor="let field of errorFieldLines(walletsError)">{{ field }}</li>
+      </ul>
+    </div>
+
+    <app-loading-state [visible]="walletsLoading" [message]="'Loading wallets...'"></app-loading-state>
+
+    <app-data-table *ngIf="!walletsLoading && wallets.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Wallet</th>
+            <th>User</th>
+            <th>Status</th>
+            <th>Balances</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let wallet of wallets; trackBy: trackByWalletId">
+            <td>
+              <strong>{{ wallet.uuid }}</strong>
+              <small>#{{ wallet.id }}</small>
+            </td>
+            <td>{{ wallet.user_id }}</td>
+            <td><span class="status" [ngClass]="statusClass(wallet.status)">{{ wallet.status }}</span></td>
+            <td>{{ wallet.balances.length }} currency bucket(s)</td>
+            <td>{{ wallet.created_at || '-' }}</td>
+            <td>
+              <button type="button" class="secondary-link secondary-link--button" (click)="inspectWallet(wallet)">
+                Inspect
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </app-data-table>
+
+    <app-empty-state *ngIf="!walletsLoading && wallets.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+
+    <app-pagination
+      *ngIf="walletsMeta"
+      [currentPage]="walletsMeta.current_page"
+      [lastPage]="walletsMeta.last_page"
+      [perPage]="walletsMeta.per_page"
+      [total]="walletsMeta.total"
+      (pageChange)="loadWallets($event)"
+    ></app-pagination>
+
+    <div class="detail-panel" *ngIf="selectedWallet || selectedWalletLoading || selectedWalletError">
+      <div class="section-head">
+        <div>
+          <h4>Wallet detail</h4>
+          <p>Loaded from the admin wallet endpoint without exposing raw credentials.</p>
+        </div>
+        <span class="status" [ngClass]="statusClass(selectedWallet?.status)">{{ selectedWallet?.status || 'waiting' }}</span>
+      </div>
+
+      <app-loading-state [visible]="selectedWalletLoading" [message]="'Loading wallet detail...'"></app-loading-state>
+      <div *ngIf="selectedWalletError" class="error-block">
+        <p class="error-line"><strong>{{ selectedWalletError.code || 'wallet_error' }}</strong><span>{{ selectedWalletError.message }}</span></p>
+      </div>
+
+      <ng-container *ngIf="selectedWallet && !selectedWalletLoading">
+        <div class="kv-grid">
+          <div class="kv"><span>UUID</span><strong>{{ selectedWallet.uuid }}</strong></div>
+          <div class="kv"><span>Database id</span><strong>{{ selectedWallet.id }}</strong></div>
+          <div class="kv"><span>User</span><strong>{{ selectedWallet.user_id }}</strong></div>
+          <div class="kv"><span>Created</span><strong>{{ selectedWallet.created_at || '-' }}</strong></div>
+        </div>
+
+        <app-data-table *ngIf="selectedWallet.balances.length > 0">
+          <table>
+            <thead>
+              <tr>
+                <th>Currency</th>
+                <th>Available</th>
+                <th>Held</th>
+                <th>Updated</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let balance of selectedWallet.balances">
+                <td>{{ balance.currency.code }}</td>
+                <td>{{ formatAmount(balance.available_amount, balance.currency.code) }}</td>
+                <td>{{ formatAmount(balance.held_amount, balance.currency.code) }}</td>
+                <td>{{ balance.updated_at || '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </app-data-table>
+
+        <app-loading-state [visible]="selectedWalletTransactionsLoading" [message]="'Loading wallet transactions...'"></app-loading-state>
+        <div *ngIf="selectedWalletTransactionsError" class="error-block">
+          <p class="error-line"><strong>{{ selectedWalletTransactionsError.code || 'wallet_transactions_error' }}</strong><span>{{ selectedWalletTransactionsError.message }}</span></p>
+        </div>
+
+        <app-data-table *ngIf="selectedWalletTransactions.length > 0">
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Direction</th>
+                <th>Amount</th>
+                <th>Reason</th>
+                <th>Reference</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let transaction of selectedWalletTransactions">
+                <td>{{ transaction.type }}</td>
+                <td>{{ transaction.direction }}</td>
+                <td>{{ formatAmount(transaction.amount, transaction.currency) }}</td>
+                <td>{{ transaction.reason || '-' }}</td>
+                <td>{{ transaction.reference || '-' }}</td>
+                <td>{{ transaction.created_at || '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </app-data-table>
+
+        <app-empty-state *ngIf="!selectedWalletTransactionsLoading && selectedWalletTransactions.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+
+        <app-pagination
+          *ngIf="selectedWalletTransactionsMeta"
+          [currentPage]="selectedWalletTransactionsMeta.current_page"
+          [lastPage]="selectedWalletTransactionsMeta.last_page"
+          [perPage]="selectedWalletTransactionsMeta.per_page"
+          [total]="selectedWalletTransactionsMeta.total"
+          (pageChange)="selectedWallet ? loadWalletTransactions(selectedWallet.id, $event) : null"
+        ></app-pagination>
+      </ng-container>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Idempotency keys</h3>
+        <p>List and detail views expose key fingerprints only, so the raw idempotency value never reaches the UI.</p>
+      </div>
+      <span class="status" [ngClass]="idempotencyKeysLoading ? 'status--pending' : 'status--neutral'">{{ idempotencyCount }}</span>
+    </div>
+
+    <div *ngIf="idempotencyKeysError" class="error-block">
+      <p class="error-line"><strong>{{ idempotencyKeysError.code || 'idempotency_error' }}</strong><span>{{ idempotencyKeysError.message }}</span></p>
+    </div>
+
+    <app-loading-state [visible]="idempotencyKeysLoading" [message]="'Loading idempotency keys...'"></app-loading-state>
+
+    <app-data-table *ngIf="!idempotencyKeysLoading && idempotencyKeys.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Fingerprint</th>
+            <th>Scope</th>
+            <th>Method</th>
+            <th>Endpoint</th>
+            <th>Status</th>
+            <th>Response</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let key of idempotencyKeys; trackBy: trackByIdempotencyId">
+            <td><strong>{{ key.key_fingerprint }}</strong></td>
+            <td>{{ key.scope }}</td>
+            <td>{{ key.method }}</td>
+            <td>{{ key.endpoint }}</td>
+            <td><span class="status" [ngClass]="statusClass(key.status)">{{ key.status }}</span></td>
+            <td>{{ key.response_status || '-' }}</td>
+            <td>{{ key.created_at || '-' }}</td>
+            <td>
+              <button type="button" class="secondary-link secondary-link--button" (click)="inspectIdempotencyKey(key)">
+                Inspect
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </app-data-table>
+
+    <app-empty-state *ngIf="!idempotencyKeysLoading && idempotencyKeys.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+
+    <app-pagination
+      *ngIf="idempotencyKeysMeta"
+      [currentPage]="idempotencyKeysMeta.current_page"
+      [lastPage]="idempotencyKeysMeta.last_page"
+      [perPage]="idempotencyKeysMeta.per_page"
+      [total]="idempotencyKeysMeta.total"
+      (pageChange)="loadIdempotencyKeys($event)"
+    ></app-pagination>
+
+    <div class="detail-panel" *ngIf="selectedIdempotencyKey || selectedIdempotencyKeyLoading || selectedIdempotencyKeyError">
+      <div class="section-head">
+        <div>
+          <h4>Idempotency detail</h4>
+          <p>Only the fingerprint, response status, and lifecycle timestamps are shown here.</p>
+        </div>
+        <span class="status" [ngClass]="statusClass(selectedIdempotencyKey?.status)">{{ selectedIdempotencyKey?.status || 'waiting' }}</span>
+      </div>
+
+      <app-loading-state [visible]="selectedIdempotencyKeyLoading" [message]="'Loading idempotency detail...'"></app-loading-state>
+      <div *ngIf="selectedIdempotencyKeyError" class="error-block">
+        <p class="error-line"><strong>{{ selectedIdempotencyKeyError.code || 'idempotency_detail_error' }}</strong><span>{{ selectedIdempotencyKeyError.message }}</span></p>
+      </div>
+
+      <ng-container *ngIf="selectedIdempotencyKey && !selectedIdempotencyKeyLoading">
+        <div class="kv-grid">
+          <div class="kv"><span>Fingerprint</span><strong>{{ selectedIdempotencyKey.key_fingerprint }}</strong></div>
+          <div class="kv"><span>Scope</span><strong>{{ selectedIdempotencyKey.scope }}</strong></div>
+          <div class="kv"><span>Method</span><strong>{{ selectedIdempotencyKey.method }}</strong></div>
+          <div class="kv"><span>Endpoint</span><strong>{{ selectedIdempotencyKey.endpoint }}</strong></div>
+          <div class="kv"><span>Response status</span><strong>{{ selectedIdempotencyKey.response_status || '-' }}</strong></div>
+          <div class="kv"><span>Expires at</span><strong>{{ selectedIdempotencyKey.expires_at || '-' }}</strong></div>
+        </div>
+      </ng-container>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Provider accounts</h3>
+        <p>Provider configuration is exposed in a masked form so the UI can review state without secrets.</p>
+      </div>
+      <span class="status" [ngClass]="providerAccountsLoading ? 'status--pending' : 'status--neutral'">{{ providerAccountCount }}</span>
+    </div>
+
+    <div *ngIf="providerAccountsError" class="error-block">
+      <p class="error-line"><strong>{{ providerAccountsError.code || 'provider_accounts_error' }}</strong><span>{{ providerAccountsError.message }}</span></p>
+    </div>
+
+    <app-loading-state [visible]="providerAccountsLoading" [message]="'Loading provider accounts...'"></app-loading-state>
+
+    <app-data-table *ngIf="!providerAccountsLoading && providerAccounts.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Account</th>
+            <th>Provider</th>
+            <th>Status</th>
+            <th>Mode</th>
+            <th>Company</th>
+            <th>Seller</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let account of providerAccounts; trackBy: trackByProviderAccountId">
+            <td>
+              <strong>{{ account.display_name || account.uuid }}</strong>
+              <small>{{ account.uuid }}</small>
+            </td>
+            <td>{{ account.provider }}</td>
+            <td><span class="status" [ngClass]="statusClass(account.status)">{{ account.status }}</span></td>
+            <td>{{ account.mode || '-' }}</td>
+            <td>{{ account.company_id || '-' }}</td>
+            <td>{{ account.seller_id || '-' }}</td>
+            <td>{{ account.created_at || '-' }}</td>
+            <td>
+              <button type="button" class="secondary-link secondary-link--button" (click)="inspectProviderAccount(account)">
+                Inspect
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </app-data-table>
+
+    <app-empty-state *ngIf="!providerAccountsLoading && providerAccounts.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+
+    <app-pagination
+      *ngIf="providerAccountsMeta"
+      [currentPage]="providerAccountsMeta.current_page"
+      [lastPage]="providerAccountsMeta.last_page"
+      [perPage]="providerAccountsMeta.per_page"
+      [total]="providerAccountsMeta.total"
+      (pageChange)="loadProviderAccounts($event)"
+    ></app-pagination>
+
+    <div class="detail-panel" *ngIf="selectedProviderAccount || selectedProviderAccountLoading || selectedProviderAccountError">
+      <div class="section-head">
+        <div>
+          <h4>Provider account detail</h4>
+          <p>Masked credentials and public config are safe to render in the admin UI.</p>
+        </div>
+        <span class="status" [ngClass]="statusClass(selectedProviderAccount?.status)">{{ selectedProviderAccount?.status || 'waiting' }}</span>
+      </div>
+
+      <app-loading-state [visible]="selectedProviderAccountLoading" [message]="'Loading provider account detail...'"></app-loading-state>
+      <div *ngIf="selectedProviderAccountError" class="error-block">
+        <p class="error-line"><strong>{{ selectedProviderAccountError.code || 'provider_account_error' }}</strong><span>{{ selectedProviderAccountError.message }}</span></p>
+      </div>
+
+      <ng-container *ngIf="selectedProviderAccount && !selectedProviderAccountLoading">
+        <div class="kv-grid">
+          <div class="kv"><span>UUID</span><strong>{{ selectedProviderAccount.uuid }}</strong></div>
+          <div class="kv"><span>Provider</span><strong>{{ selectedProviderAccount.provider }}</strong></div>
+          <div class="kv"><span>Display name</span><strong>{{ selectedProviderAccount.display_name || '-' }}</strong></div>
+          <div class="kv"><span>Config source</span><strong>{{ selectedProviderAccount.config_source || '-' }}</strong></div>
+          <div class="kv"><span>Masked credentials</span><strong>{{ selectedProviderAccount.masked_credentials | json }}</strong></div>
+          <div class="kv"><span>Public config</span><strong>{{ selectedProviderAccount.public_config | json }}</strong></div>
+        </div>
+      </ng-container>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Restrictions</h3>
+        <p>Operational restriction records stay visible here without exposing any write actions.</p>
+      </div>
+      <span class="status" [ngClass]="restrictionsLoading ? 'status--pending' : 'status--neutral'">{{ restrictionsMeta?.total ?? restrictions.length }}</span>
+    </div>
+
+    <div *ngIf="restrictionsError" class="error-block">
+      <p class="error-line"><strong>{{ restrictionsError.code || 'restrictions_error' }}</strong><span>{{ restrictionsError.message }}</span></p>
+    </div>
+
+    <app-loading-state [visible]="restrictionsLoading" [message]="'Loading restrictions...'"></app-loading-state>
+
+    <app-data-table *ngIf="!restrictionsLoading && restrictions.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Scope</th>
+            <th>User</th>
+            <th>Feature</th>
+            <th>Active</th>
+            <th>Reason</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let restriction of restrictions; trackBy: trackByRestrictionId">
+            <td>{{ restriction.type }}</td>
+            <td>{{ restriction.scope }}</td>
+            <td>{{ restriction.user_id }}</td>
+            <td>{{ restriction.feature_key || '-' }}</td>
+            <td>{{ restriction.is_active ? 'Yes' : 'No' }}</td>
+            <td>{{ restriction.reason || '-' }}</td>
+            <td>{{ restriction.created_at || '-' }}</td>
+            <td>
+              <button type="button" class="secondary-link secondary-link--button" (click)="inspectRestriction(restriction)">
+                Inspect
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </app-data-table>
+
+    <app-empty-state *ngIf="!restrictionsLoading && restrictions.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+
+    <app-pagination
+      *ngIf="restrictionsMeta"
+      [currentPage]="restrictionsMeta.current_page"
+      [lastPage]="restrictionsMeta.last_page"
+      [perPage]="restrictionsMeta.per_page"
+      [total]="restrictionsMeta.total"
+      (pageChange)="loadRestrictions($event)"
+    ></app-pagination>
+
+    <div class="detail-panel" *ngIf="selectedRestriction || selectedRestrictionLoading || selectedRestrictionError">
+      <div class="section-head">
+        <div>
+          <h4>Restriction detail</h4>
+          <p>Read-only operational context for admin review.</p>
+        </div>
+        <span class="status" [ngClass]="selectedRestriction?.is_active ? 'status--positive' : 'status--neutral'">{{ selectedRestriction?.is_active ? 'active' : 'inactive' }}</span>
+      </div>
+
+      <app-loading-state [visible]="selectedRestrictionLoading" [message]="'Loading restriction detail...'"></app-loading-state>
+      <div *ngIf="selectedRestrictionError" class="error-block">
+        <p class="error-line"><strong>{{ selectedRestrictionError.code || 'restriction_error' }}</strong><span>{{ selectedRestrictionError.message }}</span></p>
+      </div>
+
+      <ng-container *ngIf="selectedRestriction && !selectedRestrictionLoading">
+        <div class="kv-grid">
+          <div class="kv"><span>Type</span><strong>{{ selectedRestriction.type }}</strong></div>
+          <div class="kv"><span>Scope</span><strong>{{ selectedRestriction.scope }}</strong></div>
+          <div class="kv"><span>Feature</span><strong>{{ selectedRestriction.feature_key || '-' }}</strong></div>
+          <div class="kv"><span>Reason</span><strong>{{ selectedRestriction.reason || '-' }}</strong></div>
+          <div class="kv"><span>Starts at</span><strong>{{ selectedRestriction.starts_at || '-' }}</strong></div>
+          <div class="kv"><span>Ends at</span><strong>{{ selectedRestriction.ends_at || '-' }}</strong></div>
+        </div>
+      </ng-container>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Feature overrides</h3>
+        <p>Read-only visibility into active and planned override values for billing and product limits.</p>
+      </div>
+      <span class="status" [ngClass]="featureOverridesLoading ? 'status--pending' : 'status--neutral'">{{ featureOverridesMeta?.total ?? featureOverrides.length }}</span>
+    </div>
+
+    <div *ngIf="featureOverridesError" class="error-block">
+      <p class="error-line"><strong>{{ featureOverridesError.code || 'feature_overrides_error' }}</strong><span>{{ featureOverridesError.message }}</span></p>
+    </div>
+
+    <app-loading-state [visible]="featureOverridesLoading" [message]="'Loading feature overrides...'"></app-loading-state>
+
+    <app-data-table *ngIf="!featureOverridesLoading && featureOverrides.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>User</th>
+            <th>Subscription</th>
+            <th>Value</th>
+            <th>Period</th>
+            <th>Priority</th>
+            <th>Enabled</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let override of featureOverrides; trackBy: trackByFeatureOverrideId">
+            <td>{{ override.feature_key }}</td>
+            <td>{{ override.user_id }}</td>
+            <td>{{ override.subscription_id || '-' }}</td>
+            <td>{{ override.value }}</td>
+            <td>{{ override.period }}</td>
+            <td>{{ override.priority }}</td>
+            <td>{{ override.is_enabled ? 'Yes' : 'No' }}</td>
+            <td>
+              <button type="button" class="secondary-link secondary-link--button" (click)="inspectFeatureOverride(override)">
+                Inspect
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </app-data-table>
+
+    <app-empty-state *ngIf="!featureOverridesLoading && featureOverrides.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+
+    <app-pagination
+      *ngIf="featureOverridesMeta"
+      [currentPage]="featureOverridesMeta.current_page"
+      [lastPage]="featureOverridesMeta.last_page"
+      [perPage]="featureOverridesMeta.per_page"
+      [total]="featureOverridesMeta.total"
+      (pageChange)="loadFeatureOverrides($event)"
+    ></app-pagination>
+
+    <div class="detail-panel" *ngIf="selectedFeatureOverride || selectedFeatureOverrideLoading || selectedFeatureOverrideError">
+      <div class="section-head">
+        <div>
+          <h4>Feature override detail</h4>
+          <p>Detail view stays read-only so operator review cannot alter limits by mistake.</p>
+        </div>
+        <span class="status" [ngClass]="selectedFeatureOverride?.is_enabled ? 'status--positive' : 'status--neutral'">{{ selectedFeatureOverride?.is_enabled ? 'enabled' : 'disabled' }}</span>
+      </div>
+
+      <app-loading-state [visible]="selectedFeatureOverrideLoading" [message]="'Loading feature override detail...'"></app-loading-state>
+      <div *ngIf="selectedFeatureOverrideError" class="error-block">
+        <p class="error-line"><strong>{{ selectedFeatureOverrideError.code || 'feature_override_error' }}</strong><span>{{ selectedFeatureOverrideError.message }}</span></p>
+      </div>
+
+      <ng-container *ngIf="selectedFeatureOverride && !selectedFeatureOverrideLoading">
+        <div class="kv-grid">
+          <div class="kv"><span>Feature</span><strong>{{ selectedFeatureOverride.feature_key }}</strong></div>
+          <div class="kv"><span>Value</span><strong>{{ selectedFeatureOverride.value }}</strong></div>
+          <div class="kv"><span>Type</span><strong>{{ selectedFeatureOverride.value_type }}</strong></div>
+          <div class="kv"><span>Period</span><strong>{{ selectedFeatureOverride.period }}</strong></div>
+          <div class="kv"><span>Reset policy</span><strong>{{ selectedFeatureOverride.reset_policy }}</strong></div>
+          <div class="kv"><span>Priority</span><strong>{{ selectedFeatureOverride.priority }}</strong></div>
+        </div>
+      </ng-container>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Admin reference notes</h3>
+        <p>The read-only operational records above are enough for portfolio review, while reporting remains a separate concern.</p>
+      </div>
+      <span class="status status--positive">Ready</span>
     </div>
 
     <div class="gap-grid">
       <article class="gap-card" *ngFor="let card of gapCards">
-        <span class="status" [ngClass]="card.status === 'gap' ? 'status--pending' : 'status--neutral'">{{ card.status }}</span>
+        <span class="status" [ngClass]="card.status === 'ready' ? 'status--positive' : 'status--neutral'">{{ card.status }}</span>
         <h4>{{ card.title }}</h4>
         <p>{{ card.note }}</p>
       </article>

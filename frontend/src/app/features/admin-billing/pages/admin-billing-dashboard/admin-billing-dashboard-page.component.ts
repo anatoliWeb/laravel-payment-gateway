@@ -6,14 +6,19 @@ import { BillingService } from '../../../billing/services/billing.service';
 import { PermissionService } from '../../../../rbac/services/permission.service';
 import type {
   BillingActivityLog as AdminBillingActivityLog,
+  BillingAdminFeatureOverride,
+  BillingAdminIdempotencyKey,
   BillingAdminPayment,
   BillingAdminPaymentTransaction,
   BillingAdminActivityFilters,
   BillingInvoice,
   BillingPaginationMeta,
   BillingPortalError,
+  BillingAdminProviderAccount,
+  BillingAdminRestriction,
   BillingSubscription,
   BillingWebhookDelivery,
+  BillingAdminWallet,
   BillingWalletAdjustmentPayload,
   BillingWalletTransaction,
 } from '../../../billing/models/billing.model';
@@ -43,23 +48,23 @@ export class AdminBillingDashboardPageComponent implements OnInit {
   readonly gapCards: DashboardGap[] = [
     {
       title: 'Idempotency records',
-      note: 'There is no admin-safe idempotency listing endpoint, so raw keys stay invisible and this section remains a gap note.',
-      status: 'gap',
+      note: 'Admin operators can review fingerprints, response status, and lifecycle timestamps without exposing raw keys.',
+      status: 'ready',
     },
     {
       title: 'Provider accounts',
-      note: 'Provider account readiness is documented, but there is no admin provider-account API yet.',
-      status: 'gap',
+      note: 'Provider account state, capabilities, and masked credentials are now browseable through read-only endpoints.',
+      status: 'ready',
     },
     {
       title: 'Restrictions / blacklist',
-      note: 'Restriction and override storage exists, but the admin CRUD endpoints are not exposed in this phase.',
-      status: 'gap',
+      note: 'Restriction records are available for operator review while write actions stay outside the admin dashboard.',
+      status: 'ready',
     },
     {
       title: 'Feature overrides',
-      note: 'Feature override management is intentionally left as a placeholder until API support lands.',
-      status: 'gap',
+      note: 'Feature overrides can be inspected as operational data without allowing the UI to change billing limits.',
+      status: 'ready',
     },
   ];
 
@@ -98,6 +103,50 @@ export class AdminBillingDashboardPageComponent implements OnInit {
   subscription: BillingSubscription | null = null;
   subscriptionLoading = false;
   subscriptionError: BillingPortalError | null = null;
+
+  wallets: BillingAdminWallet[] = [];
+  walletsMeta: BillingPaginationMeta | null = null;
+  walletsLoading = false;
+  walletsError: BillingPortalError | null = null;
+  selectedWallet: BillingAdminWallet | null = null;
+  selectedWalletLoading = false;
+  selectedWalletError: BillingPortalError | null = null;
+  selectedWalletTransactions: BillingWalletTransaction[] = [];
+  selectedWalletTransactionsMeta: BillingPaginationMeta | null = null;
+  selectedWalletTransactionsLoading = false;
+  selectedWalletTransactionsError: BillingPortalError | null = null;
+
+  idempotencyKeys: BillingAdminIdempotencyKey[] = [];
+  idempotencyKeysMeta: BillingPaginationMeta | null = null;
+  idempotencyKeysLoading = false;
+  idempotencyKeysError: BillingPortalError | null = null;
+  selectedIdempotencyKey: BillingAdminIdempotencyKey | null = null;
+  selectedIdempotencyKeyLoading = false;
+  selectedIdempotencyKeyError: BillingPortalError | null = null;
+
+  providerAccounts: BillingAdminProviderAccount[] = [];
+  providerAccountsMeta: BillingPaginationMeta | null = null;
+  providerAccountsLoading = false;
+  providerAccountsError: BillingPortalError | null = null;
+  selectedProviderAccount: BillingAdminProviderAccount | null = null;
+  selectedProviderAccountLoading = false;
+  selectedProviderAccountError: BillingPortalError | null = null;
+
+  restrictions: BillingAdminRestriction[] = [];
+  restrictionsMeta: BillingPaginationMeta | null = null;
+  restrictionsLoading = false;
+  restrictionsError: BillingPortalError | null = null;
+  selectedRestriction: BillingAdminRestriction | null = null;
+  selectedRestrictionLoading = false;
+  selectedRestrictionError: BillingPortalError | null = null;
+
+  featureOverrides: BillingAdminFeatureOverride[] = [];
+  featureOverridesMeta: BillingPaginationMeta | null = null;
+  featureOverridesLoading = false;
+  featureOverridesError: BillingPortalError | null = null;
+  selectedFeatureOverride: BillingAdminFeatureOverride | null = null;
+  selectedFeatureOverrideLoading = false;
+  selectedFeatureOverrideError: BillingPortalError | null = null;
 
   walletAdjustmentLoading = false;
   walletAdjustmentMessage: string | null = null;
@@ -171,6 +220,18 @@ export class AdminBillingDashboardPageComponent implements OnInit {
     return this.webhookMeta?.total ?? this.webhookDeliveries.length;
   }
 
+  get walletCount(): number {
+    return this.walletsMeta?.total ?? this.wallets.length;
+  }
+
+  get idempotencyCount(): number {
+    return this.idempotencyKeysMeta?.total ?? this.idempotencyKeys.length;
+  }
+
+  get providerAccountCount(): number {
+    return this.providerAccountsMeta?.total ?? this.providerAccounts.length;
+  }
+
   get summaryCards(): Array<{ label: string; value: string; hint: string }> {
     return [
       {
@@ -198,6 +259,21 @@ export class AdminBillingDashboardPageComponent implements OnInit {
         value: this.canAdjustWallet ? 'Allowed' : 'Locked',
         hint: this.canAdjustWallet ? 'Permission-gated UI' : 'Admin permission required',
       },
+      {
+        label: 'Wallets',
+        value: String(this.walletCount),
+        hint: this.walletsLoading ? 'Loading wallets' : 'Admin wallet balances and history',
+      },
+      {
+        label: 'Idempotency',
+        value: String(this.idempotencyCount),
+        hint: this.idempotencyKeysLoading ? 'Loading keys' : 'Key fingerprint lookup only',
+      },
+      {
+        label: 'Provider accounts',
+        value: String(this.providerAccountCount),
+        hint: this.providerAccountsLoading ? 'Loading accounts' : 'Masked configuration only',
+      },
     ];
   }
 
@@ -206,6 +282,11 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.loadPayments(1),
       this.loadInvoices(1),
       this.loadActivityLogs(1),
+      this.loadWallets(1),
+      this.loadIdempotencyKeys(1),
+      this.loadProviderAccounts(1),
+      this.loadRestrictions(1),
+      this.loadFeatureOverrides(1),
     ]);
   }
 
@@ -352,6 +433,182 @@ export class AdminBillingDashboardPageComponent implements OnInit {
     }
   }
 
+  async loadWallets(page = 1): Promise<void> {
+    this.walletsLoading = true;
+    this.walletsError = null;
+
+    try {
+      const response = await firstValueFrom(this.billingService.loadAdminWallets(page, this.paymentPageSize));
+      this.wallets = response.items;
+      this.walletsMeta = this.normalizeMeta(response.meta, this.paymentPageSize);
+    } catch (error) {
+      this.wallets = [];
+      this.walletsMeta = null;
+      this.walletsError = BillingService.extractError(error);
+    } finally {
+      this.walletsLoading = false;
+    }
+  }
+
+  async inspectWallet(wallet: BillingAdminWallet): Promise<void> {
+    this.selectedWallet = wallet;
+    this.selectedWalletError = null;
+    this.selectedWalletLoading = true;
+    this.selectedWalletTransactionsError = null;
+
+    try {
+      this.selectedWallet = await firstValueFrom(this.billingService.loadAdminWallet(wallet.id));
+      await this.loadWalletTransactions(wallet.id, 1);
+    } catch (error) {
+      this.selectedWalletError = BillingService.extractError(error);
+      this.selectedWalletTransactions = [];
+      this.selectedWalletTransactionsMeta = null;
+    } finally {
+      this.selectedWalletLoading = false;
+    }
+  }
+
+  async loadWalletTransactions(walletIdOrUuid: string | number, page = 1): Promise<void> {
+    this.selectedWalletTransactionsLoading = true;
+    this.selectedWalletTransactionsError = null;
+
+    try {
+      const response = await firstValueFrom(this.billingService.loadAdminWalletTransactions(walletIdOrUuid, page, this.paymentPageSize));
+      this.selectedWalletTransactions = response.items;
+      this.selectedWalletTransactionsMeta = this.normalizeMeta(response.meta, this.paymentPageSize);
+    } catch (error) {
+      this.selectedWalletTransactions = [];
+      this.selectedWalletTransactionsMeta = null;
+      this.selectedWalletTransactionsError = BillingService.extractError(error);
+    } finally {
+      this.selectedWalletTransactionsLoading = false;
+    }
+  }
+
+  async loadIdempotencyKeys(page = 1): Promise<void> {
+    this.idempotencyKeysLoading = true;
+    this.idempotencyKeysError = null;
+
+    try {
+      const response = await firstValueFrom(this.billingService.loadAdminIdempotencyKeys(page, this.paymentPageSize));
+      this.idempotencyKeys = response.items;
+      this.idempotencyKeysMeta = this.normalizeMeta(response.meta, this.paymentPageSize);
+    } catch (error) {
+      this.idempotencyKeys = [];
+      this.idempotencyKeysMeta = null;
+      this.idempotencyKeysError = BillingService.extractError(error);
+    } finally {
+      this.idempotencyKeysLoading = false;
+    }
+  }
+
+  async inspectIdempotencyKey(idempotencyKey: BillingAdminIdempotencyKey): Promise<void> {
+    this.selectedIdempotencyKey = idempotencyKey;
+    this.selectedIdempotencyKeyError = null;
+    this.selectedIdempotencyKeyLoading = true;
+
+    try {
+      this.selectedIdempotencyKey = await firstValueFrom(this.billingService.loadAdminIdempotencyKey(idempotencyKey.id));
+    } catch (error) {
+      this.selectedIdempotencyKeyError = BillingService.extractError(error);
+    } finally {
+      this.selectedIdempotencyKeyLoading = false;
+    }
+  }
+
+  async loadProviderAccounts(page = 1): Promise<void> {
+    this.providerAccountsLoading = true;
+    this.providerAccountsError = null;
+
+    try {
+      const response = await firstValueFrom(this.billingService.loadAdminProviderAccounts(page, this.paymentPageSize));
+      this.providerAccounts = response.items;
+      this.providerAccountsMeta = this.normalizeMeta(response.meta, this.paymentPageSize);
+    } catch (error) {
+      this.providerAccounts = [];
+      this.providerAccountsMeta = null;
+      this.providerAccountsError = BillingService.extractError(error);
+    } finally {
+      this.providerAccountsLoading = false;
+    }
+  }
+
+  async inspectProviderAccount(providerAccount: BillingAdminProviderAccount): Promise<void> {
+    this.selectedProviderAccount = providerAccount;
+    this.selectedProviderAccountError = null;
+    this.selectedProviderAccountLoading = true;
+
+    try {
+      this.selectedProviderAccount = await firstValueFrom(this.billingService.loadAdminProviderAccount(providerAccount.uuid));
+    } catch (error) {
+      this.selectedProviderAccountError = BillingService.extractError(error);
+    } finally {
+      this.selectedProviderAccountLoading = false;
+    }
+  }
+
+  async loadRestrictions(page = 1): Promise<void> {
+    this.restrictionsLoading = true;
+    this.restrictionsError = null;
+
+    try {
+      const response = await firstValueFrom(this.billingService.loadAdminRestrictions(page, this.paymentPageSize));
+      this.restrictions = response.items;
+      this.restrictionsMeta = this.normalizeMeta(response.meta, this.paymentPageSize);
+    } catch (error) {
+      this.restrictions = [];
+      this.restrictionsMeta = null;
+      this.restrictionsError = BillingService.extractError(error);
+    } finally {
+      this.restrictionsLoading = false;
+    }
+  }
+
+  async inspectRestriction(restriction: BillingAdminRestriction): Promise<void> {
+    this.selectedRestriction = restriction;
+    this.selectedRestrictionError = null;
+    this.selectedRestrictionLoading = true;
+
+    try {
+      this.selectedRestriction = await firstValueFrom(this.billingService.loadAdminRestriction(restriction.id));
+    } catch (error) {
+      this.selectedRestrictionError = BillingService.extractError(error);
+    } finally {
+      this.selectedRestrictionLoading = false;
+    }
+  }
+
+  async loadFeatureOverrides(page = 1): Promise<void> {
+    this.featureOverridesLoading = true;
+    this.featureOverridesError = null;
+
+    try {
+      const response = await firstValueFrom(this.billingService.loadAdminFeatureOverrides(page, this.paymentPageSize));
+      this.featureOverrides = response.items;
+      this.featureOverridesMeta = this.normalizeMeta(response.meta, this.paymentPageSize);
+    } catch (error) {
+      this.featureOverrides = [];
+      this.featureOverridesMeta = null;
+      this.featureOverridesError = BillingService.extractError(error);
+    } finally {
+      this.featureOverridesLoading = false;
+    }
+  }
+
+  async inspectFeatureOverride(featureOverride: BillingAdminFeatureOverride): Promise<void> {
+    this.selectedFeatureOverride = featureOverride;
+    this.selectedFeatureOverrideError = null;
+    this.selectedFeatureOverrideLoading = true;
+
+    try {
+      this.selectedFeatureOverride = await firstValueFrom(this.billingService.loadAdminFeatureOverride(featureOverride.id));
+    } catch (error) {
+      this.selectedFeatureOverrideError = BillingService.extractError(error);
+    } finally {
+      this.selectedFeatureOverrideLoading = false;
+    }
+  }
+
   async lookupWebhookDeliveries(page = 1): Promise<void> {
     this.webhookError = null;
     this.webhookRetryMessage = null;
@@ -477,6 +734,26 @@ export class AdminBillingDashboardPageComponent implements OnInit {
   }
 
   trackByWebhookId(_: number, item: BillingWebhookDelivery): number {
+    return item.id;
+  }
+
+  trackByWalletId(_: number, item: BillingAdminWallet): number {
+    return item.id;
+  }
+
+  trackByIdempotencyId(_: number, item: BillingAdminIdempotencyKey): number {
+    return item.id;
+  }
+
+  trackByProviderAccountId(_: number, item: BillingAdminProviderAccount): number {
+    return item.id;
+  }
+
+  trackByRestrictionId(_: number, item: BillingAdminRestriction): number {
+    return item.id;
+  }
+
+  trackByFeatureOverrideId(_: number, item: BillingAdminFeatureOverride): number {
     return item.id;
   }
 

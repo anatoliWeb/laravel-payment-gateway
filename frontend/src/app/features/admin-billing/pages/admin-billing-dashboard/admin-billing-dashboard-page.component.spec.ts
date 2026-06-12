@@ -158,6 +158,98 @@ describe('AdminBillingDashboardPageComponent', () => {
     created_at: '2026-06-12T08:50:00Z',
   };
 
+  const wallet = {
+    id: 33,
+    uuid: 'wallet-33',
+    user_id: 15,
+    status: 'active',
+    balances: [
+      {
+        currency: { code: 'USD', name: 'US Dollar', symbol: '$', decimal_precision: 2 },
+        available_amount: 25000,
+        held_amount: 2000,
+        updated_at: '2026-06-12T09:00:00Z',
+      },
+    ],
+    metadata: {},
+    created_at: '2026-06-10T08:00:00Z',
+    updated_at: '2026-06-12T09:00:00Z',
+  };
+
+  const idempotencyKey = {
+    id: 44,
+    user_id: 15,
+    scope: 'payment.create',
+    method: 'POST',
+    endpoint: '/api/v1/billing/payments',
+    status: 'completed',
+    key_fingerprint: 'sha256:demo12345678',
+    request_hash: 'request-hash',
+    response_status: 201,
+    related_type: 'App\\Models\\Payment',
+    related_id: 77,
+    locked_until: null,
+    expires_at: '2026-06-13T00:00:00Z',
+    created_at: '2026-06-12T08:00:00Z',
+    updated_at: '2026-06-12T08:00:00Z',
+  };
+
+  const providerAccount = {
+    id: 55,
+    uuid: 'provider-account-55',
+    user_id: 15,
+    company_id: 3,
+    seller_id: 7,
+    provider: 'simulator',
+    display_name: 'Demo Platform Simulator',
+    status: 'active',
+    mode: 'test',
+    config_source: 'database',
+    public_config: { seeded: true },
+    capabilities: { charge: true, refund: true },
+    masked_credentials: { api_key: '***0000' },
+    last_verified_at: '2026-06-12T07:45:00Z',
+    metadata: {},
+    created_at: '2026-06-10T08:00:00Z',
+    updated_at: '2026-06-12T08:00:00Z',
+  };
+
+  const restriction = {
+    id: 66,
+    user_id: 15,
+    type: 'billing_blocked',
+    scope: 'billing',
+    feature_key: null,
+    reason: 'Manual billing review demo',
+    is_active: true,
+    starts_at: '2026-06-11T08:00:00Z',
+    ends_at: null,
+    created_by: 1,
+    metadata: {},
+    created_at: '2026-06-11T08:00:00Z',
+    updated_at: '2026-06-12T08:00:00Z',
+  };
+
+  const featureOverride = {
+    id: 77,
+    user_id: 15,
+    subscription_id: 12,
+    feature_key: 'chat.messages.daily',
+    value: '5000',
+    value_type: 'integer',
+    period: 'daily',
+    reset_policy: 'calendar_day',
+    is_enabled: true,
+    priority: 100,
+    reason: 'Demo chat limit uplift',
+    starts_at: '2026-06-11T08:00:00Z',
+    ends_at: null,
+    created_by: 1,
+    metadata: {},
+    created_at: '2026-06-11T08:00:00Z',
+    updated_at: '2026-06-12T08:00:00Z',
+  };
+
   const billingServiceMock = {
     loadAdminPayments: vi.fn().mockReturnValue(of({ items: [payment], meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 } })),
     loadAdminPayment: vi.fn().mockReturnValue(of(payment)),
@@ -169,6 +261,17 @@ describe('AdminBillingDashboardPageComponent', () => {
     loadWebhookDeliveries: vi.fn().mockReturnValue(of({ items: [webhook], meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 } })),
     retryWebhookDelivery: vi.fn().mockReturnValue(of(webhook)),
     adjustWallet: vi.fn().mockReturnValue(of(walletTransaction)),
+    loadAdminWallets: vi.fn().mockReturnValue(of({ items: [wallet], meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 } })),
+    loadAdminWallet: vi.fn().mockReturnValue(of(wallet)),
+    loadAdminWalletTransactions: vi.fn().mockReturnValue(of({ items: [walletTransaction], meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 } })),
+    loadAdminIdempotencyKeys: vi.fn().mockReturnValue(of({ items: [idempotencyKey], meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 } })),
+    loadAdminIdempotencyKey: vi.fn().mockReturnValue(of(idempotencyKey)),
+    loadAdminProviderAccounts: vi.fn().mockReturnValue(of({ items: [providerAccount], meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 } })),
+    loadAdminProviderAccount: vi.fn().mockReturnValue(of(providerAccount)),
+    loadAdminRestrictions: vi.fn().mockReturnValue(of({ items: [restriction], meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 } })),
+    loadAdminRestriction: vi.fn().mockReturnValue(of(restriction)),
+    loadAdminFeatureOverrides: vi.fn().mockReturnValue(of({ items: [featureOverride], meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 } })),
+    loadAdminFeatureOverride: vi.fn().mockReturnValue(of(featureOverride)),
   };
 
   const permissionServiceMock = {
@@ -198,6 +301,8 @@ describe('AdminBillingDashboardPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Billing Management');
     expect(fixture.nativeElement.textContent).toContain('UUID-backed admin payment view');
     expect(fixture.nativeElement.textContent).toContain('Activity logs');
+    expect(fixture.nativeElement.textContent).toContain('Wallets');
+    expect(fixture.nativeElement.textContent).toContain('Provider accounts');
   });
 
   it('validates the wallet adjustment reason field', async () => {

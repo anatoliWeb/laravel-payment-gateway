@@ -27,6 +27,13 @@ class DatabaseSeeder extends Seeder
             CompanySellerSeeder::class,
         ]);
 
+        // WHY:
+        // Demo billing data is useful for portfolio walkthroughs, but it must
+        // stay opt-in so the base seeder remains safe for normal environments.
+        if (! app()->environment('production') && (bool) env('BILLING_DEMO_SEED', false)) {
+            $this->call(BillingDemoSeeder::class);
+        }
+
         if (! app()->environment('production') && (bool) env('CHAT_DEMO_SEED', false)) {
             $this->call(ChatDemoSeeder::class);
         }

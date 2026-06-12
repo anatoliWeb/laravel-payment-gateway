@@ -134,6 +134,87 @@ export interface BillingAdminPaymentTransaction {
   created_at: string | null;
 }
 
+export interface BillingAdminWallet extends BillingWallet {
+  id: number;
+  user_id: number;
+  metadata: Record<string, unknown>;
+  updated_at: string | null;
+}
+
+export interface BillingAdminIdempotencyKey {
+  id: number;
+  user_id: number;
+  scope: string;
+  method: string;
+  endpoint: string;
+  status: string;
+  key_fingerprint: string;
+  request_hash: string;
+  response_status: number | null;
+  related_type: string | null;
+  related_id: number | null;
+  locked_until: string | null;
+  expires_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface BillingAdminProviderAccount {
+  id: number;
+  uuid: string;
+  user_id: number | null;
+  company_id: number | null;
+  seller_id: number | null;
+  provider: string;
+  display_name: string | null;
+  status: string;
+  mode: string | null;
+  config_source: string | null;
+  public_config: Record<string, unknown>;
+  capabilities: Record<string, unknown>;
+  masked_credentials: Record<string, unknown>;
+  last_verified_at: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface BillingAdminRestriction {
+  id: number;
+  user_id: number;
+  type: string;
+  scope: string;
+  feature_key: string | null;
+  reason: string | null;
+  is_active: boolean;
+  starts_at: string | null;
+  ends_at: string | null;
+  created_by: number | null;
+  metadata: Record<string, unknown>;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface BillingAdminFeatureOverride {
+  id: number;
+  user_id: number;
+  subscription_id: number | null;
+  feature_key: string;
+  value: string;
+  value_type: string;
+  period: string;
+  reset_policy: string;
+  is_enabled: boolean;
+  priority: number;
+  reason: string | null;
+  starts_at: string | null;
+  ends_at: string | null;
+  created_by: number | null;
+  metadata: Record<string, unknown>;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
 export interface BillingPaymentPreference {
   strategy: BillingPaymentStrategy;
   default_payment_method?: BillingPaymentMethod | null;

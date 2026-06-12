@@ -16,7 +16,12 @@ import type {
   BillingPaymentPreferencesPayload,
   BillingPaymentPayload,
   BillingPortalError,
+  BillingAdminFeatureOverride,
+  BillingAdminIdempotencyKey,
+  BillingAdminProviderAccount,
+  BillingAdminRestriction,
   BillingSubscription,
+  BillingAdminWallet,
   BillingWallet,
   BillingWalletAdjustmentPayload,
   BillingWalletTopUpPayload,
@@ -146,6 +151,132 @@ export class BillingService {
         items: Array.isArray(response.data) ? response.data : [],
         meta: response.meta ?? null,
       })),
+    );
+  }
+
+  loadAdminWallets(page = 1, perPage = 10, filters: Record<string, string | number | null | undefined> = {}) {
+    const params = Object.fromEntries(
+      Object.entries({
+        page,
+        per_page: perPage,
+        ...filters,
+      }).filter(([, value]) => value !== null && value !== undefined && String(value) !== ''),
+    ) as Record<string, string | number | boolean>;
+
+    return this.apiClient.get<BillingAdminWallet[]>('/v1/billing/admin/wallets', { params }).pipe(
+      map((response: ApiResponse<BillingAdminWallet[]>) => ({
+        items: Array.isArray(response.data) ? response.data : [],
+        meta: response.meta ?? null,
+      })),
+    );
+  }
+
+  loadAdminWallet(walletIdOrUuid: string | number) {
+    return this.apiClient.get<BillingAdminWallet>(`/v1/billing/admin/wallets/${walletIdOrUuid}`).pipe(
+      map((response: ApiResponse<BillingAdminWallet>) => response.data ?? null),
+    );
+  }
+
+  loadAdminWalletTransactions(walletIdOrUuid: string | number, page = 1, perPage = 10) {
+    return this.apiClient.get<BillingWalletTransaction[]>(`/v1/billing/admin/wallets/${walletIdOrUuid}/transactions`, {
+      params: { page, per_page: perPage },
+    }).pipe(
+      map((response: ApiResponse<BillingWalletTransaction[]>) => ({
+        items: Array.isArray(response.data) ? response.data : [],
+        meta: response.meta ?? null,
+      })),
+    );
+  }
+
+  loadAdminIdempotencyKeys(page = 1, perPage = 10, filters: Record<string, string | number | null | undefined> = {}) {
+    const params = Object.fromEntries(
+      Object.entries({
+        page,
+        per_page: perPage,
+        ...filters,
+      }).filter(([, value]) => value !== null && value !== undefined && String(value) !== ''),
+    ) as Record<string, string | number | boolean>;
+
+    return this.apiClient.get<BillingAdminIdempotencyKey[]>('/v1/billing/admin/idempotency-keys', { params }).pipe(
+      map((response: ApiResponse<BillingAdminIdempotencyKey[]>) => ({
+        items: Array.isArray(response.data) ? response.data : [],
+        meta: response.meta ?? null,
+      })),
+    );
+  }
+
+  loadAdminIdempotencyKey(idempotencyKeyId: string | number) {
+    return this.apiClient.get<BillingAdminIdempotencyKey>(`/v1/billing/admin/idempotency-keys/${idempotencyKeyId}`).pipe(
+      map((response: ApiResponse<BillingAdminIdempotencyKey>) => response.data ?? null),
+    );
+  }
+
+  loadAdminProviderAccounts(page = 1, perPage = 10, filters: Record<string, string | number | null | undefined> = {}) {
+    const params = Object.fromEntries(
+      Object.entries({
+        page,
+        per_page: perPage,
+        ...filters,
+      }).filter(([, value]) => value !== null && value !== undefined && String(value) !== ''),
+    ) as Record<string, string | number | boolean>;
+
+    return this.apiClient.get<BillingAdminProviderAccount[]>('/v1/billing/admin/provider-accounts', { params }).pipe(
+      map((response: ApiResponse<BillingAdminProviderAccount[]>) => ({
+        items: Array.isArray(response.data) ? response.data : [],
+        meta: response.meta ?? null,
+      })),
+    );
+  }
+
+  loadAdminProviderAccount(providerAccountId: string | number) {
+    return this.apiClient.get<BillingAdminProviderAccount>(`/v1/billing/admin/provider-accounts/${providerAccountId}`).pipe(
+      map((response: ApiResponse<BillingAdminProviderAccount>) => response.data ?? null),
+    );
+  }
+
+  loadAdminRestrictions(page = 1, perPage = 10, filters: Record<string, string | number | null | undefined> = {}) {
+    const params = Object.fromEntries(
+      Object.entries({
+        page,
+        per_page: perPage,
+        ...filters,
+      }).filter(([, value]) => value !== null && value !== undefined && String(value) !== ''),
+    ) as Record<string, string | number | boolean>;
+
+    return this.apiClient.get<BillingAdminRestriction[]>('/v1/billing/admin/restrictions', { params }).pipe(
+      map((response: ApiResponse<BillingAdminRestriction[]>) => ({
+        items: Array.isArray(response.data) ? response.data : [],
+        meta: response.meta ?? null,
+      })),
+    );
+  }
+
+  loadAdminRestriction(restrictionId: string | number) {
+    return this.apiClient.get<BillingAdminRestriction>(`/v1/billing/admin/restrictions/${restrictionId}`).pipe(
+      map((response: ApiResponse<BillingAdminRestriction>) => response.data ?? null),
+    );
+  }
+
+  loadAdminFeatureOverrides(page = 1, perPage = 10, filters: Record<string, string | number | null | undefined> = {}) {
+    const params = Object.fromEntries(
+      Object.entries({
+        page,
+        per_page: perPage,
+        ...filters,
+      }).filter(([, value]) => value !== null && value !== undefined && String(value) !== ''),
+    ) as Record<string, string | number | boolean>;
+
+    return this.apiClient.get<BillingAdminFeatureOverride[]>('/v1/billing/admin/overrides', { params }).pipe(
+      map((response: ApiResponse<BillingAdminFeatureOverride[]>) => ({
+        items: Array.isArray(response.data) ? response.data : [],
+        meta: response.meta ?? null,
+      })),
+    );
+  }
+
+  loadAdminFeatureOverride(featureOverrideId: string | number) {
+    return this.apiClient.get<BillingAdminFeatureOverride>(`/v1/billing/admin/overrides/${featureOverrideId}`).pipe(
+      map((response: ApiResponse<BillingAdminFeatureOverride>) => response.data ?? null),
     );
   }
 

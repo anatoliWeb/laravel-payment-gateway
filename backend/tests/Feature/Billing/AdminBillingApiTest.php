@@ -5,6 +5,7 @@ namespace Tests\Feature\Billing;
 use App\Models\Payment;
 use App\Models\Permission;
 use App\Models\User;
+use Database\Seeders\BillingDemoSeeder;
 use Database\Seeders\BillingPermissionSeeder;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -49,5 +50,56 @@ class AdminBillingApiTest extends TestCase
             ->assertJsonPath('data.status', 'succeeded');
 
         $this->assertSame('succeeded', $payment->refresh()->status);
+    }
+
+    public function test_admin_can_read_safe_reference_admin_billing_endpoints(): void
+    {
+        $this->seed(BillingDemoSeeder::class);
+
+        Sanctum::actingAs(User::query()->where('email', BillingDemoSeeder::ADMIN_EMAIL)->firstOrFail());
+
+        $this->getJson('/api/v1/billing/admin/wallets')
+            ->assertOk()
+            ->assertJsonFragment([
+                'uuid' => 'demo-wallet-customer',
+            ]);
+
+        $this->getJson('/api/v1/billing/admin/idempotency-keys')
+            ->assertOk()
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    '*' => [
+                        'key_fingerprint',
+                        'request_hash',
+                        'response_status',
+                    ],
+                ],
+            ]);
+
+        $this->getJson('/api/v1/billing/admin/provider-accounts')
+            ->assertOk()
+            ->assertJsonStructure([
+                'success',
+                'data' => [
+                    '*' => [
+                        'masked_credentials',
+                        'public_config',
+                        'capabilities',
+                    ],
+                ],
+            ]);
+
+        $this->getJson('/api/v1/billing/admin/restrictions')
+            ->assertOk()
+            ->assertJsonFragment([
+                'type' => 'billing_blocked',
+            ]);
+
+        $this->getJson('/api/v1/billing/admin/overrides')
+            ->assertOk()
+            ->assertJsonFragment([
+                'feature_key' => 'chat.messages.daily',
+            ]);
     }
 }

@@ -1158,7 +1158,7 @@ Simulator actions use payment UUID and remain permission/demo-gated. Normal user
 Note:
 Admin / Operator Billing Management UI is focused on operational history and safe management actions: payments, transactions, invoices, subscriptions, wallets, webhooks, activity logs, idempotency, provider account readiness, restrictions, and feature overrides. Financial analytics and revenue reports are intentionally separated into a dedicated reporting phase.
 
-Payments list/detail/transactions, subscriptions list, wallet-by-user screens, idempotency records, provider accounts, restrictions, and feature overrides remain gap notes or future CRUD flows until dedicated backend list/detail endpoints exist.
+Payments list/detail/transactions, subscriptions detail lookup, wallet-by-user screens, idempotency records, provider accounts, restrictions, and feature overrides are now backed by read-only endpoints. Future CRUD flows remain intentionally out of scope.
 
 Frontend permission checks are only UX helpers. Backend permissions remain the source of truth.
 
@@ -1169,50 +1169,50 @@ Frontend permission checks are only UX helpers. Backend permissions remain the s
 Checklist:
 
 - [ ] Design admin billing backend API scope
-- [ ] Add admin payments list endpoint
-- [ ] Add admin payment detail endpoint
-- [ ] Add admin payment transaction history endpoint
-- [ ] Add admin subscriptions list endpoint
-- [ ] Add admin subscription detail endpoint if needed
-- [ ] Add admin wallet balance by user endpoint
-- [ ] Add admin wallet transaction history by user endpoint
-- [ ] Add admin idempotency records list endpoint
-- [ ] Add admin idempotency record detail endpoint
-- [ ] Ensure raw idempotency keys are never exposed
-- [ ] Add admin provider accounts list endpoint
-- [ ] Add admin provider account detail endpoint
+- [x] Add admin payments list endpoint
+- [x] Add admin payment detail endpoint
+- [x] Add admin payment transaction history endpoint
+- [x] Add admin subscriptions list endpoint
+- [x] Add admin subscription detail endpoint if needed
+- [x] Add admin wallet balance by user endpoint
+- [x] Add admin wallet transaction history by user endpoint
+- [x] Add admin idempotency records list endpoint
+- [x] Add admin idempotency record detail endpoint
+- [x] Ensure raw idempotency keys are never exposed
+- [x] Add admin provider accounts list endpoint
+- [x] Add admin provider account detail endpoint
 - [ ] Add provider account form readiness API if safe
-- [ ] Ensure provider credentials are masked and never exposed raw
-- [ ] Add billing restrictions / blacklist list endpoint
+- [x] Ensure provider credentials are masked and never exposed raw
+- [x] Add billing restrictions / blacklist list endpoint
 - [ ] Add billing restriction create endpoint
 - [ ] Add billing restriction disable/expire endpoint
-- [ ] Add feature overrides list endpoint
+- [x] Add feature overrides list endpoint
 - [ ] Add feature override create endpoint
 - [ ] Add feature override disable/expire endpoint
-- [ ] Add backend permission checks for all admin billing endpoints
-- [ ] Add permissions for admin billing read/manage actions if missing
+- [x] Add backend permission checks for all admin billing endpoints
+- [x] Add permissions for admin billing read/manage actions if missing
 - [ ] Ensure normal users cannot access admin billing endpoints
 - [ ] Add public UUID payment simulation endpoint if still needed
 - [ ] Keep simulation permission/demo gated
-- [ ] Add demo admin/operator user seed data
-- [ ] Add demo normal user seed data
-- [ ] Add demo company/seller/customer seed data if useful
-- [ ] Add demo payments in multiple statuses
-- [ ] Add demo payment transactions
-- [ ] Add demo subscriptions in multiple statuses
-- [ ] Add demo wallets and wallet transactions
-- [ ] Add demo invoices in multiple statuses
-- [ ] Add demo webhook deliveries
-- [ ] Add demo simulator provider accounts
-- [ ] Add demo billing restrictions / blacklist entries
-- [ ] Add demo feature overrides
-- [ ] Make demo seeders idempotent and safe to rerun
-- [ ] Update Angular admin billing UI to consume new endpoints
+- [x] Add demo admin/operator user seed data
+- [x] Add demo normal user seed data
+- [x] Add demo company/seller/customer seed data if useful
+- [x] Add demo payments in multiple statuses
+- [x] Add demo payment transactions
+- [x] Add demo subscriptions in multiple statuses
+- [x] Add demo wallets and wallet transactions
+- [x] Add demo invoices in multiple statuses
+- [x] Add demo webhook deliveries
+- [x] Add demo simulator provider accounts
+- [x] Add demo billing restrictions / blacklist entries
+- [x] Add demo feature overrides
+- [x] Make demo seeders idempotent and safe to rerun
+- [x] Update Angular admin billing UI to consume new endpoints
 - [ ] Update Angular checkout UI simulation buttons if endpoint is added
-- [ ] Add backend tests for admin billing APIs
-- [ ] Add backend tests for permissions
-- [ ] Add backend tests for demo seeders
-- [ ] Add frontend tests for updated admin billing UI
+- [x] Add backend tests for admin billing APIs
+- [x] Add backend tests for permissions
+- [x] Add backend tests for demo seeders
+- [x] Add frontend tests for updated admin billing UI
 - [ ] Add frontend tests for checkout simulation buttons if implemented
 - [ ] Document admin billing backend APIs
 - [ ] Document demo seed data
