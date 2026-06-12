@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\V1\Billing\InvoiceController;
 use App\Http\Controllers\Api\V1\Billing\PaymentMethodController;
 use App\Http\Controllers\Api\V1\Billing\PaymentPreferenceController;
 use App\Http\Controllers\Api\V1\Billing\PaymentSimulationController;
+use App\Http\Controllers\Api\V1\Billing\AdminBillingController;
 use App\Http\Controllers\Api\V1\Billing\WalletAdjustmentController;
 use App\Http\Controllers\Api\V1\Billing\WalletController;
 use App\Http\Controllers\Api\V1\Billing\WebhookDeliveryController;
@@ -429,6 +430,49 @@ Route::prefix('v1')
                         Route::post('/webhooks/{webhookDelivery}/retry', [WebhookDeliveryController::class, 'retry'])
                             ->middleware('permission:billing.webhooks.retry')
                             ->name('webhooks.retry');
+
+                        Route::prefix('admin')
+                            ->as('admin.')
+                            ->group(function (): void {
+                                Route::get('/payments', [AdminBillingController::class, 'payments'])
+                                    ->name('payments.index');
+                                Route::get('/payments/{payment}', [AdminBillingController::class, 'payment'])
+                                    ->name('payments.show');
+                                Route::get('/payments/{payment}/transactions', [AdminBillingController::class, 'paymentTransactions'])
+                                    ->name('payments.transactions.index');
+
+                                Route::get('/subscriptions', [AdminBillingController::class, 'subscriptions'])
+                                    ->name('subscriptions.index');
+                                Route::get('/subscriptions/{subscription}', [AdminBillingController::class, 'subscription'])
+                                    ->name('subscriptions.show');
+
+                                Route::get('/wallets', [AdminBillingController::class, 'wallets'])
+                                    ->name('wallets.index');
+                                Route::get('/wallets/{wallet}', [AdminBillingController::class, 'wallet'])
+                                    ->name('wallets.show');
+                                Route::get('/wallets/{wallet}/transactions', [AdminBillingController::class, 'walletTransactions'])
+                                    ->name('wallets.transactions.index');
+
+                                Route::get('/idempotency-keys', [AdminBillingController::class, 'idempotencyKeys'])
+                                    ->name('idempotency-keys.index');
+                                Route::get('/idempotency-keys/{idempotencyKey}', [AdminBillingController::class, 'idempotencyKey'])
+                                    ->name('idempotency-keys.show');
+
+                                Route::get('/provider-accounts', [AdminBillingController::class, 'providerAccounts'])
+                                    ->name('provider-accounts.index');
+                                Route::get('/provider-accounts/{providerAccount}', [AdminBillingController::class, 'providerAccount'])
+                                    ->name('provider-accounts.show');
+
+                                Route::get('/restrictions', [AdminBillingController::class, 'restrictions'])
+                                    ->name('restrictions.index');
+                                Route::get('/restrictions/{billingRestriction}', [AdminBillingController::class, 'restriction'])
+                                    ->name('restrictions.show');
+
+                                Route::get('/overrides', [AdminBillingController::class, 'featureOverrides'])
+                                    ->name('overrides.index');
+                                Route::get('/overrides/{featureOverride}', [AdminBillingController::class, 'featureOverride'])
+                                    ->name('overrides.show');
+                            });
                     });
 
                 /**

@@ -4,6 +4,8 @@ import { ApiClientService } from '../../../api/services/api-client.service';
 import type { ApiResponse } from '../../../api/models/api-response.model';
 import type {
   BillingActivityLog,
+  BillingAdminPayment,
+  BillingAdminPaymentTransaction,
   BillingAdminActivityFilters,
   BillingInvoice,
   BillingInvoicePaymentPayload,
@@ -111,6 +113,42 @@ export class BillingService {
     );
   }
 
+  loadAdminPayments(page = 1, perPage = 10, filters: Record<string, string | number | null | undefined> = {}) {
+    const params = Object.fromEntries(
+      Object.entries({
+        page,
+        per_page: perPage,
+        ...filters,
+      }).filter(([, value]) => value !== null && value !== undefined && String(value) !== ''),
+    ) as Record<string, string | number | boolean>;
+
+    return this.apiClient.get<BillingAdminPayment[]>('/v1/billing/admin/payments', {
+      params,
+    }).pipe(
+      map((response: ApiResponse<BillingAdminPayment[]>) => ({
+        items: Array.isArray(response.data) ? response.data : [],
+        meta: response.meta ?? null,
+      })),
+    );
+  }
+
+  loadAdminPayment(paymentIdOrUuid: string | number) {
+    return this.apiClient.get<BillingAdminPayment>(`/v1/billing/admin/payments/${paymentIdOrUuid}`).pipe(
+      map((response: ApiResponse<BillingAdminPayment>) => response.data ?? null),
+    );
+  }
+
+  loadAdminPaymentTransactions(paymentIdOrUuid: string | number, page = 1, perPage = 10) {
+    return this.apiClient.get<BillingAdminPaymentTransaction[]>(`/v1/billing/admin/payments/${paymentIdOrUuid}/transactions`, {
+      params: { page, per_page: perPage },
+    }).pipe(
+      map((response: ApiResponse<BillingAdminPaymentTransaction[]>) => ({
+        items: Array.isArray(response.data) ? response.data : [],
+        meta: response.meta ?? null,
+      })),
+    );
+  }
+
   createPayment(payload: BillingPaymentPayload, idempotencyKey: string) {
     return this.apiClient.post<BillingPayment, BillingPaymentPayload>(
       '/v1/billing/payments',
@@ -203,18 +241,18 @@ export class BillingService {
     );
   }
 
-  simulatePaymentSuccess(paymentId: number) {
+  simulatePaymentSuccess(paymentIdOrUuid: string | number) {
     return this.apiClient.post<BillingPayment, Record<string, never>>(
-      `/v1/billing/payments/${paymentId}/simulate/success`,
+      `/v1/billing/payments/${paymentIdOrUuid}/simulate/success`,
       {},
     ).pipe(
       map((response: ApiResponse<BillingPayment>) => response.data ?? null),
     );
   }
 
-  simulatePaymentFailure(paymentId: number, reason = 'card_declined') {
+  simulatePaymentFailure(paymentIdOrUuid: string | number, reason = 'card_declined') {
     return this.apiClient.post<BillingPayment, { reason: string; metadata: Record<string, unknown> }>(
-      `/v1/billing/payments/${paymentId}/simulate/failure`,
+      `/v1/billing/payments/${paymentIdOrUuid}/simulate/failure`,
       {
         reason,
         metadata: {

@@ -97,10 +97,6 @@
         </div>
         <p *ngIf="paymentResultMessage" class="success-line">{{ paymentResultMessage }}</p>
 
-        <div class="status-note">
-          <p>The user checkout intentionally hides simulator success/failure buttons because payment simulator routes require an internal payment id that the create response does not expose.</p>
-        </div>
-
         <div class="payment-result" *ngIf="paymentResult">
           <div class="section-head">
             <div>
@@ -117,6 +113,22 @@
             <div class="status-row"><span>Invoice</span><strong>{{ paymentResult.invoice_id || '-' }}</strong></div>
             <div class="status-row"><span>Provider</span><strong>{{ paymentResult.provider || '-' }}</strong></div>
             <div class="status-row"><span>Created</span><strong>{{ paymentResult.created_at || '-' }}</strong></div>
+          </div>
+
+          <div class="status-note" *ngIf="canUseSimulationActions">
+            <p>Demo simulator actions can target the returned payment UUID, so local checkout flows can be exercised without exposing internal ids.</p>
+            <div class="billing-split__actions">
+              <app-button type="button" [disabled]="simulationLoading" (click)="simulateSuccess()">Simulate success</app-button>
+              <app-button type="button" [disabled]="simulationLoading" (click)="simulateFailure()">Simulate failure</app-button>
+            </div>
+            <p *ngIf="simulationActionMessage" class="success-line">{{ simulationActionMessage }}</p>
+          </div>
+
+          <div *ngIf="simulationActionError" class="error-block">
+            <p class="error-line"><strong>{{ simulationActionError.code || 'simulation_error' }}</strong><span>{{ simulationActionError.message }}</span></p>
+            <ul class="error-fields" *ngIf="errorFieldLines(simulationActionError).length">
+              <li *ngFor="let field of errorFieldLines(simulationActionError)">{{ field }}</li>
+            </ul>
           </div>
         </div>
       </div>

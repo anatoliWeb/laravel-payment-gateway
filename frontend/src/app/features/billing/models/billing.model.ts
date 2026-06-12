@@ -97,6 +97,43 @@ export interface BillingPayment {
   created_at: string | null;
 }
 
+export interface BillingAdminPayment extends BillingPayment {
+  id: number;
+  user_id: number | null;
+  payer_user_id: number | null;
+  company_id: number | null;
+  seller_id: number | null;
+  subscription_id: number | null;
+  invoice_id: number | null;
+  parent_payment_id: number | null;
+  provider_account_id: number | null;
+  description: string | null;
+  failure_reason: string | null;
+  callback_url: string | null;
+  metadata: Record<string, unknown>;
+  ownership_metadata: Record<string, unknown> | null;
+  paid_at: string | null;
+  failed_at: string | null;
+  expired_at: string | null;
+  cancelled_at: string | null;
+  transactions_count?: number | null;
+  webhook_deliveries_count?: number | null;
+  updated_at: string | null;
+}
+
+export interface BillingAdminPaymentTransaction {
+  id: number;
+  payment_id: number;
+  type: string;
+  status_from: string | null;
+  status_to: string | null;
+  amount: number;
+  currency: string;
+  message: string | null;
+  payload: Record<string, unknown>;
+  created_at: string | null;
+}
+
 export interface BillingPaymentPreference {
   strategy: BillingPaymentStrategy;
   default_payment_method?: BillingPaymentMethod | null;

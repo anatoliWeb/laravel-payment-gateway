@@ -96,14 +96,14 @@ No stack traces or raw server errors are shown.
 
 ## Simulator Success / Failure Buttons
 
-The user checkout UI does not expose simulator success/failure actions.
+The user checkout UI now shows simulator success/failure actions only after a payment has been created.
 
-Reason:
+WHY:
 
-- the payment simulation routes are bound to the internal payment id
-- the current create responses return a public payment UUID, not a create-time payment id
+- the payment simulation routes accept the returned payment UUID
+- local/demo checkout flows can be exercised without exposing internal database ids
 
-That control remains a better fit for the admin/operator phase.
+The broader admin/operator surface still owns the list/detail workflow; the checkout page only exposes a post-create demo helper.
 
 ## What Is Intentionally Not Implemented
 
@@ -112,7 +112,7 @@ That control remains a better fit for the admin/operator phase.
 - admin/operator billing management
 - seller/company billing dashboards
 - backend plans catalog UI
-- hidden payment simulation controls in the user portal
+- hidden payment simulation controls before a payment exists
 
 ## Relation to Phase 22.1
 

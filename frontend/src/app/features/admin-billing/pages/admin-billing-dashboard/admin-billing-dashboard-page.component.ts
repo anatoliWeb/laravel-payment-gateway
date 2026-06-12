@@ -6,6 +6,8 @@ import { BillingService } from '../../../billing/services/billing.service';
 import { PermissionService } from '../../../../rbac/services/permission.service';
 import type {
   BillingActivityLog as AdminBillingActivityLog,
+  BillingAdminPayment,
+  BillingAdminPaymentTransaction,
   BillingAdminActivityFilters,
   BillingInvoice,
   BillingPaginationMeta,
@@ -34,20 +36,11 @@ export class AdminBillingDashboardPageComponent implements OnInit {
   private readonly permissionService = inject(PermissionService);
 
   readonly invoicePageSize = 6;
+  readonly paymentPageSize = 8;
   readonly activityPageSize = 8;
   readonly webhookPageSize = 8;
 
   readonly gapCards: DashboardGap[] = [
-    {
-      title: 'Payments list and detail',
-      note: 'The backend does not expose a payment list or payment detail endpoint yet, so the admin UI shows this as a documented gap.',
-      status: 'gap',
-    },
-    {
-      title: 'Payment transaction history',
-      note: 'Payment transaction history is not exposed separately from payment records in the current API surface.',
-      status: 'gap',
-    },
     {
       title: 'Idempotency records',
       note: 'There is no admin-safe idempotency listing endpoint, so raw keys stay invisible and this section remains a gap note.',
@@ -77,6 +70,18 @@ export class AdminBillingDashboardPageComponent implements OnInit {
   selectedInvoice: BillingInvoice | null = null;
   selectedInvoiceLoading = false;
   selectedInvoiceError: BillingPortalError | null = null;
+
+  payments: BillingAdminPayment[] = [];
+  paymentsMeta: BillingPaginationMeta | null = null;
+  paymentsLoading = false;
+  paymentsError: BillingPortalError | null = null;
+  selectedPayment: BillingAdminPayment | null = null;
+  selectedPaymentLoading = false;
+  selectedPaymentError: BillingPortalError | null = null;
+  selectedPaymentTransactions: BillingAdminPaymentTransaction[] = [];
+  selectedPaymentTransactionsMeta: BillingPaginationMeta | null = null;
+  selectedPaymentTransactionsLoading = false;
+  selectedPaymentTransactionsError: BillingPortalError | null = null;
 
   activityLogs: AdminBillingActivityLog[] = [];
   activityMeta: BillingPaginationMeta | null = null;
@@ -154,6 +159,10 @@ export class AdminBillingDashboardPageComponent implements OnInit {
     return this.invoicesMeta?.total ?? this.invoices.length;
   }
 
+  get paymentsCount(): number {
+    return this.paymentsMeta?.total ?? this.payments.length;
+  }
+
   get activityCount(): number {
     return this.activityMeta?.total ?? this.activityLogs.length;
   }
@@ -168,6 +177,11 @@ export class AdminBillingDashboardPageComponent implements OnInit {
         label: 'Invoices',
         value: String(this.invoicesCount),
         hint: this.invoicesLoading ? 'Loading invoice list' : 'Admin-readable invoices',
+      },
+      {
+        label: 'Payments',
+        value: String(this.paymentsCount),
+        hint: this.paymentsLoading ? 'Loading payment list' : 'UUID-backed admin payment view',
       },
       {
         label: 'Activity logs',
@@ -189,9 +203,45 @@ export class AdminBillingDashboardPageComponent implements OnInit {
 
   async refresh(): Promise<void> {
     await Promise.allSettled([
+      this.loadPayments(1),
       this.loadInvoices(1),
       this.loadActivityLogs(1),
     ]);
+  }
+
+  async loadPayments(page = 1): Promise<void> {
+    this.paymentsLoading = true;
+    this.paymentsError = null;
+
+    try {
+      const response = await firstValueFrom(this.billingService.loadAdminPayments(page, this.paymentPageSize));
+      this.payments = response.items;
+      this.paymentsMeta = this.normalizeMeta(response.meta, this.paymentPageSize);
+    } catch (error) {
+      this.payments = [];
+      this.paymentsMeta = null;
+      this.paymentsError = BillingService.extractError(error);
+    } finally {
+      this.paymentsLoading = false;
+    }
+  }
+
+  async inspectPayment(payment: BillingAdminPayment): Promise<void> {
+    this.selectedPayment = payment;
+    this.selectedPaymentError = null;
+    this.selectedPaymentLoading = true;
+    this.selectedPaymentTransactionsError = null;
+
+    try {
+      this.selectedPayment = await firstValueFrom(this.billingService.loadAdminPayment(payment.uuid));
+      await this.loadPaymentTransactions(payment.uuid, 1);
+    } catch (error) {
+      this.selectedPaymentError = BillingService.extractError(error);
+      this.selectedPaymentTransactions = [];
+      this.selectedPaymentTransactionsMeta = null;
+    } finally {
+      this.selectedPaymentLoading = false;
+    }
   }
 
   async loadInvoices(page = 1): Promise<void> {
@@ -282,6 +332,23 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.activityError = BillingService.extractError(error);
     } finally {
       this.activityLoading = false;
+    }
+  }
+
+  async loadPaymentTransactions(paymentIdOrUuid: string, page = 1): Promise<void> {
+    this.selectedPaymentTransactionsLoading = true;
+    this.selectedPaymentTransactionsError = null;
+
+    try {
+      const response = await firstValueFrom(this.billingService.loadAdminPaymentTransactions(paymentIdOrUuid, page, this.paymentPageSize));
+      this.selectedPaymentTransactions = response.items;
+      this.selectedPaymentTransactionsMeta = this.normalizeMeta(response.meta, this.paymentPageSize);
+    } catch (error) {
+      this.selectedPaymentTransactions = [];
+      this.selectedPaymentTransactionsMeta = null;
+      this.selectedPaymentTransactionsError = BillingService.extractError(error);
+    } finally {
+      this.selectedPaymentTransactionsLoading = false;
     }
   }
 
@@ -401,6 +468,14 @@ export class AdminBillingDashboardPageComponent implements OnInit {
     return item.id;
   }
 
+  trackByPaymentId(_: number, item: BillingAdminPayment): number {
+    return item.id;
+  }
+
+  trackByPaymentTransactionId(_: number, item: BillingAdminPaymentTransaction): number {
+    return item.id;
+  }
+
   trackByWebhookId(_: number, item: BillingWebhookDelivery): number {
     return item.id;
   }
@@ -465,7 +540,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
     return Number.isFinite(parsed) ? parsed : null;
   }
 
-  private normalizeMeta(meta: unknown): BillingPaginationMeta | null {
+  private normalizeMeta(meta: unknown, perPage = this.invoicePageSize): BillingPaginationMeta | null {
     if (!meta || typeof meta !== 'object') {
       return null;
     }
@@ -474,7 +549,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
     return {
       current_page: Number(source['current_page'] ?? 1),
       last_page: Number(source['last_page'] ?? 1),
-      per_page: Number(source['per_page'] ?? this.invoicePageSize),
+      per_page: Number(source['per_page'] ?? perPage),
       total: Number(source['total'] ?? 0),
     };
   }

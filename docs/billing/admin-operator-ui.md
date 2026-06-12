@@ -16,8 +16,8 @@ The route is backed by a lazy-loaded Angular feature module and uses the existin
 
 ### Dashboard
 
-- summary cards for invoices, activity logs, webhook deliveries, and wallet adjustment readiness
-- visible gap cards for backend areas that do not yet have admin list/detail endpoints
+- summary cards for invoices, payments, activity logs, webhook deliveries, and wallet adjustment readiness
+- visible gap cards for backend areas that do not yet have admin UI screens
 
 ### Invoices
 
@@ -25,10 +25,17 @@ The route is backed by a lazy-loaded Angular feature module and uses the existin
 - invoice detail lookup from `GET /api/v1/billing/invoices/{invoice}`
 - pagination support through the existing list response meta
 
+### Payments
+
+- payment list from `GET /api/v1/billing/admin/payments`
+- payment detail lookup from `GET /api/v1/billing/admin/payments/{payment}`
+- payment transaction history from `GET /api/v1/billing/admin/payments/{payment}/transactions`
+- UUID and legacy id binding both work for payment lookup and simulator actions
+
 ### Subscriptions
 
 - subscription detail lookup from `GET /api/v1/billing/subscriptions/{subscription}`
-- no subscription list endpoint is exposed yet, so the UI shows a gap note for list views
+- subscription list is available on the backend admin API, while the UI still uses a focused lookup pattern
 
 ### Wallet Adjustments
 
@@ -54,8 +61,6 @@ The route is backed by a lazy-loaded Angular feature module and uses the existin
 
 The UI intentionally shows placeholder cards for:
 
-- payments list and payment detail
-- payment transaction history
 - idempotency records
 - provider accounts
 - billing restrictions / blacklist
@@ -67,6 +72,9 @@ These are documented gaps, not missed wiring.
 
 - `GET /api/v1/billing/invoices`
 - `GET /api/v1/billing/invoices/{invoice}`
+- `GET /api/v1/billing/admin/payments`
+- `GET /api/v1/billing/admin/payments/{payment}`
+- `GET /api/v1/billing/admin/payments/{payment}/transactions`
 - `GET /api/v1/billing/subscriptions/{subscription}`
 - `GET /api/v1/activity`
 - `GET /api/v1/billing/payments/{payment}/webhooks`
@@ -97,8 +105,6 @@ Backend permissions remain the source of truth. The UI still expects `403` respo
 
 ## What Is Intentionally Not Implemented
 
-- payment list/detail screens
-- payment transaction history screens
 - idempotency records screen
 - provider account CRUD
 - restrictions / blacklist CRUD

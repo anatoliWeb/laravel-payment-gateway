@@ -53,6 +53,28 @@ class Payment extends Model
         'cancelled_at' => 'datetime',
     ];
 
+    /**
+     * Resolve payment route bindings by id or UUID.
+     *
+     * WHY:
+     * The checkout UI receives UUIDs while older admin tooling still uses
+     * numeric ids. Accepting both keeps the API backward-compatible and lets
+     * local/demo pages use the public UUID without a second endpoint shape.
+     */
+    public function resolveRouteBinding($value, $field = null): ?Model
+    {
+        $query = static::query();
+
+        if ($field !== null && $field !== $this->getRouteKeyName()) {
+            return $query->where($field, $value)->first();
+        }
+
+        return $query
+            ->whereKey($value)
+            ->orWhere('uuid', $value)
+            ->first();
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

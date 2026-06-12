@@ -107,6 +107,9 @@ export class BillingCheckoutPageComponent implements OnInit {
   paymentResult: BillingPayment | null = null;
   paymentResultMessage: string | null = null;
   paymentActionError: BillingPortalError | null = null;
+  simulationActionError: BillingPortalError | null = null;
+  simulationActionMessage: string | null = null;
+  simulationLoading = false;
   submitting = false;
 
   readonly checkoutForm = this.fb.group({
@@ -149,7 +152,7 @@ export class BillingCheckoutPageComponent implements OnInit {
   }
 
   get canUseSimulationActions(): boolean {
-    return false;
+    return this.paymentResult !== null;
   }
 
   async refresh(): Promise<void> {
@@ -167,6 +170,8 @@ export class BillingCheckoutPageComponent implements OnInit {
   async submit(): Promise<void> {
     this.paymentActionError = null;
     this.paymentResultMessage = null;
+    this.simulationActionError = null;
+    this.simulationActionMessage = null;
 
     if (this.checkoutForm.invalid) {
       this.checkoutForm.markAllAsTouched();
@@ -223,6 +228,46 @@ export class BillingCheckoutPageComponent implements OnInit {
       this.paymentActionError = BillingService.extractError(error);
     } finally {
       this.submitting = false;
+    }
+  }
+
+  async simulateSuccess(): Promise<void> {
+    if (!this.paymentResult?.uuid) {
+      return;
+    }
+
+    this.simulationActionError = null;
+    this.simulationActionMessage = null;
+    this.simulationLoading = true;
+
+    try {
+      const payment = await firstValueFrom(this.billingService.simulatePaymentSuccess(this.paymentResult.uuid));
+      this.paymentResult = payment;
+      this.simulationActionMessage = `Payment ${payment?.uuid || 'payment'} marked as succeeded.`;
+    } catch (error) {
+      this.simulationActionError = BillingService.extractError(error);
+    } finally {
+      this.simulationLoading = false;
+    }
+  }
+
+  async simulateFailure(): Promise<void> {
+    if (!this.paymentResult?.uuid) {
+      return;
+    }
+
+    this.simulationActionError = null;
+    this.simulationActionMessage = null;
+    this.simulationLoading = true;
+
+    try {
+      const payment = await firstValueFrom(this.billingService.simulatePaymentFailure(this.paymentResult.uuid));
+      this.paymentResult = payment;
+      this.simulationActionMessage = `Payment ${payment?.uuid || 'payment'} marked as failed.`;
+    } catch (error) {
+      this.simulationActionError = BillingService.extractError(error);
+    } finally {
+      this.simulationLoading = false;
     }
   }
 

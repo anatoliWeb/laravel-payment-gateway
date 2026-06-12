@@ -153,6 +153,152 @@
   <ui-card>
     <div class="section-head">
       <div>
+        <h3>Payments</h3>
+        <p>Payments are loaded from the admin billing API and can be opened by UUID or legacy id.</p>
+      </div>
+      <span class="status" [ngClass]="paymentsLoading ? 'status--pending' : 'status--neutral'">{{ paymentsCount }}</span>
+    </div>
+
+    <div *ngIf="paymentsError" class="error-block">
+      <p class="error-line"><strong>{{ paymentsError.code || 'payments_error' }}</strong><span>{{ paymentsError.message }}</span></p>
+      <ul class="error-fields" *ngIf="errorFieldLines(paymentsError).length">
+        <li *ngFor="let field of errorFieldLines(paymentsError)">{{ field }}</li>
+      </ul>
+    </div>
+
+    <app-loading-state [visible]="paymentsLoading" [message]="'Loading payments...'"></app-loading-state>
+
+    <ng-container *ngIf="!paymentsLoading && payments.length > 0">
+      <app-data-table>
+        <table>
+          <thead>
+            <tr>
+              <th>Payment</th>
+              <th>Status</th>
+              <th>Amount</th>
+              <th>Source</th>
+              <th>Provider</th>
+              <th>Owner</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let payment of payments; trackBy: trackByPaymentId">
+              <td>
+                <strong>{{ payment.uuid }}</strong>
+                <small>#{{ payment.id }}</small>
+              </td>
+              <td><span class="status" [ngClass]="statusClass(payment.status)">{{ payment.status }}</span></td>
+              <td>{{ formatAmount(payment.amount, payment.currency) }}</td>
+              <td>{{ payment.payment_source || '-' }}</td>
+              <td>{{ payment.provider || '-' }}</td>
+              <td>{{ payment.payer_user_id || payment.user_id || '-' }}</td>
+              <td>{{ payment.created_at || '-' }}</td>
+              <td>
+                <button type="button" class="secondary-link secondary-link--button" (click)="inspectPayment(payment)">
+                  Inspect
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </app-data-table>
+
+      <app-pagination
+        *ngIf="paymentsMeta"
+        [currentPage]="paymentsMeta.current_page"
+        [lastPage]="paymentsMeta.last_page"
+        [perPage]="paymentsMeta.per_page"
+        [total]="paymentsMeta.total"
+        (pageChange)="loadPayments($event)"
+      ></app-pagination>
+    </ng-container>
+
+    <app-empty-state *ngIf="!paymentsLoading && payments.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+
+    <div class="detail-panel" *ngIf="selectedPayment || selectedPaymentLoading || selectedPaymentError">
+      <div class="section-head">
+        <div>
+          <h4>Payment detail</h4>
+          <p>Loaded from the admin payment detail endpoint.</p>
+        </div>
+        <span class="status" [ngClass]="statusClass(selectedPayment?.status)">{{ selectedPayment?.status || 'waiting' }}</span>
+      </div>
+
+      <app-loading-state [visible]="selectedPaymentLoading" [message]="'Loading payment detail...'"></app-loading-state>
+      <div *ngIf="selectedPaymentError" class="error-block">
+        <p class="error-line"><strong>{{ selectedPaymentError.code || 'payment_error' }}</strong><span>{{ selectedPaymentError.message }}</span></p>
+      </div>
+
+      <ng-container *ngIf="selectedPayment && !selectedPaymentLoading">
+        <div class="kv-grid">
+          <div class="kv"><span>UUID</span><strong>{{ selectedPayment.uuid }}</strong></div>
+          <div class="kv"><span>Database id</span><strong>{{ selectedPayment.id }}</strong></div>
+          <div class="kv"><span>User</span><strong>{{ selectedPayment.user_id || '-' }}</strong></div>
+          <div class="kv"><span>Payer</span><strong>{{ selectedPayment.payer_user_id || '-' }}</strong></div>
+          <div class="kv"><span>Company</span><strong>{{ selectedPayment.company_id || '-' }}</strong></div>
+          <div class="kv"><span>Seller</span><strong>{{ selectedPayment.seller_id || '-' }}</strong></div>
+          <div class="kv"><span>Subscription</span><strong>{{ selectedPayment.subscription_id || '-' }}</strong></div>
+          <div class="kv"><span>Invoice</span><strong>{{ selectedPayment.invoice_id || '-' }}</strong></div>
+          <div class="kv"><span>Source</span><strong>{{ selectedPayment.payment_source || '-' }}</strong></div>
+          <div class="kv"><span>Provider</span><strong>{{ selectedPayment.provider || '-' }}</strong></div>
+          <div class="kv"><span>Provider ref</span><strong>{{ selectedPayment.provider_reference || '-' }}</strong></div>
+          <div class="kv"><span>Callback</span><strong>{{ selectedPayment.callback_url || '-' }}</strong></div>
+        </div>
+
+        <div class="status-grid">
+          <div class="status-row"><span>Amount</span><strong>{{ formatAmount(selectedPayment.amount, selectedPayment.currency) }}</strong></div>
+          <div class="status-row"><span>Failure reason</span><strong>{{ selectedPayment.failure_reason || '-' }}</strong></div>
+          <div class="status-row"><span>Paid at</span><strong>{{ selectedPayment.paid_at || '-' }}</strong></div>
+          <div class="status-row"><span>Updated</span><strong>{{ selectedPayment.updated_at || '-' }}</strong></div>
+        </div>
+
+        <app-loading-state [visible]="selectedPaymentTransactionsLoading" [message]="'Loading payment transactions...'"></app-loading-state>
+        <div *ngIf="selectedPaymentTransactionsError" class="error-block">
+          <p class="error-line"><strong>{{ selectedPaymentTransactionsError.code || 'payment_transactions_error' }}</strong><span>{{ selectedPaymentTransactionsError.message }}</span></p>
+        </div>
+
+        <app-data-table *ngIf="selectedPaymentTransactions.length > 0">
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Transition</th>
+                <th>Amount</th>
+                <th>Message</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let transaction of selectedPaymentTransactions; trackBy: trackByPaymentTransactionId">
+                <td>{{ transaction.type }}</td>
+                <td>{{ transaction.status_from || '-' }} → {{ transaction.status_to || '-' }}</td>
+                <td>{{ formatAmount(transaction.amount, transaction.currency) }}</td>
+                <td>{{ transaction.message || '-' }}</td>
+                <td>{{ transaction.created_at || '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </app-data-table>
+
+        <app-empty-state *ngIf="!selectedPaymentTransactionsLoading && selectedPaymentTransactions.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+
+        <app-pagination
+          *ngIf="selectedPaymentTransactionsMeta"
+          [currentPage]="selectedPaymentTransactionsMeta.current_page"
+          [lastPage]="selectedPaymentTransactionsMeta.last_page"
+          [perPage]="selectedPaymentTransactionsMeta.per_page"
+          [total]="selectedPaymentTransactionsMeta.total"
+          (pageChange)="selectedPayment ? loadPaymentTransactions(selectedPayment.uuid, $event) : null"
+        ></app-pagination>
+      </ng-container>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
         <h3>Subscriptions</h3>
         <p>Subscription detail lookup is available, but a subscription list endpoint is not exposed yet.</p>
       </div>
@@ -427,8 +573,8 @@
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Payments</h3>
-        <p>Payments are operationally important, but the API does not expose a list or detail endpoint yet.</p>
+        <h3>Remaining admin gaps</h3>
+        <p>These items stay intentionally documented until we decide whether the portfolio needs dedicated CRUD APIs for them.</p>
       </div>
       <span class="status status--pending">Gap note</span>
     </div>

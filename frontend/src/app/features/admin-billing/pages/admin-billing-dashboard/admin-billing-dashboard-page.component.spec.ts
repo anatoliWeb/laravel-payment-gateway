@@ -49,6 +49,52 @@ describe('AdminBillingDashboardPageComponent', () => {
     created_at: '2026-06-12T08:00:00Z',
   };
 
+  const payment = {
+    id: 77,
+    uuid: 'payment-77',
+    user_id: 15,
+    payer_user_id: 15,
+    company_id: 3,
+    seller_id: 7,
+    subscription_id: 12,
+    invoice_id: 88,
+    parent_payment_id: null,
+    provider_account_id: 5,
+    amount: 10000,
+    currency: 'USD',
+    status: 'succeeded',
+    payment_source: 'payment_method',
+    payment_method_summary: { id: 101, uuid: 'pm-1', type: 'fake_card' },
+    provider: 'simulator',
+    provider_reference: 'prov-77',
+    description: 'Operator payment',
+    failure_reason: null,
+    callback_url: 'https://example.test/callback',
+    metadata: {},
+    ownership_metadata: {},
+    paid_at: '2026-06-12T08:10:00Z',
+    failed_at: null,
+    expired_at: null,
+    cancelled_at: null,
+    transactions_count: 1,
+    webhook_deliveries_count: 1,
+    created_at: '2026-06-12T08:10:00Z',
+    updated_at: '2026-06-12T08:10:00Z',
+  };
+
+  const paymentTransaction = {
+    id: 701,
+    payment_id: 77,
+    type: 'payment_succeeded',
+    status_from: 'processing',
+    status_to: 'succeeded',
+    amount: 10000,
+    currency: 'USD',
+    message: 'Payment success simulated.',
+    payload: { source: 'payment_simulation_service' },
+    created_at: '2026-06-12T08:11:00Z',
+  };
+
   const activity = {
     id: 501,
     user_id: 1,
@@ -113,6 +159,9 @@ describe('AdminBillingDashboardPageComponent', () => {
   };
 
   const billingServiceMock = {
+    loadAdminPayments: vi.fn().mockReturnValue(of({ items: [payment], meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 } })),
+    loadAdminPayment: vi.fn().mockReturnValue(of(payment)),
+    loadAdminPaymentTransactions: vi.fn().mockReturnValue(of({ items: [paymentTransaction], meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 } })),
     loadInvoices: vi.fn().mockReturnValue(of({ items: [invoice], meta: { current_page: 1, last_page: 1, per_page: 6, total: 1 } })),
     loadInvoice: vi.fn().mockReturnValue(of(invoice)),
     loadActivityLogs: vi.fn().mockReturnValue(of({ items: [activity], meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 } })),
@@ -147,7 +196,7 @@ describe('AdminBillingDashboardPageComponent', () => {
 
   it('renders the admin billing dashboard and documented gaps', () => {
     expect(fixture.nativeElement.textContent).toContain('Billing Management');
-    expect(fixture.nativeElement.textContent).toContain('Payments list and detail');
+    expect(fixture.nativeElement.textContent).toContain('UUID-backed admin payment view');
     expect(fixture.nativeElement.textContent).toContain('Activity logs');
   });
 

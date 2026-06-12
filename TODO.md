@@ -1109,8 +1109,8 @@ This phase makes billing visible to end users. It should consume existing billin
 - [x] Show succeeded payment state
 - [x] Show failed payment state
 - [x] Show expired/cancelled payment state
-- [ ] Add button to simulate payment success in demo/admin mode if allowed
-- [ ] Add button to simulate payment failure in demo/admin mode if allowed
+- [x] Add button to simulate payment success in demo/admin mode if allowed
+- [x] Add button to simulate payment failure in demo/admin mode if allowed
 - [x] Prevent duplicate submit with UI lock/idempotency key
 - [x] Display stable API error messages
 - [x] Add frontend tests if project structure supports it
@@ -1124,9 +1124,9 @@ Checkout UI must use idempotency keys and existing payment APIs. It must not cal
 ## Phase 22.3 - Admin / Operator Billing Management UI
 
 - [x] Design admin billing dashboard
-- [ ] Show payments list
-- [ ] Show payment details
-- [ ] Show payment transaction history
+- [x] Show payments list
+- [x] Show payment details
+- [x] Show payment transaction history
 - [x] Show invoices list
 - [x] Show invoice details
 - [ ] Show subscriptions list
@@ -1149,13 +1149,13 @@ Checkout UI must use idempotency keys and existing payment APIs. It must not cal
 - [ ] Add feature override creation UI
 - [ ] Add feature override disable/expire UI
 - [x] Enforce frontend permission checks
-- [ ] Enforce backend permission checks through API
+- [x] Enforce backend permission checks through API
 - [x] Add loading/empty/error states
 - [x] Add frontend tests if project structure supports it
 - [x] Document admin/operator billing UI
 
 Note:
-Payments, payment transaction history, idempotency records, provider accounts, restrictions, and feature overrides remain gap notes because the backend does not expose dedicated admin list/detail CRUD endpoints yet.
+Subscriptions, wallet-by-user screens, idempotency records, provider accounts, restrictions, and feature overrides remain gap notes because the backend does not yet expose dedicated UI flows for them.
 
 Frontend permission checks are only UX helpers. Backend permissions remain the source of truth.
 
