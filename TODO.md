@@ -1164,6 +1164,66 @@ Frontend permission checks are only UX helpers. Backend permissions remain the s
 
 ---
 
+## Phase 22.3.1 - Admin Billing Backend API & Demo Data
+
+Checklist:
+
+- [ ] Design admin billing backend API scope
+- [ ] Add admin payments list endpoint
+- [ ] Add admin payment detail endpoint
+- [ ] Add admin payment transaction history endpoint
+- [ ] Add admin subscriptions list endpoint
+- [ ] Add admin subscription detail endpoint if needed
+- [ ] Add admin wallet balance by user endpoint
+- [ ] Add admin wallet transaction history by user endpoint
+- [ ] Add admin idempotency records list endpoint
+- [ ] Add admin idempotency record detail endpoint
+- [ ] Ensure raw idempotency keys are never exposed
+- [ ] Add admin provider accounts list endpoint
+- [ ] Add admin provider account detail endpoint
+- [ ] Add provider account form readiness API if safe
+- [ ] Ensure provider credentials are masked and never exposed raw
+- [ ] Add billing restrictions / blacklist list endpoint
+- [ ] Add billing restriction create endpoint
+- [ ] Add billing restriction disable/expire endpoint
+- [ ] Add feature overrides list endpoint
+- [ ] Add feature override create endpoint
+- [ ] Add feature override disable/expire endpoint
+- [ ] Add backend permission checks for all admin billing endpoints
+- [ ] Add permissions for admin billing read/manage actions if missing
+- [ ] Ensure normal users cannot access admin billing endpoints
+- [ ] Add public UUID payment simulation endpoint if still needed
+- [ ] Keep simulation permission/demo gated
+- [ ] Add demo admin/operator user seed data
+- [ ] Add demo normal user seed data
+- [ ] Add demo company/seller/customer seed data if useful
+- [ ] Add demo payments in multiple statuses
+- [ ] Add demo payment transactions
+- [ ] Add demo subscriptions in multiple statuses
+- [ ] Add demo wallets and wallet transactions
+- [ ] Add demo invoices in multiple statuses
+- [ ] Add demo webhook deliveries
+- [ ] Add demo simulator provider accounts
+- [ ] Add demo billing restrictions / blacklist entries
+- [ ] Add demo feature overrides
+- [ ] Make demo seeders idempotent and safe to rerun
+- [ ] Update Angular admin billing UI to consume new endpoints
+- [ ] Update Angular checkout UI simulation buttons if endpoint is added
+- [ ] Add backend tests for admin billing APIs
+- [ ] Add backend tests for permissions
+- [ ] Add backend tests for demo seeders
+- [ ] Add frontend tests for updated admin billing UI
+- [ ] Add frontend tests for checkout simulation buttons if implemented
+- [ ] Document admin billing backend APIs
+- [ ] Document demo seed data
+- [ ] Document admin permissions
+- [ ] Update Phase 22.3 checklist after real endpoints are implemented
+
+Note:
+This phase closes backend/API gaps for the Admin / Operator Billing Management UI. It is focused on operational history and safe admin actions, not financial analytics. Reports and revenue aggregates belong to Phase 22.6 and Phase 22.6.1.
+
+---
+
 ## Phase 22.4 - Seller / Company Billing Views
 
 - [x] Design company billing overview page
@@ -1345,6 +1405,8 @@ This backend phase is needed before reports UI can show authoritative financial 
 - [ ] Add README section: Billing Admin Management UI
 - [ ] Add README section: Billing Demo Flows
 - [ ] Add README section: Billing Reports / Analytics Roadmap
+- [ ] Explain admin billing backend API and demo seed data
+- [ ] Explain operational admin history vs financial reports
 - [ ] Add architecture diagram text
 - [ ] Add interview talking points
 - [ ] Add examples of senior-level decisions
