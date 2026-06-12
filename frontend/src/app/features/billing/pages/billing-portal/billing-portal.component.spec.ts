@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { BillingModule } from '../../billing.module';
 import { BillingService } from '../../services/billing.service';
 import { of } from 'rxjs';
@@ -142,7 +143,7 @@ describe('BillingPortalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BillingModule],
+      imports: [BillingModule, RouterTestingModule],
       providers: [
         { provide: BillingService, useValue: billingServiceMock },
       ],

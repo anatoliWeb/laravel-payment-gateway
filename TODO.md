@@ -1118,15 +1118,16 @@ This phase makes billing visible to end users. It should consume existing billin
 
 Note:
 Checkout UI must use idempotency keys and existing payment APIs. It must not call provider logic directly.
+Simulator actions use payment UUID and remain permission/demo-gated. Normal users must not bypass backend permissions.
 
 ---
 
 ## Phase 22.3 - Admin / Operator Billing Management UI
 
 - [x] Design admin billing dashboard
-- [x] Show payments list
-- [x] Show payment details
-- [x] Show payment transaction history
+- [ ] Show payments list
+- [ ] Show payment details
+- [ ] Show payment transaction history
 - [x] Show invoices list
 - [x] Show invoice details
 - [ ] Show subscriptions list
@@ -1155,7 +1156,9 @@ Checkout UI must use idempotency keys and existing payment APIs. It must not cal
 - [x] Document admin/operator billing UI
 
 Note:
-Subscriptions, wallet-by-user screens, idempotency records, provider accounts, restrictions, and feature overrides remain gap notes because the backend does not yet expose dedicated UI flows for them.
+Admin / Operator Billing Management UI is focused on operational history and safe management actions: payments, transactions, invoices, subscriptions, wallets, webhooks, activity logs, idempotency, provider account readiness, restrictions, and feature overrides. Financial analytics and revenue reports are intentionally separated into a dedicated reporting phase.
+
+Payments list/detail/transactions, subscriptions list, wallet-by-user screens, idempotency records, provider accounts, restrictions, and feature overrides remain gap notes or future CRUD flows until dedicated backend list/detail endpoints exist.
 
 Frontend permission checks are only UX helpers. Backend permissions remain the source of truth.
 
@@ -1207,6 +1210,62 @@ They are intentionally implemented as frontend ownership shells with explicit ga
 
 Note:
 Demo flows should make the portfolio easy to review without requiring Postman.
+
+---
+
+## Phase 22.6 - Billing Reports & Analytics UI
+
+- [ ] Design billing reports dashboard
+- [ ] Show revenue summary by period
+- [ ] Show successful payments summary
+- [ ] Show failed payments summary
+- [ ] Show pending payments summary
+- [ ] Show revenue by plan
+- [ ] Show revenue by currency
+- [ ] Show revenue by seller/company
+- [ ] Show subscription MRR/ARR if supported
+- [ ] Show active subscriptions count
+- [ ] Show past_due subscriptions count
+- [ ] Show cancelled/expired subscriptions count
+- [ ] Show wallet top-up totals
+- [ ] Show wallet debit totals
+- [ ] Show invoice paid/unpaid totals
+- [ ] Add date range filters
+- [ ] Add status filters
+- [ ] Add currency filters
+- [ ] Add seller/company filters
+- [ ] Add export-ready tables
+- [ ] Add CSV export if backend supports it
+- [ ] Add backend reporting API gap notes where endpoints are missing
+- [ ] Ensure reports do not calculate authoritative revenue from partial frontend pages
+- [ ] Add frontend tests if project structure supports it
+- [ ] Document billing reports and analytics UI
+
+Note:
+Reports are separate from operational admin history. The frontend must not calculate authoritative financial totals from partial paginated lists. Real report totals require dedicated backend reporting endpoints.
+
+---
+
+## Phase 22.6.1 - Billing Reports Backend API
+
+- [ ] Design billing reports API contract
+- [ ] Add revenue summary endpoint
+- [ ] Add payment status summary endpoint
+- [ ] Add revenue by plan endpoint
+- [ ] Add revenue by currency endpoint
+- [ ] Add revenue by seller/company endpoint
+- [ ] Add subscription metrics endpoint
+- [ ] Add invoice metrics endpoint
+- [ ] Add wallet metrics endpoint
+- [ ] Add date/status/currency/seller/company filters
+- [ ] Add permission checks for report access
+- [ ] Add tests for report totals
+- [ ] Add tests for report permissions
+- [ ] Ensure financial reports use database aggregates, not frontend calculations
+- [ ] Document reports API
+
+Note:
+This backend phase is needed before reports UI can show authoritative financial totals.
 
 ---
 
@@ -1283,6 +1342,9 @@ Demo flows should make the portfolio easy to review without requiring Postman.
 - [ ] Add README section: Queue & Scheduler
 - [ ] Add README section: Paid Chat Features
 - [ ] Add README section: Future Dialer Billing
+- [ ] Add README section: Billing Admin Management UI
+- [ ] Add README section: Billing Demo Flows
+- [ ] Add README section: Billing Reports / Analytics Roadmap
 - [ ] Add architecture diagram text
 - [ ] Add interview talking points
 - [ ] Add examples of senior-level decisions
@@ -1294,6 +1356,8 @@ Demo flows should make the portfolio easy to review without requiring Postman.
 - [ ] Add screenshots or GIF notes for checkout/payment flow
 - [ ] Add screenshots or GIF notes for admin billing management
 - [ ] Add screenshots or GIF notes for seller/company billing views
+- [ ] Add screenshots or GIF notes for billing reports dashboard
 - [ ] Add explanation of permission-gated wallet adjustments
 - [ ] Add explanation of blacklist/restrictions and feature overrides
 - [ ] Add explanation of demo payment simulator UI
+- [ ] Explain difference between operational history and financial reports
