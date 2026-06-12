@@ -1163,26 +1163,27 @@ Frontend permission checks are only UX helpers. Backend permissions remain the s
 
 ## Phase 22.4 - Seller / Company Billing Views
 
-- [ ] Design company billing overview page
-- [ ] Design seller billing overview page
-- [ ] Show company-scoped payment history
-- [ ] Show seller-scoped payment history
-- [ ] Show company-scoped invoices
-- [ ] Show seller-scoped invoices
-- [ ] Show company-scoped customers if available
-- [ ] Show seller customers
-- [ ] Show seller revenue/payment summary
-- [ ] Show company revenue/payment summary
-- [ ] Show provider account status for seller/company
-- [ ] Show webhook delivery status for seller/company payments
-- [ ] Add filters by date/status/currency/seller/customer
-- [ ] Add export-ready table structure if useful
-- [ ] Enforce ownership scope in UI/API calls
-- [ ] Add tests if project structure supports it
-- [ ] Document seller/company billing views
+- [x] Design company billing overview page
+- [x] Design seller billing overview page
+- [x] Show company-scoped payment history
+- [x] Show seller-scoped payment history
+- [x] Show company-scoped invoices
+- [x] Show seller-scoped invoices
+- [x] Show company-scoped customers if available
+- [x] Show seller customers
+- [x] Show seller revenue/payment summary
+- [x] Show company revenue/payment summary
+- [x] Show provider account status for seller/company
+- [x] Show webhook delivery status for seller/company payments
+- [x] Add filters by date/status/currency/seller/customer
+- [x] Add export-ready table structure if useful
+- [x] Enforce ownership scope in UI/API calls
+- [x] Add tests if project structure supports it
+- [x] Document seller/company billing views
 
 Note:
 These views prepare the project for reporting, but full reports/analytics can remain a later phase.
+They are intentionally implemented as frontend ownership shells with explicit gap notes until scoped backend list endpoints exist.
 
 ---
 

@@ -22,6 +22,8 @@ export class SidebarComponent {
     { route: '/settings', labelKey: 'layout.nav.settings', permission: 'settings.view' },
     { route: '/notifications', labelKey: 'layout.nav.notifications', permissions: ['notifications.view'] },
     { route: '/billing', label: 'Billing' },
+    { route: '/billing/company', label: 'Company billing' },
+    { route: '/billing/seller', label: 'Seller billing' },
     { route: '/admin/billing', label: 'Billing admin', permissions: ['billing.payments.view', 'billing.invoices.view', 'billing.subscriptions.view', 'billing.wallets.view', 'activity.view'] },
     { route: '/chat', labelKey: 'layout.nav.chat', permissions: ['chat.view', 'chat.conversations.view'] },
   ];

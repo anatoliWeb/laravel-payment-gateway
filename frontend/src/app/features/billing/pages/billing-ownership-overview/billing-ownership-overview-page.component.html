@@ -1,0 +1,122 @@
+<section class="ownership-page">
+  <ui-card>
+    <header class="hero">
+      <div class="hero__copy">
+        <p class="eyebrow">Billing ownership</p>
+        <h2>{{ scopeTitle }}</h2>
+        <p>{{ heroNote }}</p>
+      </div>
+
+      <div class="hero__actions">
+        <app-button type="button" (click)="applyFilters()">Capture filter scope</app-button>
+        <a class="secondary-link" routerLink="/billing">Billing portal</a>
+        <a class="secondary-link" [routerLink]="otherScopeRoute">{{ scope === 'company' ? 'Seller billing' : 'Company billing' }}</a>
+      </div>
+    </header>
+
+    <div class="summary-grid">
+      <article class="summary-card">
+        <span class="summary-card__label">Ownership scope</span>
+        <strong class="summary-card__value">{{ scopeLabel }}</strong>
+        <small class="summary-card__hint">Scope is page-level only until dedicated backend list endpoints exist.</small>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-card__label">API coverage</span>
+        <strong class="summary-card__value">Gap-aware</strong>
+        <small class="summary-card__hint">Missing company and seller aggregation endpoints are documented below.</small>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-card__label">Filter contract</span>
+        <strong class="summary-card__value">Ready</strong>
+        <small class="summary-card__hint">Date, status, currency, seller, and customer filters are present in the UI.</small>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-card__label">Export shape</span>
+        <strong class="summary-card__value">Planned</strong>
+        <small class="summary-card__hint">Table headers are laid out so future export endpoints can map cleanly.</small>
+      </article>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Scope filters</h3>
+        <p>These controls define the intended query shape, but no request is sent because the backend list endpoints are not exposed yet.</p>
+      </div>
+      <span class="status status--pending">UI only</span>
+    </div>
+
+    <form class="filters" [formGroup]="filterForm" (ngSubmit)="applyFilters()">
+      <label>
+        <span>Date from</span>
+        <input type="date" formControlName="date_from" />
+      </label>
+      <label>
+        <span>Date to</span>
+        <input type="date" formControlName="date_to" />
+      </label>
+      <label>
+        <span>Status</span>
+        <input type="text" formControlName="status" placeholder="paid, pending, failed" />
+      </label>
+      <label>
+        <span>Currency</span>
+        <input type="text" formControlName="currency" placeholder="USD" maxlength="3" />
+      </label>
+      <label>
+        <span>Seller id</span>
+        <input type="text" formControlName="seller_id" />
+      </label>
+      <label>
+        <span>Customer id</span>
+        <input type="text" formControlName="customer_id" />
+      </label>
+      <div class="filter-actions">
+        <app-button type="submit">Apply</app-button>
+        <button type="button" class="secondary-link secondary-link--button" (click)="resetFilters()">Reset</button>
+      </div>
+    </form>
+
+    <div class="filter-note">
+      <p>Captured filter contract</p>
+      <ul>
+        <li *ngFor="let line of filterSummary">{{ line }}</li>
+      </ul>
+    </div>
+  </ui-card>
+
+  <ui-card *ngFor="let section of sections; trackBy: trackBySection">
+    <div class="section-head">
+      <div>
+        <h3>{{ scopeLabel }} {{ section.title }}</h3>
+        <p>{{ section.note }}</p>
+      </div>
+      <span class="status" [ngClass]="statusClass(section.status)">{{ section.status }}</span>
+    </div>
+
+    <div class="gap-callout">
+      The backend does not expose a scoped {{ section.title.toLowerCase() }} endpoint yet, so this page shows the expected structure instead of fake data.
+    </div>
+
+    <app-data-table>
+      <table>
+        <thead>
+          <tr>
+            <th *ngFor="let column of section.columns; trackBy: trackByColumn">{{ column }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td [attr.colspan]="section.columns.length">
+              Backend coverage missing for {{ scopeLabel.toLowerCase() }} {{ section.title.toLowerCase() }}.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </app-data-table>
+  </ui-card>
+</section>

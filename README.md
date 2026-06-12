@@ -68,6 +68,7 @@ Billing documentation:
 - [Billing user portal UI](docs/billing/user-portal-ui.md)
 - [Billing checkout/payment UI](docs/billing/checkout-payment-ui.md)
 - [Billing admin/operator UI](docs/billing/admin-operator-ui.md)
+- [Billing seller/company UI](docs/billing/seller-company-ui.md)
 - [Billing testing](docs/billing/testing.md)
 - [Payment provider abstraction](docs/billing/payment-providers.md)
 
