@@ -1,11 +1,31 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { BillingCheckoutPageComponent } from './pages/billing-checkout/billing-checkout-page.component';
 import { BillingPortalComponent } from './pages/billing-portal/billing-portal.component';
+import { InvoicePaymentPageComponent } from './pages/invoice-payment/invoice-payment-page.component';
+import { WalletTopUpPageComponent } from './pages/wallet-top-up/wallet-top-up-page.component';
 
 const routes: Routes = [
   {
     path: '',
+    pathMatch: 'full',
     component: BillingPortalComponent,
+  },
+  {
+    path: 'checkout',
+    component: BillingCheckoutPageComponent,
+  },
+  {
+    path: 'checkout/plan/:planSlug',
+    component: BillingCheckoutPageComponent,
+  },
+  {
+    path: 'invoices/:invoiceId/pay',
+    component: InvoicePaymentPageComponent,
+  },
+  {
+    path: 'wallet/top-up',
+    component: WalletTopUpPageComponent,
   },
 ];
 

@@ -1,0 +1,149 @@
+<section class="billing-page">
+  <ui-card>
+    <header class="billing-hero">
+      <div class="billing-hero__copy">
+        <p class="eyebrow">Invoice payment</p>
+        <h2>Invoice Payment</h2>
+        <p>Pay a specific invoice using wallet, saved simulator payment method, or wallet-first fallback.</p>
+      </div>
+      <div class="billing-hero__actions">
+        <a class="secondary-link" routerLink="/billing">Back to billing portal</a>
+      </div>
+    </header>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Invoice summary</h3>
+        <p>Loaded from the invoice detail endpoint and paid through the invoice payment endpoint.</p>
+      </div>
+      <span class="status" [ngClass]="statusClass(invoice?.status)">{{ invoice?.status || 'loading' }}</span>
+    </div>
+
+    <app-loading-state [visible]="invoiceLoading" [message]="'Loading invoice...'"></app-loading-state>
+    <div *ngIf="invoiceError" class="error-block">
+      <p class="error-line"><strong>{{ invoiceError.code || 'invoice_error' }}</strong><span>{{ invoiceError.message }}</span></p>
+      <ul class="error-fields" *ngIf="errorFieldLines(invoiceError).length">
+        <li *ngFor="let field of errorFieldLines(invoiceError)">{{ field }}</li>
+      </ul>
+    </div>
+
+    <ng-container *ngIf="invoice">
+      <div class="summary-grid">
+        <div class="summary-item"><span>Invoice</span><strong>{{ invoice.number }}</strong></div>
+        <div class="summary-item"><span>Due amount</span><strong>{{ formatAmount(invoice.due_amount, invoice.currency) }}</strong></div>
+        <div class="summary-item"><span>Total amount</span><strong>{{ formatAmount(invoice.total_amount, invoice.currency) }}</strong></div>
+        <div class="summary-item"><span>Due date</span><strong>{{ invoice.due_at || '-' }}</strong></div>
+        <div class="summary-item"><span>Paid amount</span><strong>{{ formatAmount(invoice.paid_amount, invoice.currency) }}</strong></div>
+        <div class="summary-item"><span>Wallet balance</span><strong>{{ walletBalanceForCurrency(invoice.currency) !== null ? formatAmount(walletBalanceForCurrency(invoice.currency), invoice.currency) : 'Unavailable' }}</strong></div>
+      </div>
+    </ng-container>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Payment form</h3>
+        <p>Uses idempotency-safe invoice payment submit flow.</p>
+      </div>
+      <span class="status status--pending" *ngIf="submitting">Submitting</span>
+    </div>
+
+    <div class="billing-split">
+      <div class="billing-split__main">
+        <app-loading-state [visible]="walletLoading" [message]="'Loading wallet preview...'"></app-loading-state>
+        <app-loading-state [visible]="paymentMethodsLoading" [message]="'Loading payment methods...'"></app-loading-state>
+        <div *ngIf="walletError" class="error-block">
+          <p class="error-line"><strong>{{ walletError.code || 'wallet_error' }}</strong><span>{{ walletError.message }}</span></p>
+          <ul class="error-fields" *ngIf="errorFieldLines(walletError).length">
+            <li *ngFor="let field of errorFieldLines(walletError)">{{ field }}</li>
+          </ul>
+        </div>
+        <div *ngIf="paymentMethodsError" class="error-block">
+          <p class="error-line"><strong>{{ paymentMethodsError.code || 'payment_methods_error' }}</strong><span>{{ paymentMethodsError.message }}</span></p>
+          <ul class="error-fields" *ngIf="errorFieldLines(paymentMethodsError).length">
+            <li *ngFor="let field of errorFieldLines(paymentMethodsError)">{{ field }}</li>
+          </ul>
+        </div>
+        <div *ngIf="paymentPreferencesError" class="error-block">
+          <p class="error-line"><strong>{{ paymentPreferencesError.code || 'payment_preferences_error' }}</strong><span>{{ paymentPreferencesError.message }}</span></p>
+          <ul class="error-fields" *ngIf="errorFieldLines(paymentPreferencesError).length">
+            <li *ngFor="let field of errorFieldLines(paymentPreferencesError)">{{ field }}</li>
+          </ul>
+        </div>
+        <div *ngIf="paymentActionError" class="error-block">
+          <p class="error-line"><strong>{{ paymentActionError.code || 'invoice_payment_error' }}</strong><span>{{ paymentActionError.message }}</span></p>
+          <ul class="error-fields" *ngIf="errorFieldLines(paymentActionError).length">
+            <li *ngFor="let field of errorFieldLines(paymentActionError)">{{ field }}</li>
+          </ul>
+        </div>
+        <p *ngIf="paymentResultMessage" class="success-line">{{ paymentResultMessage }}</p>
+
+        <div class="status-note">
+          <p>Simulator success and failure buttons are intentionally hidden in user checkout because the payment simulation routes require an internal payment id that this response does not expose.</p>
+        </div>
+
+        <div class="payment-result" *ngIf="paymentResult">
+          <div class="section-head">
+            <div>
+              <h4>Payment result</h4>
+              <p>Returned directly from the invoice payment API.</p>
+            </div>
+            <span class="status" [ngClass]="statusClass(paymentResult.status)">{{ paymentResult.status }}</span>
+          </div>
+
+          <div class="status-grid">
+            <div class="status-row"><span>Payment UUID</span><strong>{{ paymentResult.uuid }}</strong></div>
+            <div class="status-row"><span>Amount</span><strong>{{ formatAmount(paymentResult.amount, paymentResult.currency) }}</strong></div>
+            <div class="status-row"><span>Invoice id</span><strong>{{ paymentResult.invoice_id || '-' }}</strong></div>
+            <div class="status-row"><span>Source</span><strong>{{ paymentResult.payment_source || '-' }}</strong></div>
+            <div class="status-row"><span>Created</span><strong>{{ paymentResult.created_at || '-' }}</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <form class="billing-form" [formGroup]="invoicePaymentForm" (ngSubmit)="submit()">
+        <h4>Invoice payment settings</h4>
+
+        <label>
+          <span>Payment source</span>
+          <select formControlName="payment_source">
+            <option *ngFor="let option of paymentSourceOptions" [value]="option.value">{{ option.label }}</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Payment strategy</span>
+          <select formControlName="payment_strategy">
+            <option *ngFor="let option of paymentStrategyOptions" [value]="option.value">{{ option.label }}</option>
+          </select>
+        </label>
+
+        <label *ngIf="invoicePaymentForm.controls.payment_source.value !== 'wallet'">
+          <span>Payment method</span>
+          <select formControlName="payment_method_id">
+            <option value="">Use default method</option>
+            <option *ngFor="let method of paymentMethods; trackBy: trackById" [value]="method.id">
+              {{ method.display_name || method.brand || method.type }} **** {{ method.last4 || '----' }}
+            </option>
+          </select>
+        </label>
+
+        <label>
+          <span>Callback URL</span>
+          <input type="url" formControlName="callback_url" placeholder="https://example.test/billing/callback" />
+        </label>
+
+        <label>
+          <span>Description</span>
+          <input type="text" formControlName="description" maxlength="255" />
+        </label>
+
+        <small class="form-note">The payment amount and currency are taken from the invoice itself.</small>
+
+        <app-button type="submit" [disabled]="submitting || !invoice">Pay invoice</app-button>
+      </form>
+    </div>
+  </ui-card>
+</section>

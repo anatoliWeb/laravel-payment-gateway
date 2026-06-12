@@ -1095,26 +1095,26 @@ This phase makes billing visible to end users. It should consume existing billin
 
 ## Phase 22.2 - Billing Checkout / Payment UI
 
-- [ ] Design checkout page for plan purchase
-- [ ] Design invoice payment page
-- [ ] Design wallet top-up page
-- [ ] Support payment source: wallet
-- [ ] Support payment source: payment method
-- [ ] Support payment source: wallet-first
-- [ ] Show invoice summary before payment
-- [ ] Show payment amount and currency
-- [ ] Show selected seller/company context if present
-- [ ] Show payment status after creation
-- [ ] Show pending payment state
-- [ ] Show succeeded payment state
-- [ ] Show failed payment state
-- [ ] Show expired/cancelled payment state
+- [x] Design checkout page for plan purchase
+- [x] Design invoice payment page
+- [x] Design wallet top-up page
+- [x] Support payment source: wallet
+- [x] Support payment source: payment method
+- [x] Support payment source: wallet-first
+- [x] Show invoice summary before payment
+- [x] Show payment amount and currency
+- [x] Show selected seller/company context if present
+- [x] Show payment status after creation
+- [x] Show pending payment state
+- [x] Show succeeded payment state
+- [x] Show failed payment state
+- [x] Show expired/cancelled payment state
 - [ ] Add button to simulate payment success in demo/admin mode if allowed
 - [ ] Add button to simulate payment failure in demo/admin mode if allowed
-- [ ] Prevent duplicate submit with UI lock/idempotency key
-- [ ] Display stable API error messages
-- [ ] Add frontend tests if project structure supports it
-- [ ] Document checkout/payment UI flow
+- [x] Prevent duplicate submit with UI lock/idempotency key
+- [x] Display stable API error messages
+- [x] Add frontend tests if project structure supports it
+- [x] Document checkout/payment UI flow
 
 Note:
 Checkout UI must use idempotency keys and existing payment APIs. It must not call provider logic directly.

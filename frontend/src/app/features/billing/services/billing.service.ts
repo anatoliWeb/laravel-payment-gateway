@@ -4,12 +4,17 @@ import { ApiClientService } from '../../../api/services/api-client.service';
 import type { ApiResponse } from '../../../api/models/api-response.model';
 import type {
   BillingInvoice,
+  BillingInvoicePaymentPayload,
+  BillingPayment,
   BillingPaymentMethod,
   BillingPaymentMethodPayload,
   BillingPaymentPreference,
   BillingPaymentPreferencesPayload,
+  BillingPaymentPayload,
   BillingPortalError,
   BillingWallet,
+  BillingWalletTopUpPayload,
+  BillingWalletTopUpResponse,
   BillingWalletTransaction,
 } from '../models/billing.model';
 
@@ -20,6 +25,12 @@ export class BillingService {
   loadWallet() {
     return this.apiClient.get<BillingWallet>('/v1/billing/wallet').pipe(
       map((response: ApiResponse<BillingWallet>) => response.data ?? null),
+    );
+  }
+
+  loadInvoice(invoiceId: number) {
+    return this.apiClient.get<BillingInvoice>(`/v1/billing/invoices/${invoiceId}`).pipe(
+      map((response: ApiResponse<BillingInvoice>) => response.data ?? null),
     );
   }
 
@@ -48,6 +59,48 @@ export class BillingService {
   loadPaymentMethods() {
     return this.apiClient.get<BillingPaymentMethod[]>('/v1/billing/payment-methods').pipe(
       map((response: ApiResponse<BillingPaymentMethod[]>) => response.data ?? []),
+    );
+  }
+
+  createPayment(payload: BillingPaymentPayload, idempotencyKey: string) {
+    return this.apiClient.post<BillingPayment, BillingPaymentPayload>(
+      '/v1/billing/payments',
+      payload,
+      {
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
+      },
+    ).pipe(
+      map((response: ApiResponse<BillingPayment>) => response.data ?? null),
+    );
+  }
+
+  payInvoice(invoiceId: number, payload: BillingInvoicePaymentPayload, idempotencyKey: string) {
+    return this.apiClient.post<BillingPayment, BillingInvoicePaymentPayload>(
+      `/v1/billing/invoices/${invoiceId}/pay`,
+      payload,
+      {
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
+      },
+    ).pipe(
+      map((response: ApiResponse<BillingPayment>) => response.data ?? null),
+    );
+  }
+
+  createWalletTopUp(payload: BillingWalletTopUpPayload, idempotencyKey: string) {
+    return this.apiClient.post<BillingWalletTopUpResponse, BillingWalletTopUpPayload>(
+      '/v1/billing/wallet/top-ups',
+      payload,
+      {
+        headers: {
+          'Idempotency-Key': idempotencyKey,
+        },
+      },
+    ).pipe(
+      map((response: ApiResponse<BillingWalletTopUpResponse>) => response.data ?? null),
     );
   }
 
@@ -87,6 +140,29 @@ export class BillingService {
     );
   }
 
+  simulatePaymentSuccess(paymentId: number) {
+    return this.apiClient.post<BillingPayment, Record<string, never>>(
+      `/v1/billing/payments/${paymentId}/simulate/success`,
+      {},
+    ).pipe(
+      map((response: ApiResponse<BillingPayment>) => response.data ?? null),
+    );
+  }
+
+  simulatePaymentFailure(paymentId: number, reason = 'card_declined') {
+    return this.apiClient.post<BillingPayment, { reason: string; metadata: Record<string, unknown> }>(
+      `/v1/billing/payments/${paymentId}/simulate/failure`,
+      {
+        reason,
+        metadata: {
+          scenario: 'demo_checkout',
+        },
+      },
+    ).pipe(
+      map((response: ApiResponse<BillingPayment>) => response.data ?? null),
+    );
+  }
+
   static extractError(error: unknown): BillingPortalError {
     if (error && typeof error === 'object') {
       const maybeError = error as {
@@ -104,6 +180,7 @@ export class BillingService {
         message: typeof maybeError.message === 'string' && maybeError.message.trim() !== ''
           ? maybeError.message
           : 'Request failed.',
+        errors: maybeError.errors ?? null,
       };
     }
 
@@ -111,7 +188,26 @@ export class BillingService {
       status: null,
       code: null,
       message: 'Request failed.',
+      errors: null,
     };
+  }
+
+  static describeErrorFields(errors: unknown): string[] {
+    if (!errors || typeof errors !== 'object') {
+      return [];
+    }
+
+    return Object.entries(errors as Record<string, unknown>).map(([field, value]) => {
+      if (Array.isArray(value)) {
+        return `${field}: ${value.map((entry) => String(entry)).join(', ')}`;
+      }
+
+      if (value && typeof value === 'object') {
+        return `${field}: ${JSON.stringify(value)}`;
+      }
+
+      return `${field}: ${String(value)}`;
+    });
   }
 
   private static extractStableCode(error: { code?: string; errors?: unknown }): string | null {

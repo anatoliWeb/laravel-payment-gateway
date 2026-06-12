@@ -13,6 +13,8 @@
         <app-button [disabled]="refreshing" (click)="refresh()">
           {{ refreshing ? 'Refreshing...' : 'Refresh data' }}
         </app-button>
+        <a class="link-button" routerLink="/billing/checkout">Checkout</a>
+        <a class="link-button" routerLink="/billing/wallet/top-up">Top up wallet</a>
       </div>
     </header>
 
@@ -154,10 +156,15 @@
     </div>
 
     <app-loading-state [visible]="walletLoading" [message]="'Loading wallet...'"></app-loading-state>
-    <p *ngIf="walletError" class="error-line">
-      <strong>{{ walletError.code || 'wallet_error' }}</strong>
-      <span>{{ walletError.message }}</span>
-    </p>
+    <div *ngIf="walletError" class="error-block">
+      <p class="error-line">
+        <strong>{{ walletError.code || 'wallet_error' }}</strong>
+        <span>{{ walletError.message }}</span>
+      </p>
+      <ul class="error-fields" *ngIf="errorFieldLines(walletError).length">
+        <li *ngFor="let field of errorFieldLines(walletError)">{{ field }}</li>
+      </ul>
+    </div>
 
     <ng-container *ngIf="!walletLoading && wallet && wallet.balances.length > 0">
       <app-data-table>
@@ -200,10 +207,15 @@
     </div>
 
     <app-loading-state [visible]="walletTransactionsLoading" [message]="'Loading wallet transactions...'"></app-loading-state>
-    <p *ngIf="walletTransactionsError" class="error-line">
-      <strong>{{ walletTransactionsError.code || 'wallet_transactions_error' }}</strong>
-      <span>{{ walletTransactionsError.message }}</span>
-    </p>
+    <div *ngIf="walletTransactionsError" class="error-block">
+      <p class="error-line">
+        <strong>{{ walletTransactionsError.code || 'wallet_transactions_error' }}</strong>
+        <span>{{ walletTransactionsError.message }}</span>
+      </p>
+      <ul class="error-fields" *ngIf="errorFieldLines(walletTransactionsError).length">
+        <li *ngFor="let field of errorFieldLines(walletTransactionsError)">{{ field }}</li>
+      </ul>
+    </div>
 
     <app-empty-state *ngIf="!walletTransactionsLoading && !walletTransactionsError && walletTransactions.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
 
@@ -260,10 +272,15 @@
     </div>
 
     <app-loading-state [visible]="invoicesLoading" [message]="'Loading invoices...'"></app-loading-state>
-    <p *ngIf="invoicesError" class="error-line">
-      <strong>{{ invoicesError.code || 'invoices_error' }}</strong>
-      <span>{{ invoicesError.message }}</span>
-    </p>
+    <div *ngIf="invoicesError" class="error-block">
+      <p class="error-line">
+        <strong>{{ invoicesError.code || 'invoices_error' }}</strong>
+        <span>{{ invoicesError.message }}</span>
+      </p>
+      <ul class="error-fields" *ngIf="errorFieldLines(invoicesError).length">
+        <li *ngFor="let field of errorFieldLines(invoicesError)">{{ field }}</li>
+      </ul>
+    </div>
 
     <app-empty-state *ngIf="!invoicesLoading && !invoicesError && invoices.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
 
@@ -277,6 +294,7 @@
             <th>Due</th>
             <th>Payment</th>
             <th>Due date</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -290,6 +308,15 @@
             <td>{{ formatAmount(invoice.due_amount, invoice.currency) }}</td>
             <td>{{ invoice.payment_id || '-' }}</td>
             <td>{{ formatDate(invoice.due_at) }}</td>
+            <td>
+              <a
+                *ngIf="invoice.due_amount > 0 && invoice.status !== 'paid' && invoice.status !== 'void'"
+                class="link-button"
+                [routerLink]="['/billing/invoices', invoice.id, 'pay']"
+              >
+                Pay
+              </a>
+            </td>
           </tr>
         </tbody>
       </table>
@@ -306,14 +333,24 @@
     </div>
 
     <app-loading-state [visible]="paymentMethodsLoading" [message]="'Loading payment methods...'"></app-loading-state>
-    <p *ngIf="paymentMethodsError" class="error-line">
-      <strong>{{ paymentMethodsError.code || 'payment_methods_error' }}</strong>
-      <span>{{ paymentMethodsError.message }}</span>
-    </p>
-    <p *ngIf="paymentMethodActionError" class="error-line">
-      <strong>{{ paymentMethodActionError.code || 'payment_method_action_error' }}</strong>
-      <span>{{ paymentMethodActionError.message }}</span>
-    </p>
+    <div *ngIf="paymentMethodsError" class="error-block">
+      <p class="error-line">
+        <strong>{{ paymentMethodsError.code || 'payment_methods_error' }}</strong>
+        <span>{{ paymentMethodsError.message }}</span>
+      </p>
+      <ul class="error-fields" *ngIf="errorFieldLines(paymentMethodsError).length">
+        <li *ngFor="let field of errorFieldLines(paymentMethodsError)">{{ field }}</li>
+      </ul>
+    </div>
+    <div *ngIf="paymentMethodActionError" class="error-block">
+      <p class="error-line">
+        <strong>{{ paymentMethodActionError.code || 'payment_method_action_error' }}</strong>
+        <span>{{ paymentMethodActionError.message }}</span>
+      </p>
+      <ul class="error-fields" *ngIf="errorFieldLines(paymentMethodActionError).length">
+        <li *ngFor="let field of errorFieldLines(paymentMethodActionError)">{{ field }}</li>
+      </ul>
+    </div>
     <p *ngIf="paymentMethodActionMessage" class="success-line">{{ paymentMethodActionMessage }}</p>
 
     <div class="billing-split">
@@ -416,14 +453,24 @@
     </div>
 
     <app-loading-state [visible]="paymentPreferencesLoading" [message]="'Loading payment preferences...'"></app-loading-state>
-    <p *ngIf="paymentPreferencesError" class="error-line">
-      <strong>{{ paymentPreferencesError.code || 'payment_preferences_error' }}</strong>
-      <span>{{ paymentPreferencesError.message }}</span>
-    </p>
-    <p *ngIf="paymentPreferencesActionError" class="error-line">
-      <strong>{{ paymentPreferencesActionError.code || 'payment_preferences_action_error' }}</strong>
-      <span>{{ paymentPreferencesActionError.message }}</span>
-    </p>
+    <div *ngIf="paymentPreferencesError" class="error-block">
+      <p class="error-line">
+        <strong>{{ paymentPreferencesError.code || 'payment_preferences_error' }}</strong>
+        <span>{{ paymentPreferencesError.message }}</span>
+      </p>
+      <ul class="error-fields" *ngIf="errorFieldLines(paymentPreferencesError).length">
+        <li *ngFor="let field of errorFieldLines(paymentPreferencesError)">{{ field }}</li>
+      </ul>
+    </div>
+    <div *ngIf="paymentPreferencesActionError" class="error-block">
+      <p class="error-line">
+        <strong>{{ paymentPreferencesActionError.code || 'payment_preferences_action_error' }}</strong>
+        <span>{{ paymentPreferencesActionError.message }}</span>
+      </p>
+      <ul class="error-fields" *ngIf="errorFieldLines(paymentPreferencesActionError).length">
+        <li *ngFor="let field of errorFieldLines(paymentPreferencesActionError)">{{ field }}</li>
+      </ul>
+    </div>
     <p *ngIf="paymentPreferencesMessage" class="success-line">{{ paymentPreferencesMessage }}</p>
 
     <div class="billing-split">
@@ -537,7 +584,7 @@
       </div>
       <div class="note-card">
         <h4>Phase 22.2</h4>
-        <p>Checkout and top-up flows stay out of this phase and will be added later.</p>
+        <p>Checkout and top-up flows now live on dedicated billing pages above.</p>
       </div>
     </div>
   </ui-card>

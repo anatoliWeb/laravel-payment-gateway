@@ -1,10 +1,11 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { APP_CONFIG, AppEnvironment } from '../../core/tokens/app-config.token';
 import type { ApiResponse } from '../models/api-response.model';
 
 interface RequestOptions {
   params?: Record<string, string | number | boolean>;
+  headers?: Record<string, string>;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -18,6 +19,7 @@ export class ApiClientService {
     const resolved = this.resolveUrl(url);
     return this.http.get<ApiResponse<TData>>(resolved, {
       params: this.toHttpParams(options?.params),
+      headers: this.toHttpHeaders(options?.headers),
     });
   }
 
@@ -25,6 +27,7 @@ export class ApiClientService {
     const resolved = this.resolveUrl(url);
     return this.http.post<ApiResponse<TData>>(resolved, payload, {
       params: this.toHttpParams(options?.params),
+      headers: this.toHttpHeaders(options?.headers),
     });
   }
 
@@ -32,6 +35,7 @@ export class ApiClientService {
     const resolved = this.resolveUrl(url);
     return this.http.patch<ApiResponse<TData>>(resolved, payload, {
       params: this.toHttpParams(options?.params),
+      headers: this.toHttpHeaders(options?.headers),
     });
   }
 
@@ -39,6 +43,7 @@ export class ApiClientService {
     const resolved = this.resolveUrl(url);
     return this.http.delete<ApiResponse<TData>>(resolved, {
       params: this.toHttpParams(options?.params),
+      headers: this.toHttpHeaders(options?.headers),
     });
   }
 
@@ -55,5 +60,14 @@ export class ApiClientService {
       httpParams = httpParams.set(key, String(value));
     });
     return httpParams;
+  }
+
+  private toHttpHeaders(headers?: Record<string, string>): HttpHeaders | undefined {
+    if (!headers) return undefined;
+    let httpHeaders = new HttpHeaders();
+    Object.entries(headers).forEach(([key, value]) => {
+      httpHeaders = httpHeaders.set(key, value);
+    });
+    return httpHeaders;
   }
 }

@@ -6,6 +6,7 @@ export type BillingWalletTransactionDirection = 'credit' | 'debit' | 'neutral' |
 export type BillingPaymentMethodStatus = 'active' | 'inactive' | 'expired' | 'revoked' | 'failed' | string;
 export type BillingPaymentMethodType = 'fake_card' | 'fake_manual_invoice' | 'fake_wallet' | string;
 export type BillingPaymentStrategy = 'wallet_only' | 'payment_method_only' | 'wallet_first' | 'manual_invoice';
+export type BillingPaymentSource = 'wallet' | 'payment_method' | 'wallet_first';
 
 export interface BillingCurrencyRef {
   code: string;
@@ -64,6 +65,26 @@ export interface BillingPaymentMethod {
   updated_at: string | null;
 }
 
+export interface BillingPaymentMethodSummary {
+  id?: number | null;
+  uuid?: string | null;
+  type?: string | null;
+}
+
+export interface BillingPayment {
+  uuid: string;
+  amount: number;
+  currency: string;
+  status: BillingPaymentStatus;
+  payment_source: BillingPaymentSource | string | null;
+  payment_method_summary?: BillingPaymentMethodSummary | null;
+  provider?: string | null;
+  provider_reference?: string | null;
+  invoice_id?: number | null;
+  wallet_transaction_id?: number | string | null;
+  created_at: string | null;
+}
+
 export interface BillingPaymentPreference {
   strategy: BillingPaymentStrategy;
   default_payment_method?: BillingPaymentMethod | null;
@@ -116,6 +137,43 @@ export interface BillingPaymentMethodPayload {
   metadata: Record<string, unknown>;
 }
 
+export interface BillingPaymentPayload {
+  subscription_id?: number | null;
+  company_id?: number | null;
+  seller_id?: number | null;
+  plan_slug?: string | null;
+  amount?: number | null;
+  currency: string;
+  payment_source: BillingPaymentSource;
+  payment_strategy: BillingPaymentStrategy;
+  payment_method_id?: number | null;
+  callback_url?: string | null;
+  description?: string | null;
+  metadata: Record<string, unknown>;
+}
+
+export interface BillingInvoicePaymentPayload {
+  payment_source: BillingPaymentSource;
+  payment_strategy: BillingPaymentStrategy;
+  payment_method_id?: number | null;
+  currency: string;
+  callback_url?: string | null;
+  description?: string | null;
+  metadata: Record<string, unknown>;
+}
+
+export interface BillingWalletTopUpPayload {
+  amount: number;
+  currency: string;
+  payment_method_id: number | null;
+  metadata: Record<string, unknown>;
+}
+
+export interface BillingWalletTopUpResponse {
+  payment: BillingPayment;
+  wallet_transaction: BillingWalletTransaction;
+}
+
 export interface BillingPaymentPreferencesPayload {
   strategy: BillingPaymentStrategy;
   default_payment_method_id: number | null;
@@ -132,6 +190,7 @@ export interface BillingPortalError {
   status: number | null;
   code: string | null;
   message: string;
+  errors: unknown | null;
 }
 
 export interface BillingPlanReference {
@@ -140,6 +199,9 @@ export interface BillingPlanReference {
   description: string;
   priceLabel: string;
   audience: string;
+  amount?: number | null;
+  currency?: string;
+  interval?: string | null;
   highlighted?: boolean;
   features: string[];
 }
@@ -150,4 +212,8 @@ export interface BillingUsageReference {
   limitLabel: string;
   remainingLabel: string;
   period: string;
+}
+
+export interface BillingCheckoutResult {
+  payment: BillingPayment;
 }

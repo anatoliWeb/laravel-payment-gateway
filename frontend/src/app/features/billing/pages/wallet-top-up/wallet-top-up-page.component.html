@@ -1,0 +1,116 @@
+<section class="billing-page">
+  <ui-card>
+    <header class="billing-hero">
+      <div class="billing-hero__copy">
+        <p class="eyebrow">Wallet top-up</p>
+        <h2>Wallet Top-Up</h2>
+        <p>Top up the user wallet with a saved simulator payment method and client-generated idempotency protection.</p>
+      </div>
+      <div class="billing-hero__actions">
+        <a class="secondary-link" routerLink="/billing">Back to billing portal</a>
+      </div>
+    </header>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Wallet preview</h3>
+        <p>Uses the live wallet API and current payment methods.</p>
+      </div>
+      <span class="status" [ngClass]="statusClass(wallet?.status)">{{ wallet?.status || 'loading' }}</span>
+    </div>
+
+    <app-loading-state [visible]="walletLoading" [message]="'Loading wallet...'"></app-loading-state>
+    <app-loading-state [visible]="paymentMethodsLoading" [message]="'Loading payment methods...'"></app-loading-state>
+    <div *ngIf="walletError" class="error-block">
+      <p class="error-line"><strong>{{ walletError.code || 'wallet_error' }}</strong><span>{{ walletError.message }}</span></p>
+      <ul class="error-fields" *ngIf="errorFieldLines(walletError).length">
+        <li *ngFor="let field of errorFieldLines(walletError)">{{ field }}</li>
+      </ul>
+    </div>
+    <div *ngIf="paymentMethodsError" class="error-block">
+      <p class="error-line"><strong>{{ paymentMethodsError.code || 'payment_methods_error' }}</strong><span>{{ paymentMethodsError.message }}</span></p>
+      <ul class="error-fields" *ngIf="errorFieldLines(paymentMethodsError).length">
+        <li *ngFor="let field of errorFieldLines(paymentMethodsError)">{{ field }}</li>
+      </ul>
+    </div>
+
+    <ng-container *ngIf="wallet">
+      <div class="summary-grid">
+        <div class="summary-item" *ngFor="let balance of wallet.balances">
+          <span>{{ balance.currency.code }}</span>
+          <strong>{{ formatAmount(balance.available_amount, balance.currency.code, balance.currency.decimal_precision || 2) }}</strong>
+          <small>Held: {{ formatAmount(balance.held_amount, balance.currency.code, balance.currency.decimal_precision || 2) }}</small>
+        </div>
+      </div>
+    </ng-container>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Top-up form</h3>
+        <p>Uses `POST /api/v1/billing/wallet/top-ups` and a stable idempotency key.</p>
+      </div>
+      <span class="status status--pending" *ngIf="submitting">Submitting</span>
+    </div>
+
+    <div class="billing-split">
+      <div class="billing-split__main">
+        <div *ngIf="topUpActionError" class="error-block">
+          <p class="error-line"><strong>{{ topUpActionError.code || 'wallet_top_up_error' }}</strong><span>{{ topUpActionError.message }}</span></p>
+          <ul class="error-fields" *ngIf="errorFieldLines(topUpActionError).length">
+            <li *ngFor="let field of errorFieldLines(topUpActionError)">{{ field }}</li>
+          </ul>
+        </div>
+        <p *ngIf="topUpResultMessage" class="success-line">{{ topUpResultMessage }}</p>
+
+        <div class="payment-result" *ngIf="topUpResult">
+          <div class="section-head">
+            <div>
+              <h4>Result</h4>
+              <p>Wallet balance changed and a payment attempt was created.</p>
+            </div>
+          </div>
+
+          <div class="status-grid">
+            <div class="status-row"><span>Payment UUID</span><strong>{{ topUpResult.payment.uuid }}</strong></div>
+            <div class="status-row"><span>Payment status</span><strong><span class="status" [ngClass]="statusClass(topUpResult.payment.status)">{{ topUpResult.payment.status }}</span></strong></div>
+            <div class="status-row"><span>Payment amount</span><strong>{{ formatAmount(topUpResult.payment.amount, topUpResult.payment.currency) }}</strong></div>
+            <div class="status-row"><span>Wallet transaction</span><strong>{{ topUpResult.wallet_transaction.uuid }}</strong></div>
+            <div class="status-row"><span>Transaction status</span><strong><span class="status" [ngClass]="statusClass(topUpResult.wallet_transaction.status)">{{ topUpResult.wallet_transaction.status }}</span></strong></div>
+            <div class="status-row"><span>Transaction amount</span><strong>{{ formatAmount(topUpResult.wallet_transaction.amount, topUpResult.wallet_transaction.currency || 'USD') }}</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <form class="billing-form" [formGroup]="topUpForm" (ngSubmit)="submit()">
+        <h4>Top-up details</h4>
+
+        <label>
+          <span>Amount</span>
+          <input type="number" formControlName="amount" min="1" />
+        </label>
+
+        <label>
+          <span>Currency</span>
+          <input type="text" formControlName="currency" maxlength="3" />
+        </label>
+
+        <label>
+          <span>Saved payment method</span>
+          <select formControlName="payment_method_id">
+            <option value="">Choose method</option>
+            <option *ngFor="let method of paymentMethods; trackBy: trackById" [value]="method.id">
+              {{ method.display_name || method.brand || method.type }} **** {{ method.last4 || '----' }}
+            </option>
+          </select>
+        </label>
+
+        <small class="form-note">Wallet top-up never collects raw card data. It reuses the stored simulator payment method list.</small>
+        <app-button type="submit" [disabled]="submitting || paymentMethods.length === 0">Top up wallet</app-button>
+      </form>
+    </div>
+  </ui-card>
+</section>

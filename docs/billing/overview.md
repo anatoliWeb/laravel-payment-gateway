@@ -14,6 +14,7 @@ The module is simulator-safe: it demonstrates a real SaaS billing lifecycle with
 - invoice lifecycle
 - wallet balances and top-ups
 - payment methods and payment preferences
+- user-facing checkout/payment UI for plan purchase, invoice payment, and wallet top-up
 - idempotency for write operations
 - outbound webhook delivery and retry
 - scheduler-driven cleanup and expiration jobs

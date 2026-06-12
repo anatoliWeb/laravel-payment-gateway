@@ -27,6 +27,26 @@ describe('ApiClientService', () => {
     expect(options.params.get('enabled')).toBe('true');
   });
 
+  it('forwards custom headers', () => {
+    const postMock = vi.fn().mockReturnValue(of({ data: { ok: true } }));
+    const service = new ApiClientService(
+      { post: postMock } as any,
+      {
+        production: false,
+        apiBaseUrl: 'http://localhost:8080/api',
+      } as any,
+    );
+
+    service.post('/v1/billing/payments', { amount: 100 }, {
+      headers: {
+        'Idempotency-Key': 'billing-test-key',
+      },
+    });
+
+    const [, , options] = postMock.mock.calls[0];
+    expect(options.headers.get('Idempotency-Key')).toBe('billing-test-key');
+  });
+
   it('does not expose token or secret values in resolved request url', () => {
     const getMock = vi.fn().mockReturnValue(of({ data: {} }));
     const service = new ApiClientService(
@@ -46,4 +66,3 @@ describe('ApiClientService', () => {
     expect(lower).toBe('http://localhost:8080/api/v1/dashboard');
   });
 });
-

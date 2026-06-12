@@ -26,11 +26,6 @@
   color: #677185;
 }
 
-.billing-hero__actions {
-  display: flex;
-  align-items: center;
-}
-
 .eyebrow {
   margin: 0;
   text-transform: uppercase;
@@ -253,6 +248,14 @@
   flex-wrap: wrap;
 }
 
+.billing-hero__actions {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .link-button {
   border: 0;
   background: transparent;
@@ -276,6 +279,17 @@
 }
 
 .error-line {
+  color: #b42318;
+}
+
+.error-block {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.error-fields {
+  margin: 0 0 0.75rem;
+  padding-left: 1rem;
   color: #b42318;
 }
 

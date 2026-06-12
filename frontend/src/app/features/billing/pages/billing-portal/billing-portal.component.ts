@@ -159,6 +159,7 @@ export class BillingPortalComponent implements OnInit {
         status: 422,
         code: 'validation',
         message: 'Please complete the payment method form.',
+        errors: null,
       };
       return;
     }
@@ -239,6 +240,7 @@ export class BillingPortalComponent implements OnInit {
         status: 422,
         code: 'validation',
         message: 'Please complete the payment preferences form.',
+        errors: null,
       };
       return;
     }
@@ -332,6 +334,10 @@ export class BillingPortalComponent implements OnInit {
 
   trackByFeatureKey(_: number, item: { featureKey: string }): string {
     return item.featureKey;
+  }
+
+  errorFieldLines(error: BillingPortalError | null): string[] {
+    return BillingService.describeErrorFields(error?.errors ?? null);
   }
 
   private async loadWallet(): Promise<void> {
