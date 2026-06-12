@@ -59,3 +59,7 @@ The filter controls already cover the likely future query shape:
 ## Status
 
 Implemented as a UI-first ownership reporting shell for portfolio review.
+
+## Relation to Demo Flows
+
+The seller/company payment flow in [Billing Demo Flows](./demo-flows.md) points to these ownership-aware screens as the reviewer entry point for scoped billing context.

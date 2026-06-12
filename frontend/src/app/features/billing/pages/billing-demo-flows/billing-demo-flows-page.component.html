@@ -1,0 +1,145 @@
+<section class="demo-page">
+  <ui-card>
+    <header class="hero">
+      <div class="hero__copy">
+        <p class="eyebrow">Billing demo flows</p>
+        <h2>Billing Demo Flows</h2>
+        <p>
+          A reviewer-friendly walkthrough for the billing simulator. It points to the live Angular screens, spells out the safe steps, and keeps backend gaps visible instead of hiding them behind fake demo data.
+        </p>
+      </div>
+
+      <div class="hero__actions">
+        <a class="secondary-link" routerLink="/billing">Billing portal</a>
+        <a class="secondary-link" routerLink="/billing/checkout">Checkout</a>
+        <a class="secondary-link" routerLink="/billing/wallet/top-up">Wallet top-up</a>
+        <a class="secondary-link" routerLink="/admin/billing">Admin billing</a>
+      </div>
+    </header>
+
+    <div class="summary-grid">
+      <article class="summary-card">
+        <span class="summary-card__label">Route</span>
+        <strong class="summary-card__value">{{ demoRoute }}</strong>
+        <small class="summary-card__hint">Use this page as the first stop for a portfolio walkthrough.</small>
+      </article>
+      <article class="summary-card">
+        <span class="summary-card__label">Flow count</span>
+        <strong class="summary-card__value">{{ cards.length }}</strong>
+        <small class="summary-card__hint">All requested billing demo scenarios are documented below.</small>
+      </article>
+      <article class="summary-card">
+        <span class="summary-card__label">Safety</span>
+        <strong class="summary-card__value">Simulator-only</strong>
+        <small class="summary-card__hint">No real provider credentials or raw card data are used.</small>
+      </article>
+      <article class="summary-card">
+        <span class="summary-card__label">Evidence style</span>
+        <strong class="summary-card__value">Guide + gap notes</strong>
+        <small class="summary-card__hint">The page stays honest when backend discovery is still partial.</small>
+      </article>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Recommended walkthrough order</h3>
+        <p>Start here, then move through the guide in order. Each item links to the relevant section below.</p>
+      </div>
+      <span class="status status--pending">Checklist</span>
+    </div>
+
+    <ol class="walkthrough">
+      <li *ngFor="let item of walkthrough; trackBy: trackByWalkthrough">
+        <a [href]="item.anchor">{{ item.title }}</a>
+      </li>
+    </ol>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Status legend</h3>
+        <p>These labels keep the demo honest about what is live, partial, admin-only, or still a backend gap.</p>
+      </div>
+      <span class="status status--neutral">Legend</span>
+    </div>
+
+    <div class="legend-grid">
+      <article class="legend-card" *ngFor="let item of statusLegend">
+        <span class="status" [ngClass]="statusClass(item.label)">{{ item.label }}</span>
+        <p>{{ item.note }}</p>
+      </article>
+    </div>
+  </ui-card>
+
+  <ui-card *ngFor="let card of cards; trackBy: trackById" [attr.id]="card.id">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Step {{ card.order }}</p>
+        <h3>{{ card.title }}</h3>
+        <p>{{ card.purpose }}</p>
+      </div>
+      <span class="status" [ngClass]="statusClass(card.status)">{{ card.status }}</span>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-card">
+        <h4>Prerequisites</h4>
+        <ul>
+          <li *ngFor="let item of card.prerequisites; trackBy: trackByText">{{ item }}</li>
+        </ul>
+      </div>
+
+      <div class="detail-card">
+        <h4>Steps</h4>
+        <ol>
+          <li *ngFor="let item of card.steps; trackBy: trackByText">{{ item }}</li>
+        </ol>
+      </div>
+
+      <div class="detail-card">
+        <h4>Links</h4>
+        <ul class="link-list">
+          <li *ngFor="let link of card.links; trackBy: trackByLink">
+            <a *ngIf="link.route" [routerLink]="link.route">{{ link.label }}</a>
+            <span *ngIf="!link.route">{{ link.label }}</span>
+            <small *ngIf="link.docs">{{ link.docs }}</small>
+            <small *ngIf="link.note">{{ link.note }}</small>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="safety-note" *ngIf="card.safetyNote">
+      <strong>Safety note:</strong>
+      <span>{{ card.safetyNote }}</span>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Screenshots and notes</h3>
+        <p>This demo guide is documentation-first. Add screenshots or short GIF notes later if the portfolio needs visual proof.</p>
+      </div>
+      <span class="status status--neutral">Notes only</span>
+    </div>
+
+    <div class="notes-grid">
+      <div class="note-card">
+        <h4>Suggested capture order</h4>
+        <p>Start with the portal, then checkout, then wallet top-up, then admin billing, then seller/company views.</p>
+      </div>
+      <div class="note-card">
+        <h4>Simulator-only warning</h4>
+        <p>No real charges, provider secrets, or raw card data belong in these captures.</p>
+      </div>
+      <div class="note-card">
+        <h4>Where to expand later</h4>
+        <p>Place future screenshots near the billing docs or in the README once the demo pack is finalized.</p>
+      </div>
+    </div>
+  </ui-card>
+</section>

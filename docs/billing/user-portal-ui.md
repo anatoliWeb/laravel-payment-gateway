@@ -52,3 +52,7 @@ These sections are rendered as design references because the backend does not ex
 - No business logic is duplicated on the frontend.
 - No real payment provider integration is added here.
 - The page is ready for later expansion once user-scoped subscription, plans, usage, and payment-history APIs are exposed.
+
+## Relation to Demo Flows
+
+The portal is the first stop in [Billing Demo Flows](./demo-flows.md). It provides the baseline review for wallet, invoices, payment methods, and the visible placeholders that the demo guide references.

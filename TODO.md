@@ -1189,21 +1189,21 @@ They are intentionally implemented as frontend ownership shells with explicit ga
 
 ## Phase 22.5 - Billing Demo Flows
 
-- [ ] Add demo flow for free plan limits
-- [ ] Add demo flow for paid plan purchase
-- [ ] Add demo flow for wallet top-up
-- [ ] Add demo flow for wallet payment
-- [ ] Add demo flow for payment method payment
-- [ ] Add demo flow for wallet-first fallback
-- [ ] Add demo flow for invoice payment
-- [ ] Add demo flow for subscription activation
-- [ ] Add demo flow for failed payment
-- [ ] Add demo flow for webhook delivery history
-- [ ] Add demo flow for billing restriction / blacklist
-- [ ] Add demo flow for feature override
-- [ ] Add demo flow for seller/company scoped payment
-- [ ] Add screenshots or notes for portfolio README if useful
-- [ ] Document demo billing flows
+- [x] Add demo flow for free plan limits
+- [x] Add demo flow for paid plan purchase
+- [x] Add demo flow for wallet top-up
+- [x] Add demo flow for wallet payment
+- [x] Add demo flow for payment method payment
+- [x] Add demo flow for wallet-first fallback
+- [x] Add demo flow for invoice payment
+- [x] Add demo flow for subscription activation
+- [x] Add demo flow for failed payment
+- [x] Add demo flow for webhook delivery history
+- [x] Add demo flow for billing restriction / blacklist
+- [x] Add demo flow for feature override
+- [x] Add demo flow for seller/company scoped payment
+- [x] Add screenshots or notes for portfolio README if useful
+- [x] Document demo billing flows
 
 Note:
 Demo flows should make the portfolio easy to review without requiring Postman.

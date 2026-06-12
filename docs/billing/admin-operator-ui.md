@@ -117,3 +117,7 @@ Those items depend on backend APIs that are not exposed in this phase.
 ## Notes
 
 The admin billing UI is intentionally conservative. It prefers a visible gap note over fake data when the backend does not expose a safe list/detail endpoint.
+
+## Relation to Demo Flows
+
+The failed payment, webhook delivery history, restriction / blacklist, and feature override entries in [Billing Demo Flows](./demo-flows.md) route back here for the current admin/operator surface and documented gaps.

@@ -126,6 +126,10 @@ Phase 22.1 provides the user billing portal overview:
 
 Phase 22.2 adds the transactional screens that perform writes.
 
+## Relation to Demo Flows
+
+The checkout, wallet top-up, wallet payment, payment method payment, and wallet-first scenarios documented in [Billing Demo Flows](./demo-flows.md) all point back to this page and its sibling routes.
+
 ## Relation to Phase 22.3
 
 Phase 22.3 is the correct place for:

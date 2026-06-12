@@ -69,6 +69,7 @@ Billing documentation:
 - [Billing checkout/payment UI](docs/billing/checkout-payment-ui.md)
 - [Billing admin/operator UI](docs/billing/admin-operator-ui.md)
 - [Billing seller/company UI](docs/billing/seller-company-ui.md)
+- [Billing demo flows](docs/billing/demo-flows.md)
 - [Billing testing](docs/billing/testing.md)
 - [Payment provider abstraction](docs/billing/payment-providers.md)
 
@@ -148,6 +149,7 @@ Based on default `docker-compose.yml` / `.env` values:
 - API base: `http://localhost:8080/api/v1`
 - Vue Admin (Vite dev): `http://localhost:5173`
 - Angular Dashboard: `http://localhost:4200`
+- Billing demo flows: `http://localhost:4200/billing/demo`
 - API docs portal: `http://localhost:8080/docs/api/portal`
 - Swagger UI (full-access policy): `http://localhost:8080/docs/api`
 - Public liveness: `http://localhost:8080/health`

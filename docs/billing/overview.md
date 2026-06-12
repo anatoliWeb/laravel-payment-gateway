@@ -112,6 +112,7 @@ Provider readiness, encrypted credentials, customer-scoped provider accounts, an
 - [Billing API Errors](./api-errors.md)
 - [Billing Testing](./testing.md)
 - [Billing Seller / Company UI](./seller-company-ui.md)
+- [Billing Demo Flows](./demo-flows.md)
 - [Plans and Feature Access](./plans.md)
 - [Idempotency](./idempotency.md)
 - [Webhooks](./webhooks.md)
