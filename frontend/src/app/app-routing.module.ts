@@ -35,6 +35,10 @@ const routes: Routes = [
         loadChildren: () => import('./features/notifications/notifications.module').then((m) => m.NotificationsModule),
       },
       {
+        path: 'billing',
+        loadChildren: () => import('./features/billing/billing.module').then((m) => m.BillingModule),
+      },
+      {
         path: 'chat',
         loadChildren: () => import('./features/chat/chat.module').then((m) => m.ChatModule),
       },

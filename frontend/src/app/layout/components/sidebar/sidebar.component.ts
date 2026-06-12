@@ -3,7 +3,8 @@ import { PermissionService } from '../../../rbac/services/permission.service';
 
 type NavItem = {
   route: string;
-  labelKey: string;
+  labelKey?: string;
+  label?: string;
   permission?: string;
   permissions?: string[];
 };
@@ -20,6 +21,7 @@ export class SidebarComponent {
     { route: '/profile', labelKey: 'layout.nav.profile' },
     { route: '/settings', labelKey: 'layout.nav.settings', permission: 'settings.view' },
     { route: '/notifications', labelKey: 'layout.nav.notifications', permissions: ['notifications.view'] },
+    { route: '/billing', label: 'Billing' },
     { route: '/chat', labelKey: 'layout.nav.chat', permissions: ['chat.view', 'chat.conversations.view'] },
   ];
 

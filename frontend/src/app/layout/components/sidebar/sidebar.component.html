@@ -6,7 +6,7 @@
       [routerLink]="item.route"
       routerLinkActive="is-active"
     >
-      {{ item.labelKey | t }}
+      {{ item.label || (item.labelKey ? (item.labelKey | t) : '') }}
     </a>
   </nav>
 </aside>

@@ -1,0 +1,544 @@
+<section class="billing-page">
+  <ui-card>
+    <header class="billing-hero">
+      <div class="billing-hero__copy">
+        <p class="eyebrow">Billing portal</p>
+        <h2>Billing Portal</h2>
+        <p>
+          A user-facing billing surface for subscription state, wallet data, payment methods, invoices, and preferences.
+        </p>
+      </div>
+
+      <div class="billing-hero__actions">
+        <app-button [disabled]="refreshing" (click)="refresh()">
+          {{ refreshing ? 'Refreshing...' : 'Refresh data' }}
+        </app-button>
+      </div>
+    </header>
+
+    <div class="billing-summary">
+      <article class="summary-card">
+        <span class="summary-card__label">Wallet currencies</span>
+        <strong class="summary-card__value">{{ wallet?.balances?.length ?? 0 }}</strong>
+        <small class="summary-card__hint">Live from /api/v1/billing/wallet</small>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-card__label">Payment methods</span>
+        <strong class="summary-card__value">{{ paymentMethods.length }}</strong>
+        <small class="summary-card__hint">Live from /api/v1/billing/payment-methods</small>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-card__label">Invoices</span>
+        <strong class="summary-card__value">{{ invoices.length }}</strong>
+        <small class="summary-card__hint">Live from /api/v1/billing/invoices</small>
+      </article>
+
+      <article class="summary-card">
+        <span class="summary-card__label">Preferences</span>
+        <strong class="summary-card__value">
+          {{ paymentPreferences?.strategy || 'waiting' }}
+        </strong>
+        <small class="summary-card__hint">Live from /api/v1/billing/payment-preferences</small>
+      </article>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Current subscription</h3>
+        <p>There is no dedicated current-subscription endpoint yet, so this block stays intentionally explicit.</p>
+      </div>
+      <span class="status status--neutral">API pending</span>
+    </div>
+
+    <div class="placeholder-copy">
+      <p>The backend currently exposes subscription reads by subscription id only.</p>
+      <p>When a current-user subscription endpoint lands, this section will show status, plan, billing period, and cancel-at-period-end state.</p>
+    </div>
+
+    <div class="status-grid">
+      <div class="status-row">
+        <span>Status</span>
+        <strong>Not available yet</strong>
+      </div>
+      <div class="status-row">
+        <span>Plan</span>
+        <strong>Not available yet</strong>
+      </div>
+      <div class="status-row">
+        <span>Billing period</span>
+        <strong>Not available yet</strong>
+      </div>
+      <div class="status-row">
+        <span>Cancel at period end</span>
+        <strong>Not available yet</strong>
+      </div>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Available plans</h3>
+        <p>This is a design reference view because a live billing plans endpoint is not exposed yet.</p>
+      </div>
+      <span class="status status--pending">Design reference</span>
+    </div>
+
+    <div class="plan-grid">
+      <article *ngFor="let plan of plannedPlans" [class]="planChipClass(plan.highlighted)">
+        <div class="plan-card__head">
+          <div>
+            <h4>{{ plan.name }}</h4>
+            <p>{{ plan.description }}</p>
+          </div>
+          <span class="status" [ngClass]="plan.highlighted ? 'status--positive' : 'status--neutral'">
+            {{ plan.priceLabel }}
+          </span>
+        </div>
+        <small class="plan-card__audience">{{ plan.audience }}</small>
+        <ul class="plan-card__features">
+          <li *ngFor="let feature of plan.features">{{ feature }}</li>
+        </ul>
+      </article>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Usage limits</h3>
+        <p>Usage tracking is enforced by backend services, but the live usage endpoint is not exposed yet.</p>
+      </div>
+      <span class="status status--pending">Placeholder</span>
+    </div>
+
+    <div class="placeholder-copy">
+      <p>Used, limit, and remaining values will appear once a dedicated usage endpoint becomes available.</p>
+    </div>
+
+    <app-data-table>
+      <table>
+        <thead>
+          <tr>
+            <th>Feature key</th>
+            <th>Used</th>
+            <th>Limit</th>
+            <th>Remaining</th>
+            <th>Period</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of usageReference; trackBy: trackByFeatureKey">
+            <td><code>{{ item.featureKey }}</code></td>
+            <td>{{ item.usedLabel }}</td>
+            <td>{{ item.limitLabel }}</td>
+            <td>{{ item.remainingLabel }}</td>
+            <td>{{ item.period }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </app-data-table>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Wallet</h3>
+        <p>Live wallet balances and transactions from the implemented billing API.</p>
+      </div>
+      <span class="status" [ngClass]="statusClass(wallet?.status)">{{ wallet?.status || 'unknown' }}</span>
+    </div>
+
+    <app-loading-state [visible]="walletLoading" [message]="'Loading wallet...'"></app-loading-state>
+    <p *ngIf="walletError" class="error-line">
+      <strong>{{ walletError.code || 'wallet_error' }}</strong>
+      <span>{{ walletError.message }}</span>
+    </p>
+
+    <ng-container *ngIf="!walletLoading && wallet && wallet.balances.length > 0">
+      <app-data-table>
+        <table>
+          <thead>
+            <tr>
+              <th>Currency</th>
+              <th>Available</th>
+              <th>Held</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let balance of wallet.balances; trackBy: trackByBalanceCurrency">
+              <td>
+                <strong>{{ balance.currency.code }}</strong>
+                <small>{{ balance.currency.name || '-' }}</small>
+              </td>
+              <td>{{ formatAmount(balance.available_amount, balance.currency.code, balance.currency.decimal_precision || 2) }}</td>
+              <td>{{ formatAmount(balance.held_amount, balance.currency.code, balance.currency.decimal_precision || 2) }}</td>
+              <td>{{ formatDate(balance.updated_at) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </app-data-table>
+    </ng-container>
+
+    <app-empty-state *ngIf="!walletLoading && wallet && wallet.balances.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Recent wallet transactions</h3>
+        <p>Transactional ledger history is available and safe to display.</p>
+      </div>
+      <span class="status status--neutral" *ngIf="walletTransactionsMeta as meta">
+        Page {{ meta.current_page }} / {{ meta.last_page }}
+      </span>
+    </div>
+
+    <app-loading-state [visible]="walletTransactionsLoading" [message]="'Loading wallet transactions...'"></app-loading-state>
+    <p *ngIf="walletTransactionsError" class="error-line">
+      <strong>{{ walletTransactionsError.code || 'wallet_transactions_error' }}</strong>
+      <span>{{ walletTransactionsError.message }}</span>
+    </p>
+
+    <app-empty-state *ngIf="!walletTransactionsLoading && !walletTransactionsError && walletTransactions.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+
+    <app-data-table *ngIf="!walletTransactionsLoading && walletTransactions.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Transaction</th>
+            <th>Direction</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Reason</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of walletTransactions; trackBy: trackByUuid">
+            <td>
+              <strong>{{ item.type }}</strong>
+              <small>{{ item.payment_uuid || item.reference || '-' }}</small>
+            </td>
+            <td>{{ item.direction }}</td>
+            <td>{{ formatAmount(item.amount, item.currency) }}</td>
+            <td><span class="status" [ngClass]="statusClass(item.status)">{{ item.status }}</span></td>
+            <td>{{ item.reason || '-' }}</td>
+            <td>{{ formatDate(item.created_at) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </app-data-table>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Payment history</h3>
+        <p>The backend does not expose a payment list endpoint yet, so this section is a clear placeholder.</p>
+      </div>
+      <span class="status status--pending">API pending</span>
+    </div>
+
+    <div class="placeholder-copy">
+      <p>When a list payments endpoint is available, this area will show payment id, amount, source, status, and related records.</p>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Invoices</h3>
+        <p>Invoice history is live and uses the implemented billing API.</p>
+      </div>
+      <span class="status" [ngClass]="statusClass(invoices[0]?.status)">{{ invoices[0]?.status || 'unknown' }}</span>
+    </div>
+
+    <app-loading-state [visible]="invoicesLoading" [message]="'Loading invoices...'"></app-loading-state>
+    <p *ngIf="invoicesError" class="error-line">
+      <strong>{{ invoicesError.code || 'invoices_error' }}</strong>
+      <span>{{ invoicesError.message }}</span>
+    </p>
+
+    <app-empty-state *ngIf="!invoicesLoading && !invoicesError && invoices.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+
+    <app-data-table *ngIf="!invoicesLoading && invoices.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Invoice</th>
+            <th>Status</th>
+            <th>Total</th>
+            <th>Due</th>
+            <th>Payment</th>
+            <th>Due date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let invoice of invoices; trackBy: trackById">
+            <td>
+              <strong>{{ invoice.number }}</strong>
+              <small>{{ invoice.uuid }}</small>
+            </td>
+            <td><span class="status" [ngClass]="statusClass(invoice.status)">{{ invoice.status }}</span></td>
+            <td>{{ formatAmount(invoice.total_amount, invoice.currency) }}</td>
+            <td>{{ formatAmount(invoice.due_amount, invoice.currency) }}</td>
+            <td>{{ invoice.payment_id || '-' }}</td>
+            <td>{{ formatDate(invoice.due_at) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </app-data-table>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Payment methods</h3>
+        <p>Simulator-safe payment methods can be created, defaulted, and deactivated here.</p>
+      </div>
+      <span class="status" [ngClass]="statusClass(paymentMethods[0]?.status)">{{ paymentMethods[0]?.status || 'unknown' }}</span>
+    </div>
+
+    <app-loading-state [visible]="paymentMethodsLoading" [message]="'Loading payment methods...'"></app-loading-state>
+    <p *ngIf="paymentMethodsError" class="error-line">
+      <strong>{{ paymentMethodsError.code || 'payment_methods_error' }}</strong>
+      <span>{{ paymentMethodsError.message }}</span>
+    </p>
+    <p *ngIf="paymentMethodActionError" class="error-line">
+      <strong>{{ paymentMethodActionError.code || 'payment_method_action_error' }}</strong>
+      <span>{{ paymentMethodActionError.message }}</span>
+    </p>
+    <p *ngIf="paymentMethodActionMessage" class="success-line">{{ paymentMethodActionMessage }}</p>
+
+    <div class="billing-split">
+      <div class="billing-split__main">
+        <app-data-table *ngIf="!paymentMethodsLoading && paymentMethods.length > 0">
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Default</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let method of paymentMethods; trackBy: trackById">
+                <td>
+                  <strong>{{ method.display_name || method.brand || method.type }}</strong>
+                  <small>{{ method.brand || '-' }} **** {{ method.last4 || '----' }}</small>
+                </td>
+                <td>{{ method.type }}</td>
+                <td><span class="status" [ngClass]="statusClass(method.status)">{{ method.status }}</span></td>
+                <td>
+                  <span class="badge" [class.badge--active]="method.is_default">
+                    {{ method.is_default ? 'Default' : 'No' }}
+                  </span>
+                </td>
+                <td>{{ formatDate(method.created_at) }}</td>
+                <td>
+                  <div class="row-actions">
+                    <button type="button" class="link-button" [disabled]="method.is_default || method.status !== 'active'" (click)="setDefaultPaymentMethod(method.id)">
+                      Set default
+                    </button>
+                    <button type="button" class="link-button" [disabled]="method.status === 'inactive'" (click)="deactivatePaymentMethod(method.id)">
+                      Deactivate
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </app-data-table>
+
+        <app-empty-state *ngIf="!paymentMethodsLoading && paymentMethods.length === 0" [messageKey]="'common.states.noData'"></app-empty-state>
+      </div>
+
+      <form class="billing-form" [formGroup]="paymentMethodForm" (ngSubmit)="createPaymentMethod()">
+        <h4>Add simulator payment method</h4>
+
+        <label>
+          <span>Type</span>
+          <select formControlName="type">
+            <option value="fake_card">Fake card</option>
+            <option value="fake_manual_invoice">Fake manual invoice</option>
+            <option value="fake_wallet">Fake wallet</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Brand</span>
+          <input type="text" formControlName="brand" />
+        </label>
+
+        <label>
+          <span>Last 4 digits</span>
+          <input type="text" formControlName="last4" maxlength="4" />
+        </label>
+
+        <label>
+          <span>Expiry month</span>
+          <input type="number" formControlName="exp_month" min="1" max="12" />
+        </label>
+
+        <label>
+          <span>Expiry year</span>
+          <input type="number" formControlName="exp_year" min="2024" max="2100" />
+        </label>
+
+        <label>
+          <span>Display name</span>
+          <input type="text" formControlName="display_name" />
+        </label>
+
+        <small class="form-note">No raw card data is accepted. Simulator-safe fields only.</small>
+
+        <app-button type="submit">Add payment method</app-button>
+      </form>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>Payment preferences</h3>
+        <p>Editing preferences is live. Auto charge and auto top-up remain consent-driven settings.</p>
+      </div>
+      <span class="status" [ngClass]="statusClass(paymentPreferences?.strategy)">{{ paymentPreferences?.strategy || 'unknown' }}</span>
+    </div>
+
+    <app-loading-state [visible]="paymentPreferencesLoading" [message]="'Loading payment preferences...'"></app-loading-state>
+    <p *ngIf="paymentPreferencesError" class="error-line">
+      <strong>{{ paymentPreferencesError.code || 'payment_preferences_error' }}</strong>
+      <span>{{ paymentPreferencesError.message }}</span>
+    </p>
+    <p *ngIf="paymentPreferencesActionError" class="error-line">
+      <strong>{{ paymentPreferencesActionError.code || 'payment_preferences_action_error' }}</strong>
+      <span>{{ paymentPreferencesActionError.message }}</span>
+    </p>
+    <p *ngIf="paymentPreferencesMessage" class="success-line">{{ paymentPreferencesMessage }}</p>
+
+    <div class="billing-split">
+      <div class="billing-split__main">
+        <div class="preference-summary" *ngIf="paymentPreferences">
+          <div class="status-row">
+            <span>Default method</span>
+            <strong>{{ paymentPreferences.default_payment_method?.display_name || 'None' }}</strong>
+          </div>
+          <div class="status-row">
+            <span>Auto charge consent</span>
+            <strong>{{ paymentPreferences.auto_charge_enabled ? 'Enabled' : 'Disabled' }}</strong>
+          </div>
+          <div class="status-row">
+            <span>Auto top-up consent</span>
+            <strong>{{ paymentPreferences.auto_top_up_enabled ? 'Enabled' : 'Disabled' }}</strong>
+          </div>
+          <div class="status-row">
+            <span>Auto top-up amount</span>
+            <strong>
+              {{ formatAmount(paymentPreferences.auto_top_up_amount ?? null, paymentPreferences.auto_top_up_currency?.code || 'USD') }}
+            </strong>
+          </div>
+        </div>
+      </div>
+
+      <form class="billing-form" [formGroup]="paymentPreferencesForm" (ngSubmit)="savePaymentPreferences()">
+        <h4>Edit preferences</h4>
+
+        <label>
+          <span>Strategy</span>
+          <select formControlName="strategy">
+            <option value="wallet_only">Wallet only</option>
+            <option value="payment_method_only">Payment method only</option>
+            <option value="wallet_first">Wallet first</option>
+            <option value="manual_invoice">Manual invoice</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Default payment method id</span>
+          <select formControlName="default_payment_method_id">
+            <option value="">None</option>
+            <option *ngFor="let method of paymentMethods; trackBy: trackById" [value]="method.id">
+              {{ method.display_name || method.brand || method.type }}
+            </option>
+          </select>
+        </label>
+
+        <label class="checkbox-row">
+          <input type="checkbox" formControlName="auto_charge_enabled" />
+          <span>Auto charge enabled</span>
+        </label>
+
+        <label class="checkbox-row">
+          <input type="checkbox" formControlName="auto_top_up_enabled" />
+          <span>Auto top-up enabled</span>
+        </label>
+
+        <label>
+          <span>Auto top-up threshold</span>
+          <input type="number" formControlName="auto_top_up_threshold_amount" min="0" />
+        </label>
+
+        <label>
+          <span>Auto top-up amount</span>
+          <input type="number" formControlName="auto_top_up_amount" min="1" />
+        </label>
+
+        <label>
+          <span>Auto top-up currency</span>
+          <input type="text" formControlName="auto_top_up_currency" maxlength="3" />
+        </label>
+
+        <label>
+          <span>Max auto top-up per day</span>
+          <input type="number" formControlName="max_auto_top_up_per_day" min="1" />
+        </label>
+
+        <label>
+          <span>Max auto top-up per month</span>
+          <input type="number" formControlName="max_auto_top_up_per_month" min="1" />
+        </label>
+
+        <app-button type="submit">Save preferences</app-button>
+      </form>
+    </div>
+  </ui-card>
+
+  <ui-card>
+    <div class="section-head">
+      <div>
+        <h3>What is not wired yet</h3>
+        <p>These sections are intentionally visible so the portal stays honest about missing backend endpoints.</p>
+      </div>
+      <span class="status status--pending">API pending</span>
+    </div>
+
+    <div class="billing-note-grid">
+      <div class="note-card">
+        <h4>Payments history</h4>
+        <p>The backend does not expose a payment list endpoint yet.</p>
+      </div>
+      <div class="note-card">
+        <h4>Current subscription</h4>
+        <p>There is no current-user subscription endpoint yet.</p>
+      </div>
+      <div class="note-card">
+        <h4>Usage limits</h4>
+        <p>Usage counters are enforced server-side, but the live usage API is not exposed yet.</p>
+      </div>
+      <div class="note-card">
+        <h4>Phase 22.2</h4>
+        <p>Checkout and top-up flows stay out of this phase and will be added later.</p>
+      </div>
+    </div>
+  </ui-card>
+</section>

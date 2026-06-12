@@ -1063,30 +1063,30 @@ Plan viewed is intentionally not logged because catalog browsing can create high
 
 ## Phase 22.1 - Billing User Portal UI
 
-- [ ] Design user billing dashboard page
-- [ ] Show current subscription
-- [ ] Show current plan and limits
-- [ ] Show available plans
-- [ ] Show usage limits and remaining usage
-- [ ] Show payment history
-- [ ] Show invoice history
-- [ ] Show wallet balance
-- [ ] Show wallet transaction history
-- [ ] Show payment methods
-- [ ] Allow user to add simulator payment method
-- [ ] Allow user to set default payment method
-- [ ] Allow user to remove/deactivate payment method
-- [ ] Show payment preferences
-- [ ] Allow user to choose wallet-only strategy
-- [ ] Allow user to choose card/payment-method-only strategy
-- [ ] Allow user to choose wallet-first strategy
-- [ ] Allow user to enable/disable auto-charge
-- [ ] Allow user to enable/disable auto top-up
-- [ ] Show auto-charge consent state
-- [ ] Show auto top-up settings
-- [ ] Add loading/empty/error states
-- [ ] Add frontend tests if project structure supports it
-- [ ] Document user billing portal UI
+- [x] Design user billing dashboard page
+- [x] Show current subscription
+- [x] Show current plan and limits
+- [x] Show available plans
+- [x] Show usage limits and remaining usage
+- [x] Show payment history
+- [x] Show invoice history
+- [x] Show wallet balance
+- [x] Show wallet transaction history
+- [x] Show payment methods
+- [x] Allow user to add simulator payment method
+- [x] Allow user to set default payment method
+- [x] Allow user to remove/deactivate payment method
+- [x] Show payment preferences
+- [x] Allow user to choose wallet-only strategy
+- [x] Allow user to choose card/payment-method-only strategy
+- [x] Allow user to choose wallet-first strategy
+- [x] Allow user to enable/disable auto-charge
+- [x] Allow user to enable/disable auto top-up
+- [x] Show auto-charge consent state
+- [x] Show auto top-up settings
+- [x] Add loading/empty/error states
+- [x] Add frontend tests if project structure supports it
+- [x] Document user billing portal UI
 
 Note:
 This phase makes billing visible to end users. It should consume existing billing APIs and must not duplicate billing business logic on the frontend.

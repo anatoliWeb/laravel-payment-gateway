@@ -24,6 +24,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/database.md](./billing/database.md) - Billing database schema planning
 - [billing/architecture.md](./billing/architecture.md) - Billing domain structure architecture
 - [billing/api.md](./billing/api.md) - Billing runtime API examples and flows
+- [billing/user-portal-ui.md](./billing/user-portal-ui.md) - Angular billing portal UI reference
 - [billing/api-errors.md](./billing/api-errors.md) - Billing API error envelope and stable code catalog
 - [billing/statuses.md](./billing/statuses.md) - Billing enums, statuses, and transition rules
 - [billing/seeders.md](./billing/seeders.md) - Billing seed data and idempotent seeding strategy
@@ -68,6 +69,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Database -> [./billing/database.md](./billing/database.md)
 - Billing Architecture -> [./billing/architecture.md](./billing/architecture.md)
 - Billing API -> [./billing/api.md](./billing/api.md)
+- Billing User Portal UI -> [./billing/user-portal-ui.md](./billing/user-portal-ui.md)
 - Billing API Errors -> [./billing/api-errors.md](./billing/api-errors.md)
 - Billing Testing -> [./billing/testing.md](./billing/testing.md)
 - Billing Statuses -> [./billing/statuses.md](./billing/statuses.md)
