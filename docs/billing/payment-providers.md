@@ -90,6 +90,15 @@ PAYMENT_SIMULATOR_DEFAULT_ENABLED=true
 
 Optional external provider variables are placeholders only. They are not required for local setup and external providers remain disabled by default.
 
+Example shape for future provider flags:
+
+```env
+PAYMENT_PROVIDER=simulator
+PAYMENT_EXTERNAL_PROVIDERS_ENABLED=false
+PAYMENT_PROVIDER_TIMEOUT_SECONDS=15
+PAYMENT_PROVIDER_RETRY_ATTEMPTS=3
+```
+
 ## Customer Database Provider Config
 
 `payment_provider_accounts` stores provider accounts with a required custodial `user_id` and optional additive company/seller scope.
@@ -102,6 +111,22 @@ Current ownership boundary:
 
 This is not presented as complete tenant isolation because company/seller accounts retain a custodial user. The ownership foundation and boundaries are documented in [Company / Seller Ownership Scope](./ownership-scope.md).
 
+Example shape for a stored provider account:
+
+```json
+{
+  "provider": "simulator",
+  "mode": "demo",
+  "display_name": "Demo provider account",
+  "is_active": true,
+  "credentials": {
+    "client_id": "masked-value",
+    "client_secret": "masked-value",
+    "merchant_id": "masked-value"
+  }
+}
+```
+
 ## Credential Encryption and Masking
 
 `PaymentProviderAccount`:
@@ -112,6 +137,18 @@ This is not presented as complete tenant isolation because company/seller accoun
 - rejects raw card/CVV-like fields
 
 No real credentials exist in seeders or tests.
+
+Admin forms should expose only masked and safe metadata:
+
+- provider key
+- display name
+- mode
+- status
+- active scope
+- last verification timestamp
+- masked credential summary
+
+They must never expose decrypted credentials, full webhook secrets, or raw card data.
 
 ## Provider Config Priority
 
@@ -155,6 +192,14 @@ No public provider webhook endpoint is created in Phase 13.4.
 
 Phase 16 implements outbound billing webhooks only: our system sends signed delivery callbacks to client URLs after simulator payment status changes. Real inbound provider webhooks remain future provider-specific work.
 
+Example verification responsibilities for a real adapter:
+
+- validate signature header or query token
+- validate timestamp or replay window
+- compare HMAC over the raw payload
+- map invalid signatures to `provider_webhook_signature_invalid`
+- reject unknown event types with a stable internal error
+
 ## Planned Provider Adapters
 
 Planned adapters:
@@ -165,6 +210,19 @@ Planned adapters:
 - Monobank/Fondy
 
 They are documented plans only. Empty adapter classes are intentionally not created.
+
+## Adapter Template Documentation
+
+Use the provider template docs in `docs/billing/providers/_template` to keep future adapters consistent:
+
+- README
+- capabilities
+- configuration
+- webhook verification
+- error mapping
+- testing checklist
+
+The templates are documentation scaffolding only and do not imply an implemented provider.
 
 ## How to Add a New Provider
 

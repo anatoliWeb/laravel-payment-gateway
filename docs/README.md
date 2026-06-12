@@ -18,12 +18,12 @@ The project follows an API-first, modular architecture with clear separation bet
 - [commands.md](./commands.md) - Development and operational commands
 - [coding-standards.md](./coding-standards.md) - Code style and best practices
 - [api.md](./api.md) - API endpoints and examples
-- [billing/overview.md](./billing/overview.md) - Billing strategy and roadmap scope
-- [billing/plans.md](./billing/plans.md) - Plans and feature-access design
+- [billing/overview.md](./billing/overview.md) - Implemented billing module overview
+- [billing/plans.md](./billing/plans.md) - Plans and feature-access design reference
 - [billing/payment-gateway-simulator.md](./billing/payment-gateway-simulator.md) - Payment Gateway Simulator design
 - [billing/database.md](./billing/database.md) - Billing database schema planning
 - [billing/architecture.md](./billing/architecture.md) - Billing domain structure architecture
-- [billing/api.md](./billing/api.md) - Billing API contract planning
+- [billing/api.md](./billing/api.md) - Billing runtime API examples and flows
 - [billing/api-errors.md](./billing/api-errors.md) - Billing API error envelope and stable code catalog
 - [billing/statuses.md](./billing/statuses.md) - Billing enums, statuses, and transition rules
 - [billing/seeders.md](./billing/seeders.md) - Billing seed data and idempotent seeding strategy
@@ -46,6 +46,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/idempotency.md](./billing/idempotency.md) - Central billing write replay and conflict protection
 - [billing/ownership-scope.md](./billing/ownership-scope.md) - Company/seller ownership foundation and demo seed data
 - [billing/payment-providers.md](./billing/payment-providers.md) - External provider integration readiness
+- [billing/testing.md](./billing/testing.md) - Billing testing and validation notes
 - [billing/webhooks.md](./billing/webhooks.md) - Outbound billing webhook delivery flow
 - [billing/providers/README.md](./billing/providers/README.md) - Provider adapter documentation convention
 - [billing/providers/_template/README.md](./billing/providers/_template/README.md) - Provider adapter documentation template
@@ -68,6 +69,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Architecture -> [./billing/architecture.md](./billing/architecture.md)
 - Billing API -> [./billing/api.md](./billing/api.md)
 - Billing API Errors -> [./billing/api-errors.md](./billing/api-errors.md)
+- Billing Testing -> [./billing/testing.md](./billing/testing.md)
 - Billing Statuses -> [./billing/statuses.md](./billing/statuses.md)
 - Billing Seeders -> [./billing/seeders.md](./billing/seeders.md)
 - Billing Overrides -> [./billing/overrides.md](./billing/overrides.md)
@@ -225,12 +227,13 @@ Improves developer navigation and onboarding experience.
 
 - [Architecture](./architecture.md)
 - [API](./api.md)
-- [Billing Strategy](./billing/overview.md)
+- [Billing Overview](./billing/overview.md)
 - [Billing Plans Design](./billing/plans.md)
 - [Payment Gateway Simulator Design](./billing/payment-gateway-simulator.md)
 - [Billing Database Schema Planning](./billing/database.md)
 - [Billing Domain Architecture](./billing/architecture.md)
-- [Billing API Contract](./billing/api.md)
+- [Billing API](./billing/api.md)
+- [Billing Testing](./billing/testing.md)
 - [Billing Enums & Statuses](./billing/statuses.md)
 - [Billing Seeders](./billing/seeders.md)
 - [Billing Overrides](./billing/overrides.md)

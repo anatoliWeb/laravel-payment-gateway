@@ -1025,39 +1025,39 @@ Plan viewed is intentionally not logged because catalog browsing can create high
 
 ## Phase 22 — API Documentation
 
-- [ ] Update main README with billing module description
-- [ ] Add `docs/billing/overview.md`
-- [ ] Add `docs/billing/api.md`
-- [ ] Add `docs/billing/plans.md`
-- [ ] Add `docs/billing/idempotency.md`
-- [ ] Add `docs/billing/webhooks.md`
-- [ ] Add `docs/billing/scheduler.md`
-- [ ] Add `docs/billing/testing.md`
-- [ ] Add curl examples
-- [ ] Add example payment flow
-- [ ] Add example subscription flow
-- [ ] Add example chat limit flow
-- [ ] Add future dialer billing notes
-- [ ] Add wallet balance API examples
-- [ ] Add wallet top-up API examples
-- [ ] Add wallet payment API examples
-- [ ] Add card/payment method API examples
-- [ ] Add wallet-first fallback API examples
-- [ ] Add payment preferences API examples
-- [ ] Add auto-charge consent API examples
-- [ ] Add provider abstraction documentation
-- [ ] Add simulator provider examples
-- [ ] Add platform `.env` provider config examples
-- [ ] Add customer DB provider config examples
-- [ ] Add provider account admin form examples
-- [ ] Add encrypted credentials documentation
-- [ ] Add planned Stripe integration notes
-- [ ] Add planned PayPal integration notes
-- [ ] Add planned LiqPay integration notes
-- [ ] Add planned WayForPay integration notes
-- [ ] Add provider webhook verification examples
-- [ ] Add provider error mapping examples
-- [ ] Add provider adapter template documentation
+- [x] Update main README with billing module description
+- [x] Add `docs/billing/overview.md`
+- [x] Add `docs/billing/api.md`
+- [x] Add `docs/billing/plans.md`
+- [x] Add `docs/billing/idempotency.md`
+- [x] Add `docs/billing/webhooks.md`
+- [x] Add `docs/billing/scheduler.md`
+- [x] Add `docs/billing/testing.md`
+- [x] Add curl examples
+- [x] Add example payment flow
+- [x] Add example subscription flow
+- [x] Add example chat limit flow
+- [x] Add future dialer billing notes
+- [x] Add wallet balance API examples
+- [x] Add wallet top-up API examples
+- [x] Add wallet payment API examples
+- [x] Add card/payment method API examples
+- [x] Add wallet-first fallback API examples
+- [x] Add payment preferences API examples
+- [x] Add auto-charge consent API examples
+- [x] Add provider abstraction documentation
+- [x] Add simulator provider examples
+- [x] Add platform `.env` provider config examples
+- [x] Add customer DB provider config examples
+- [x] Add provider account admin form examples
+- [x] Add encrypted credentials documentation
+- [x] Add planned Stripe integration notes
+- [x] Add planned PayPal integration notes
+- [x] Add planned LiqPay integration notes
+- [x] Add planned WayForPay integration notes
+- [x] Add provider webhook verification examples
+- [x] Add provider error mapping examples
+- [x] Add provider adapter template documentation
 
 ---
 

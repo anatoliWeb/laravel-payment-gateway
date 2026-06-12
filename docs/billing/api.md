@@ -1,427 +1,477 @@
-# Billing API Contract
+# Billing Runtime API
 
 ## Purpose
 
-Define the Phase 6 API contract for Billing + Payments modules before implementation.  
-This document describes endpoint behavior, auth/RBAC, idempotency, envelopes, and async expectations.
+This document describes the implemented billing runtime API under `/api/v1/billing`.
 
-## Design Principles
+It is the source of truth for current request/response examples, simulator-safe payment flows, wallet operations, invoices, subscriptions, webhooks, and idempotency behavior.
 
-- Base prefix: `/api/v1/billing`
-- API-first, JSON-only
-- Reuse existing auth/Sanctum/RBAC patterns
-- Reuse unified API response envelope
-- Stable error codes
-- Prefer public IDs/UUIDs over raw DB IDs where practical
-- FormRequest/Resource/Service are planned implementation patterns (not created in this phase)
-- No secrets/raw provider internals in response/logs
+## Contract Rules
 
-## Base URL
-
-- Prefix: `/api/v1/billing`
-
-## Authentication
-
-- Most endpoints require authenticated user context.
-- `GET /plans`: recommended public read-only for safe demo catalog (can be switched to auth-required mode by policy).
-- Payment create/retry endpoints require authentication.
-- Simulation endpoints require elevated permission.
-- Current subscription/usage/payments are user-scoped.
-
-## Authorization / RBAC
-
-Planned permissions:
-- `billing.plans.view`
-- `billing.subscriptions.view`
-- `billing.subscriptions.manage`
-- `billing.usage.view`
-- `billing.payments.view`
-- `billing.payments.create`
-- `billing.payments.simulate`
-- `billing.payments.retry`
-- `billing.webhooks.view`
-- `billing.webhooks.retry`
-
-Access rules:
-- Regular users: own billing data only.
-- Admin/system roles: broader visibility/operations.
-- Simulator endpoints are not public.
-
-Implemented subscription lifecycle endpoints and behavior are documented in [Subscription Lifecycle](./subscription-lifecycle.md).
-
-## Common Headers
-
-JSON:
-- `Accept: application/json`
-- `Content-Type: application/json` (writes)
-
-Auth/tracing/idempotency:
-- `Authorization: Bearer ...` or session auth (per existing app convention)
-- `Idempotency-Key` (required for selected write endpoints)
-- `X-Request-Id` (optional tracing)
-
-## Idempotency Rules
-
-- Required:
-  - `POST /payments`
-  - `POST /payments/{payment}/retry`
-  - `POST /subscriptions` when a paid plan creates a linked payment
-- Not required for `GET`.
-- Recommended not required for simulation endpoints (state-machine + permission guarded admin/demo actions).
-- Same key + same payload: replay same response.
-- Same key + different payload: `409 idempotency_conflict`.
-- Missing key on required service operations: stable error (`idempotency_key_required`).
-- Idempotency records expire by configurable TTL.
+- JSON only
+- authenticated via `auth:sanctum`
+- stable success/error envelope
+- errors return a machine-readable `code`
+- write endpoints that create money-moving side effects use `Idempotency-Key`
+- no raw card data, CVV/CVC, tokens, passwords, or provider secrets
 
 ## Common Response Envelope
+
+Success:
 
 ```json
 {
   "success": true,
-  "message": "Payment created successfully.",
+  "message": "Request successful.",
   "data": {},
   "meta": {}
 }
 ```
 
-## Common Error Envelope
+Error:
 
 ```json
 {
   "success": false,
-  "message": "Validation failed.",
-  "errors": {},
-  "code": "validation_failed"
+  "message": "Request failed.",
+  "code": "validation_failed",
+  "errors": {}
 }
 ```
 
-Stable billing error codes and response rules are documented in [Billing API Errors](./api-errors.md).
+The stable error catalog is documented in [Billing API Errors](./api-errors.md).
 
-## Error Codes
+## Current Routes
 
-- `validation_failed`
-- `unauthenticated`
-- `forbidden`
-- `not_found`
-- `plan_not_found`
-- `plan_not_available`
-- `subscription_not_found`
-- `subscription_inactive`
-- `invalid_plan_change`
-- `feature_not_available`
-- `feature_limit_exceeded`
-- `payment_not_found`
-- `payment_already_finalized`
-- `invalid_payment_state`
-- `payment_expired`
-- `idempotency_key_required`
-- `idempotency_conflict`
-- `webhook_delivery_not_found`
-- `webhook_retry_not_allowed`
+### Wallet
 
-## Pagination / Filtering / Sorting
-
-- List endpoints use existing app pagination style.
-- Support `page` / `per_page` for list/timeline endpoints.
-- Filters must be whitelisted and documented.
-- Sorting limited to safe fields (`created_at`, `status`, `amount` where applicable).
-
-## Plans Endpoints
-
-### `GET /api/v1/billing/plans`
-
-- Purpose: list available plans.
-- Auth: public read-only (recommended) or authenticated read-only by policy.
-- Query: `active`, `public`, `type`, `currency`.
-- Response: plans list + feature summary.
-- Activity log: usually none for simple reads.
-
-## Current Subscription Endpoint
-
-### `GET /api/v1/billing/current-subscription`
-
-- Purpose: get current user effective subscription.
-- Auth: required.
-- Response: subscription, plan, current period, cancel-at-period-end, key feature summary.
-- Recommendation: if no paid record, return effective free/default shape for frontend simplicity.
-
-## Subscription Management Endpoints
-
-### `POST /api/v1/billing/subscriptions`
-
-- Purpose: create/select subscription for plan.
-- Body: `plan_slug`, optional `billing_interval`, `payment_method`, `callback_url`, `metadata`.
-- Behavior:
-  - free plan: active immediately
-  - paid plan: pending subscription + payment required flow
-- Idempotency:
-  - required if endpoint creates payment attempt
-  - optional if pure pending subscription creation mode
-- Response: subscription + `payment_required` + optional payment payload.
-
-### `POST /api/v1/billing/subscriptions/change-plan`
-
-- Purpose: request upgrade/downgrade.
-- Body: `target_plan_slug`, `apply_mode` (`immediate`/`period_end`), optional payment fields.
-- Behavior:
-  - upgrade usually immediate after successful payment
-  - downgrade usually period-end
-- Response: subscription + pending change + optional payment.
-
-### `POST /api/v1/billing/subscriptions/cancel`
-
-- Purpose: cancel subscription.
-- Body: `mode` (`immediate`/`period_end`), optional `reason`.
-- MVP behavior: paid defaults to period-end cancellation.
-- Response: subscription + cancellation state.
-
-## Usage Endpoint
-
-### `GET /api/v1/billing/usage`
-
-- Purpose: fetch user feature usage.
-- Query: optional `feature_key`, `period`, `module` (`chat`/`dialer`/`platform`).
-- Response: `used`, `limit`, `remaining`, `reset_at` per item.
-- Scope: own usage only unless elevated permission.
-
-## Payments Endpoints
-
-### `GET /api/v1/billing/payments`
-
-- Purpose: list payments.
-- Query: `status`, `payment_method`, `date_from`, `date_to`, paging.
-- Scope: own data by default; wider scope only with elevated permission.
-
-### `POST /api/v1/billing/payments`
-
-- Purpose: create payment attempt.
-- Idempotency: required.
-- Body: optional context refs (`plan_slug`, `subscription_public_id`, future `invoice_public_id`), `currency`, `payment_method`, optional `payment_method_uuid`, optional callback/metadata.
-- Behavior: validate context, resolve payment source, create payment, append initial transaction.
-- Phase 13 supports `payment_source` values:
-  - `wallet`: debit internal wallet balance and create a succeeded internal payment
-  - `payment_method`: create a simulator-safe payment-method attempt
-  - `wallet_first`: debit wallet when funds are available, otherwise fall back to default active payment method
-- Phase 14 stores central user-scoped idempotency replay/conflict state before payment side effects.
-- Phase 13 does not activate subscriptions, send webhooks, or call real providers.
-- Phase 13.1 runs demo-safe payment risk checks before wallet debit or simulator payment-method processing.
-- Response:
-  - `201` on first create
-  - `201` on idempotency replay of the original create result
-
-Payment method and preference persistence details: [Payment Methods & User Payment Preferences](./payment-methods.md).
-Payment risk guard details: [Payment Risk & Fraud Guard](./payment-risk.md).
-Wallet/card API runtime details: [Wallet/Card Payment API Interface](./payment-api.md).
-
-## Wallet/Card Payment API
-
-Phase 13.3 exposes authenticated wallet and saved payment method APIs:
 - `GET /api/v1/billing/wallet`
 - `GET /api/v1/billing/wallet/balances`
 - `GET /api/v1/billing/wallet/transactions`
 - `POST /api/v1/billing/wallet/top-ups`
+
+### Payment Methods and Preferences
+
 - `GET /api/v1/billing/payment-methods`
 - `POST /api/v1/billing/payment-methods`
-- `PATCH /api/v1/billing/payment-methods/{paymentMethod}`
+- `PUT|PATCH /api/v1/billing/payment-methods/{paymentMethod}`
 - `DELETE /api/v1/billing/payment-methods/{paymentMethod}`
 - `POST /api/v1/billing/payment-methods/{paymentMethod}/set-default`
 - `GET /api/v1/billing/payment-preferences`
 - `PATCH /api/v1/billing/payment-preferences`
 
-Full endpoint behavior and safety rules are documented in [Wallet/Card Payment API Interface](./payment-api.md).
+### Payments
 
-Provider-neutral charge/config contracts are documented in [External Payment Provider Integration Readiness](./payment-providers.md).
+- `POST /api/v1/billing/payments`
+- `POST /api/v1/billing/payments/{payment}/simulate/success`
+- `POST /api/v1/billing/payments/{payment}/simulate/failure`
+- `GET /api/v1/billing/payments/{payment}/webhooks`
 
-### `GET /api/v1/billing/payments/{payment}`
+### Subscriptions
 
-- Purpose: payment details.
-- Scope: owner or elevated view permission.
-- Response: safe fields + safe metadata.
+- `POST /api/v1/billing/subscriptions`
+- `GET /api/v1/billing/subscriptions/{subscription}`
+- `POST /api/v1/billing/subscriptions/{subscription}/change-plan`
+- `POST /api/v1/billing/subscriptions/{subscription}/cancel`
 
-### `GET /api/v1/billing/payments/{payment}/status`
+### Invoices
 
-- Purpose: lightweight polling status.
-- Response: status + relevant timestamps + safe failure reason.
+- `GET /api/v1/billing/invoices`
+- `POST /api/v1/billing/invoices`
+- `GET /api/v1/billing/invoices/{invoice}`
+- `POST /api/v1/billing/invoices/{invoice}/issue`
+- `POST /api/v1/billing/invoices/{invoice}/void`
+- `POST /api/v1/billing/invoices/{invoice}/pay`
 
-## Payment Simulation Endpoints
+### Webhook Retry
 
-### `POST /api/v1/billing/payments/{payment}/simulate/success`
+- `POST /api/v1/billing/webhooks/{webhookDelivery}/retry`
 
-- Purpose: simulate success (admin/demo operation).
-- Permission: `billing.payments.simulate`.
-- Behavior: validate state -> set succeeded -> append transaction -> queue side effects/webhook.
-- Idempotency: not required; state machine guards repeats.
+### Manual Wallet Adjustment
 
-### `POST /api/v1/billing/payments/{payment}/simulate/failure`
+- `POST /api/v1/billing/wallet-adjustments`
 
-- Purpose: simulate failure (admin/demo operation).
-- Permission: `billing.payments.simulate`.
-- Body: `failure_reason` (safe enum), optional note/metadata.
-- Behavior: validate state -> set failed -> append transaction -> queue webhook.
+## Payment Creation
 
-## Payment Transactions Endpoint
+### `POST /api/v1/billing/payments`
 
-### `GET /api/v1/billing/payments/{payment}/transactions`
+Headers:
 
-- Purpose: payment timeline/history.
-- Query: optional `type`, pagination.
-- Scope: owner or elevated view permission.
-- Response excludes sensitive payload internals.
+- `Authorization: Bearer {{TOKEN}}`
+- `Idempotency-Key: {{KEY}}`
 
-## Payment Webhooks Endpoint
-
-### `GET /api/v1/billing/payments/{payment}/webhooks`
-
-- Purpose: list webhook deliveries related to payment.
-- Query: optional `status`, `event`, pagination.
-- Scope: owner or `billing.webhooks.view`.
-- Response: delivery summary/status/attempt timings.
-
-## Webhook Delivery Retry Endpoint
-
-### `POST /api/v1/billing/webhooks/{webhookDelivery}/retry`
-
-- Purpose: manual webhook retry.
-- Permission: `billing.webhooks.retry`.
-- Body: optional reason.
-- Behavior: allow only retry-eligible statuses; queue retry job; audit event.
-
-## Activity Logging Expectations
-
-Log:
-- subscription creation/change/cancel
-- payment created/succeeded/failed/retry
-- webhook retry requested
-- idempotency conflict/replay events where useful
-
-Do not log:
-- sensitive payload data/secrets
-- high-noise read-only events (e.g., plan list, usage view)
-
-## Queue / Async Behavior
-
-- Payment creation is synchronous DB operation.
-- Webhook sending is async.
-- Simulation endpoints return after state transition + queue dispatch.
-- Webhook retry endpoint dispatches async job.
-
-## Security Notes
-
-- No real card data.
-- Payment methods store only simulator-safe masked data and last4.
-- No provider secrets in payload/response logs.
-- Restrict simulator endpoints to elevated permissions.
-- Treat idempotency keys as operational identifiers (do not over-log raw values).
-- Prefer public IDs for external-facing paths/payloads.
-
-## Non-Goals For This Phase
-
-- No route/controller/request/resource/service/model/migration implementation.
-- No runtime contract enforcement yet.
-- No provider integration.
-
-## Implementation Notes For Next Phases
-
-- Next phase should formalize enum/status sets and transition rules.
-- After enums, implement routes/controllers/FormRequests/DTO/services incrementally.
-- Keep API envelope and error code stability from first implementation commit.
-- Enum/status planning details: [Enums & Statuses Planning](./statuses.md).
-
-## Status
-
-- Phase 6 is API contract/documentation only.
-- No routes, controllers, requests, resources, services, models, or migrations have been created yet.
-- Next phase: Enums & Statuses.
-
-## API Examples
-
-Create payment request:
+Body:
 
 ```json
 {
-  "subscription_public_id": "sub_01H...",
+  "subscription_id": 123,
+  "company_id": 15,
+  "seller_id": 42,
+  "plan_slug": "pro",
+  "amount": 19900,
   "currency": "USD",
-  "payment_method": "fake_card",
+  "payment_source": "wallet_first",
+  "payment_strategy": "wallet_first",
+  "payment_method_id": 77,
+  "callback_url": "https://example.test/billing/callback",
+  "description": "Pro plan purchase",
   "metadata": {
-    "source": "subscription_upgrade"
+    "source": "checkout"
   }
 }
 ```
 
-Create payment response:
+Accepted source values:
+
+- `wallet`
+- `payment_method`
+- `wallet_first`
+
+Accepted strategy values:
+
+- `wallet_only`
+- `payment_method_only`
+- `wallet_first`
+- `manual_invoice`
+
+Notes:
+
+- the service resolves ownership context when `company_id` or `seller_id` is present
+- `amount` is required when `subscription_id` and `plan_slug` are both absent
+- simulator payments do not call real providers
+- successful create returns `201`
+- idempotent replay returns the previously created result
+
+## Subscription Lifecycle
+
+### `POST /api/v1/billing/subscriptions`
+
+Headers:
+
+- `Authorization: Bearer {{TOKEN}}`
+- `Idempotency-Key: {{KEY}}`
+
+Body:
 
 ```json
 {
-  "success": true,
-  "message": "Payment created successfully.",
-  "data": {
-    "payment": {
-      "public_id": "pay_01H...",
-      "status": "pending"
-    },
-    "simulator_actions": [
-      "simulate_success",
-      "simulate_failure"
-    ]
+  "plan_slug": "pro",
+  "payment_source": "payment_method",
+  "payment_strategy": "payment_method_only",
+  "payment_method_id": 77,
+  "callback_url": "https://example.test/billing/callback",
+  "auto_renew": true,
+  "metadata": {
+    "source": "plan_select"
+  }
+}
+```
+
+Rules:
+
+- `plan_id` or `plan_slug` is required
+- free plans can become active immediately
+- paid plans create a pending subscription and a linked payment
+- the subscription becomes active only after payment success
+
+### `POST /api/v1/billing/subscriptions/{subscription}/change-plan`
+
+Body:
+
+```json
+{
+  "plan_id": 2,
+  "direction": "upgrade",
+  "payment_source": "payment_method",
+  "payment_method_id": 77,
+  "metadata": {
+    "source": "upgrade_flow"
+  }
+}
+```
+
+### `POST /api/v1/billing/subscriptions/{subscription}/cancel`
+
+Body:
+
+```json
+{
+  "reason": "customer_request",
+  "immediate": false
+}
+```
+
+## Invoice Lifecycle
+
+### `POST /api/v1/billing/invoices`
+
+Body:
+
+```json
+{
+  "payer_user_id": 12,
+  "company_id": 15,
+  "seller_id": 42,
+  "subscription_id": 123,
+  "currency": "USD",
+  "description": "Consulting bundle",
+  "due_at": "2026-07-01T00:00:00Z",
+  "metadata": {
+    "source": "admin_issue"
   },
-  "meta": {}
-}
-```
-
-Idempotency conflict response:
-
-```json
-{
-  "success": false,
-  "message": "Idempotency conflict.",
-  "errors": {},
-  "code": "idempotency_conflict"
-}
-```
-
-Simulate success response:
-
-```json
-{
-  "success": true,
-  "message": "Payment marked as succeeded.",
-  "data": {
-    "payment": {
-      "public_id": "pay_01H...",
-      "status": "succeeded"
-    }
-  }
-}
-```
-
-Payment status response:
-
-```json
-{
-  "success": true,
-  "message": "Payment status fetched.",
-  "data": {
-    "public_id": "pay_01H...",
-    "status": "failed",
-    "failure_reason": "card_declined"
-  }
-}
-```
-
-Usage response:
-
-```json
-{
-  "success": true,
-  "message": "Usage fetched.",
-  "data": [
+  "items": [
     {
-      "feature_key": "chat.messages.monthly",
-      "used": 120,
-      "limit": 500,
-      "remaining": 380,
-      "reset_at": "2026-07-01T00:00:00Z"
+      "item_type": "service",
+      "description": "Implementation work",
+      "quantity": 1,
+      "unit_amount": 19900,
+      "discount_amount": 0,
+      "tax_amount": 0,
+      "metadata": {
+        "month": "2026-06"
+      }
     }
   ]
 }
 ```
+
+### `POST /api/v1/billing/invoices/{invoice}/pay`
+
+Body:
+
+```json
+{
+  "payment_source": "wallet_first",
+  "payment_strategy": "wallet_first",
+  "payment_method_id": 77,
+  "currency": "USD",
+  "callback_url": "https://example.test/billing/callback",
+  "description": "Invoice payment",
+  "metadata": {
+    "source": "invoice_pay"
+  }
+}
+```
+
+The generated payment amount equals the invoice due amount and the currency must match the invoice.
+
+## Wallet API
+
+### `GET /api/v1/billing/wallet`
+
+Returns the current user's wallet and balances.
+
+### `GET /api/v1/billing/wallet/balances`
+
+Returns the wallet balance collection by currency.
+
+### `GET /api/v1/billing/wallet/transactions`
+
+Returns wallet ledger history with pagination.
+
+### `POST /api/v1/billing/wallet/top-ups`
+
+Headers:
+
+- `Authorization: Bearer {{TOKEN}}`
+- `Idempotency-Key: {{KEY}}`
+
+Body:
+
+```json
+{
+  "amount": 3000,
+  "currency": "USD",
+  "payment_method_id": 77,
+  "metadata": {
+    "source": "wallet_settings"
+  }
+}
+```
+
+This creates a simulator-safe payment and then credits the wallet.
+
+## Payment Methods
+
+### `POST /api/v1/billing/payment-methods`
+
+Body:
+
+```json
+{
+  "type": "fake_card",
+  "brand": "Visa",
+  "last4": "4242",
+  "exp_month": 12,
+  "exp_year": 2030,
+  "display_name": "Visa ending 4242",
+  "metadata": {
+    "source": "checkout"
+  }
+}
+```
+
+Supported types:
+
+- `fake_card`
+- `fake_manual_invoice`
+- `fake_wallet`
+
+### `POST /api/v1/billing/payment-methods/{paymentMethod}/set-default`
+
+Marks the method as the default saved payment method.
+
+### `PATCH /api/v1/billing/payment-preferences`
+
+Body:
+
+```json
+{
+  "strategy": "wallet_first",
+  "default_payment_method_id": 77,
+  "auto_charge_enabled": true,
+  "auto_top_up_enabled": true,
+  "auto_top_up_threshold_amount": 500,
+  "auto_top_up_amount": 3000,
+  "auto_top_up_currency": "USD",
+  "max_auto_top_up_per_day": 2,
+  "max_auto_top_up_per_month": 10
+}
+```
+
+This updates preference state only. It does not execute a charge by itself.
+
+## Payment Simulation
+
+### `POST /api/v1/billing/payments/{payment}/simulate/success`
+
+Body:
+
+```json
+{
+  "metadata": {
+    "scenario": "demo_success"
+  }
+}
+```
+
+### `POST /api/v1/billing/payments/{payment}/simulate/failure`
+
+Body:
+
+```json
+{
+  "reason": "card_declined",
+  "metadata": {
+    "scenario": "demo_decline"
+  }
+}
+```
+
+Simulation endpoints are permission-gated and only exist for demo/operator flows.
+
+## Webhook Delivery
+
+### `GET /api/v1/billing/payments/{payment}/webhooks`
+
+Returns safe webhook delivery history for a payment.
+
+### `POST /api/v1/billing/webhooks/{webhookDelivery}/retry`
+
+Retries a failed or retry-eligible outbound delivery.
+
+## Manual Wallet Adjustment
+
+### `POST /api/v1/billing/wallet-adjustments`
+
+Headers:
+
+- `Authorization: Bearer {{TOKEN}}`
+- `Idempotency-Key: {{KEY}}`
+
+Body:
+
+```json
+{
+  "user_id": 42,
+  "currency": "USD",
+  "amount": 2500,
+  "direction": "credit",
+  "reason": "Support-approved correction",
+  "description": "Billing reconciliation adjustment.",
+  "reference": "ticket-1001",
+  "metadata": {
+    "case_type": "support"
+  }
+}
+```
+
+This route is permission-gated and writes an append-only wallet ledger transaction.
+
+## Example Flows
+
+### Example Payment Flow
+
+1. `POST /api/v1/billing/payments`
+2. payment is created in `pending` or `processing`
+3. operator simulates success or failure
+4. webhook delivery is queued when a callback URL is present
+5. transaction history and activity logs are written
+
+### Example Subscription Flow
+
+1. `POST /api/v1/billing/subscriptions`
+2. pending subscription is created
+3. linked payment is created for paid plans
+4. simulator success activates the subscription
+5. scheduler later handles expiration or renewal checks
+
+### Example Wallet First Flow
+
+1. client sends `payment_source=wallet_first`
+2. service tries wallet balance first
+3. if wallet is insufficient, it falls back to the saved payment method
+4. the final payment outcome is still simulator-safe
+
+### Example Chat Limit Flow
+
+Chat is not a billing route, but billing drives the limit.
+
+When a user exceeds a paid or free chat quota, the chat API returns `403` with stable code `feature_limit_exceeded`.
+
+Example route:
+
+- `POST /api/v1/chat/conversations/{conversation}/messages`
+
+Example response:
+
+```json
+{
+  "success": false,
+  "message": "Feature limit exceeded.",
+  "code": "feature_limit_exceeded",
+  "errors": {}
+}
+```
+
+## Provider Abstraction
+
+The billing module uses a provider abstraction, but the simulator adapter is the default runtime implementation.
+
+Current provider readiness and examples are documented in [Payment Provider Integration Readiness](./payment-providers.md).
+
+## Future Dialer Notes
+
+The billing feature-access layer is reusable for future dialer monetization.
+
+Relevant feature keys:
+
+- `dialer.calls.monthly`
+- `dialer.concurrent_calls`
+- `dialer.recordings.storage_mb`
+- `dialer.recordings.retention_days`
+- `dialer.webhook_endpoints.count`
+
+## Testing and Validation
+
+See [Billing Testing](./testing.md) for the testing database workflow and targeted validation commands.

@@ -3,7 +3,7 @@
 ## Purpose
 
 Define the Phase 2 design for plans, feature access, subscriptions, and usage tracking on top of the existing SaaS foundation.  
-This is a planning document, not implementation code.
+This is a planning/reference document. The billing runtime is now implemented, but the design notes remain useful for explaining the feature-access model and future extension points.
 
 ## Design Principles
 
@@ -394,12 +394,12 @@ Next phase focus:
 
 Schema-level planning details: [Billing Database Schema Planning](./database.md).
 Domain structure planning details: [Billing Domain Architecture](./architecture.md).
-API contract planning details: [Billing API Contract](./api.md).
+API reference details: [Billing API](./api.md).
 Enum/status planning details: [Enums & Statuses Planning](./statuses.md).
 Seeder implementation notes: [Billing Seeders](./seeders.md).
 
 ## Status
 
-- Phase 2 is design/documentation only.
-- No migrations/models/services have been created yet.
-- Next phase: Payment Gateway Simulator Design.
+- Phase 2 remains the original design reference for plans and feature access.
+- Billing runtime is now implemented in later phases.
+- Use this document for schema intent and feature-model rationale, not as the current API source of truth.

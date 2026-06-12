@@ -2,7 +2,7 @@
 
 API-first SaaS foundation built as a modular monolith: Laravel backend, Vue Admin (inside backend), Angular dashboard, RBAC, chat/realtime, OpenAPI docs, Docker, and CI/CD/release preparation.
 
-Billing direction for this repository: planned Billing & Payment Gateway Simulator module on top of the existing SaaS baseline.
+Billing direction for this repository: implemented Billing & Payment Gateway Simulator module on top of the existing SaaS baseline.
 
 ## Highlights
 
@@ -52,12 +52,21 @@ Current architecture is a **modular monolith** with API-first boundaries, servic
 
 ## Main Features
 
-### Billing Roadmap
+### Billing Module
 
-- Planned Billing & Payment Gateway Simulator module
-- Planned subscription and paid feature flows
-- Planned idempotency and webhook simulation for payment workflows
-- Planned billing reuse for future dialer/calling monetization scenarios
+- Implemented Billing & Payment Gateway Simulator module
+- Subscription lifecycle with payment creation, simulation, invoices, and webhooks
+- Idempotency for write operations and replay-safe billing behavior
+- Wallet balance, payment methods, payment preferences, and manual adjustments
+- Queue-based webhook delivery and scheduler-driven cleanup/maintenance
+- Shared billing feature access for chat and future dialer monetization scenarios
+
+Billing documentation:
+
+- [Billing overview](docs/billing/overview.md)
+- [Billing API](docs/billing/api.md)
+- [Billing testing](docs/billing/testing.md)
+- [Payment provider abstraction](docs/billing/payment-providers.md)
 
 ### Auth & RBAC
 
@@ -191,6 +200,6 @@ Important: do not run multiple backend test processes in parallel against the sa
 This repository is a portfolio and architecture-oriented SaaS foundation.
 
 - It demonstrates realistic backend/frontend/platform engineering decisions.
-- Billing & Payment Gateway Simulator is a planned module, not fully implemented at this stage.
+- Billing & Payment Gateway Simulator is implemented as a simulator-safe module, not a real payment integration.
 - It does **not** claim turnkey production deployment for every environment.
 - Microservices are documented as a **future strategy**; current implementation remains a modular monolith.

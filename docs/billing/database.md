@@ -784,7 +784,7 @@ Dependency notes:
 - Service-layer transaction boundaries and idempotency locking should be implemented together with write flows.
 
 Domain structure details: [Billing Domain Architecture](./architecture.md).
-API contract planning details: [Billing API Contract](./api.md).
+API reference details: [Billing API](./api.md).
 Enum/status planning details: [Enums & Statuses Planning](./statuses.md).
 Seeder implementation notes: [Billing Seeders](./seeders.md).
 Payment methods and preferences: [Payment Methods & User Payment Preferences](./payment-methods.md).
