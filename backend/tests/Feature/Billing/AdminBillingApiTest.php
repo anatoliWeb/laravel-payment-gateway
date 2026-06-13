@@ -102,4 +102,15 @@ class AdminBillingApiTest extends TestCase
                 'feature_key' => 'chat.messages.daily',
             ]);
     }
+
+    public function test_normal_user_is_forbidden_from_admin_billing_endpoints(): void
+    {
+        $this->seed(BillingDemoSeeder::class);
+
+        Sanctum::actingAs(User::query()->where('email', BillingDemoSeeder::NORMAL_EMAIL)->firstOrFail());
+
+        $this->getJson('/api/v1/billing/admin/payments')->assertForbidden();
+        $this->getJson('/api/v1/billing/admin/wallets')->assertForbidden();
+        $this->getJson('/api/v1/billing/admin/idempotency-keys')->assertForbidden();
+    }
 }

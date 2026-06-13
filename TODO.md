@@ -1191,9 +1191,9 @@ Checklist:
 - [ ] Add feature override disable/expire endpoint
 - [x] Add backend permission checks for all admin billing endpoints
 - [x] Add permissions for admin billing read/manage actions if missing
-- [ ] Ensure normal users cannot access admin billing endpoints
-- [ ] Add public UUID payment simulation endpoint if still needed
-- [ ] Keep simulation permission/demo gated
+- [x] Ensure normal users cannot access admin billing endpoints
+- [x] Add public UUID payment simulation endpoint if still needed
+- [x] Keep simulation permission/demo gated
 - [x] Add demo admin/operator user seed data
 - [x] Add demo normal user seed data
 - [x] Add demo company/seller/customer seed data if useful
@@ -1208,12 +1208,12 @@ Checklist:
 - [x] Add demo feature overrides
 - [x] Make demo seeders idempotent and safe to rerun
 - [x] Update Angular admin billing UI to consume new endpoints
-- [ ] Update Angular checkout UI simulation buttons if endpoint is added
+- [x] Update Angular checkout UI simulation buttons if endpoint is added
 - [x] Add backend tests for admin billing APIs
 - [x] Add backend tests for permissions
 - [x] Add backend tests for demo seeders
 - [x] Add frontend tests for updated admin billing UI
-- [ ] Add frontend tests for checkout simulation buttons if implemented
+- [x] Add frontend tests for checkout simulation buttons if implemented
 - [ ] Document admin billing backend APIs
 - [ ] Document demo seed data
 - [ ] Document admin permissions

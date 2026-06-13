@@ -7,13 +7,13 @@ use App\Models\PaymentProviderAccount;
 use App\Models\Seller;
 use App\Models\User;
 use App\Services\Payments\Providers\PaymentProviderConfigResolver;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use RuntimeException;
 use Tests\TestCase;
 
 class PaymentProviderConfigResolverTest extends TestCase
 {
-    use RefreshDatabase;
+    use DatabaseTransactions;
 
     public function test_simulator_default_resolves_without_real_secrets(): void
     {
