@@ -31,6 +31,7 @@ use App\Http\Controllers\Api\V1\Billing\PaymentMethodController;
 use App\Http\Controllers\Api\V1\Billing\PaymentPreferenceController;
 use App\Http\Controllers\Api\V1\Billing\PaymentSimulationController;
 use App\Http\Controllers\Api\V1\Billing\AdminBillingController;
+use App\Http\Controllers\Api\V1\Billing\AdminBillingReportController;
 use App\Http\Controllers\Api\V1\Billing\WalletAdjustmentController;
 use App\Http\Controllers\Api\V1\Billing\WalletController;
 use App\Http\Controllers\Api\V1\Billing\WebhookDeliveryController;
@@ -472,6 +473,27 @@ Route::prefix('v1')
                                     ->name('overrides.index');
                                 Route::get('/overrides/{featureOverride}', [AdminBillingController::class, 'featureOverride'])
                                     ->name('overrides.show');
+
+                                Route::prefix('reports')
+                                    ->as('reports.')
+                                    ->group(function (): void {
+                                        Route::get('/revenue-summary', [AdminBillingReportController::class, 'revenueSummary'])
+                                            ->name('revenue-summary');
+                                        Route::get('/payment-status-summary', [AdminBillingReportController::class, 'paymentStatusSummary'])
+                                            ->name('payment-status-summary');
+                                        Route::get('/revenue-by-plan', [AdminBillingReportController::class, 'revenueByPlan'])
+                                            ->name('revenue-by-plan');
+                                        Route::get('/revenue-by-currency', [AdminBillingReportController::class, 'revenueByCurrency'])
+                                            ->name('revenue-by-currency');
+                                        Route::get('/revenue-by-seller-company', [AdminBillingReportController::class, 'revenueBySellerCompany'])
+                                            ->name('revenue-by-seller-company');
+                                        Route::get('/subscription-metrics', [AdminBillingReportController::class, 'subscriptionMetrics'])
+                                            ->name('subscription-metrics');
+                                        Route::get('/invoice-metrics', [AdminBillingReportController::class, 'invoiceMetrics'])
+                                            ->name('invoice-metrics');
+                                        Route::get('/wallet-metrics', [AdminBillingReportController::class, 'walletMetrics'])
+                                            ->name('wallet-metrics');
+                                    });
                             });
                     });
 

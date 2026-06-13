@@ -24,6 +24,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/database.md](./billing/database.md) - Billing database schema planning
 - [billing/architecture.md](./billing/architecture.md) - Billing domain structure architecture
 - [billing/api.md](./billing/api.md) - Billing runtime API examples and flows
+- [billing/reports-api.md](./billing/reports-api.md) - Billing reports backend API contract and aggregates
 - [billing/user-portal-ui.md](./billing/user-portal-ui.md) - Angular billing portal UI reference
 - [billing/checkout-payment-ui.md](./billing/checkout-payment-ui.md) - Angular billing checkout and payment UI reference
 - [billing/admin-operator-ui.md](./billing/admin-operator-ui.md) - Angular admin/operator billing management UI reference
@@ -73,6 +74,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Database -> [./billing/database.md](./billing/database.md)
 - Billing Architecture -> [./billing/architecture.md](./billing/architecture.md)
 - Billing API -> [./billing/api.md](./billing/api.md)
+- Billing Reports API -> [./billing/reports-api.md](./billing/reports-api.md)
 - Billing User Portal UI -> [./billing/user-portal-ui.md](./billing/user-portal-ui.md)
 - Billing Checkout / Payment UI -> [./billing/checkout-payment-ui.md](./billing/checkout-payment-ui.md)
 - Billing Admin / Operator UI -> [./billing/admin-operator-ui.md](./billing/admin-operator-ui.md)

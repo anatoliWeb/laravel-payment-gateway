@@ -164,6 +164,24 @@ Permissions:
 
 - `billing.overrides.view_any`
 
+### Reports
+
+- `GET /api/v1/billing/admin/reports/revenue-summary`
+- `GET /api/v1/billing/admin/reports/payment-status-summary`
+- `GET /api/v1/billing/admin/reports/revenue-by-plan`
+- `GET /api/v1/billing/admin/reports/revenue-by-currency`
+- `GET /api/v1/billing/admin/reports/revenue-by-seller-company`
+- `GET /api/v1/billing/admin/reports/subscription-metrics`
+- `GET /api/v1/billing/admin/reports/invoice-metrics`
+- `GET /api/v1/billing/admin/reports/wallet-metrics`
+
+Permissions:
+
+- `billing.reports.view`
+- `billing.reports.view_financials` for revenue / money-bearing endpoints
+
+Detailed request and response examples are documented in [Billing Reports API](./reports-api.md).
+
 ### Safety Notes
 
 - safe fields only

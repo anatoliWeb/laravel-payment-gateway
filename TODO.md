@@ -1308,21 +1308,21 @@ Reports are separate from operational admin history. The frontend must not calcu
 
 ## Phase 22.6.1 - Billing Reports Backend API
 
-- [ ] Design billing reports API contract
-- [ ] Add revenue summary endpoint
-- [ ] Add payment status summary endpoint
-- [ ] Add revenue by plan endpoint
-- [ ] Add revenue by currency endpoint
-- [ ] Add revenue by seller/company endpoint
-- [ ] Add subscription metrics endpoint
-- [ ] Add invoice metrics endpoint
-- [ ] Add wallet metrics endpoint
-- [ ] Add date/status/currency/seller/company filters
-- [ ] Add permission checks for report access
-- [ ] Add tests for report totals
-- [ ] Add tests for report permissions
-- [ ] Ensure financial reports use database aggregates, not frontend calculations
-- [ ] Document reports API
+- [x] Design billing reports API contract
+- [x] Add revenue summary endpoint
+- [x] Add payment status summary endpoint
+- [x] Add revenue by plan endpoint
+- [x] Add revenue by currency endpoint
+- [x] Add revenue by seller/company endpoint
+- [x] Add subscription metrics endpoint
+- [x] Add invoice metrics endpoint
+- [x] Add wallet metrics endpoint
+- [x] Add date/status/currency/seller/company filters
+- [x] Add permission checks for report access
+- [x] Add tests for report totals
+- [x] Add tests for report permissions
+- [x] Ensure financial reports use database aggregates, not frontend calculations
+- [x] Document reports API
 
 Note:
 This backend phase is needed before reports UI can show authoritative financial totals.

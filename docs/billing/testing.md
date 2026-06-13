@@ -74,6 +74,7 @@ Additional high-value slices:
 - provider factory / config resolver / credential masking
 - scheduler command registration and retry commands
 - admin read-surface API access control
+- billing reports aggregates and permissions
 - demo seed data stability
 
 ## Targeted Frontend Checks
@@ -111,6 +112,7 @@ If that happens:
 - reset only the testing database when needed
 - run focused billing tests
 - confirm OpenAPI smoke tests if the response envelope changes
+- confirm report endpoints return backend aggregates instead of frontend-calculated totals
 - keep production and development databases untouched
 - use Docker when host Angular spawning is unstable
 

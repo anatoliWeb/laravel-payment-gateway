@@ -65,6 +65,7 @@ Billing documentation:
 
 - [Billing overview](docs/billing/overview.md)
 - [Billing API](docs/billing/api.md)
+- [Billing Reports API](docs/billing/reports-api.md)
 - [Billing user portal UI](docs/billing/user-portal-ui.md)
 - [Billing checkout/payment UI](docs/billing/checkout-payment-ui.md)
 - [Billing admin/operator UI](docs/billing/admin-operator-ui.md)

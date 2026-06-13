@@ -99,6 +99,7 @@ class BillingPermissionSeeder extends Seeder
         'billing.currencies.view' => 'View billing currencies',
         'billing.currencies.manage' => 'Manage billing currencies',
         'billing.reports.view' => 'View billing reports',
+        'billing.reports.view_financials' => 'View financial billing reports',
     ];
 
     public function run(): void
