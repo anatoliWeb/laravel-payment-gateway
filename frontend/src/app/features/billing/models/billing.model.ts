@@ -428,3 +428,164 @@ export interface BillingAdminActivityFilters {
   date_from?: string | null;
   date_to?: string | null;
 }
+
+export interface BillingReportFilters {
+  date_from?: string | null;
+  date_to?: string | null;
+  currency?: string | null;
+  company_id?: number | null;
+  seller_id?: number | null;
+  user_id?: number | null;
+  plan_id?: number | null;
+  payment_status?: string | null;
+  invoice_status?: string | null;
+  subscription_status?: string | null;
+  wallet_status?: string | null;
+}
+
+export interface BillingReportEnvelope {
+  scope: string;
+  generated_at: string | null;
+  filters: BillingReportFilters;
+}
+
+export interface BillingStatusBreakdownRow {
+  status: string | null;
+  payment_count?: number | null;
+  amount_total?: number | null;
+  invoice_count?: number | null;
+  total_amount?: number | null;
+  paid_amount?: number | null;
+  due_amount?: number | null;
+  subscription_count?: number | null;
+  wallet_count?: number | null;
+  transaction_count?: number | null;
+  credited_amount?: number | null;
+  debited_amount?: number | null;
+}
+
+export interface BillingRevenueCurrencyRow {
+  currency: string | null;
+  payment_count: number;
+  revenue_amount: number;
+}
+
+export interface BillingRevenuePlanRow {
+  plan_id: number | null;
+  plan_slug: string | null;
+  plan_name: string | null;
+  currency: string | null;
+  payment_count: number;
+  revenue_amount: number;
+}
+
+export interface BillingSellerCompanyRevenueRow {
+  company_id: number | null;
+  company_name: string | null;
+  seller_id: number | null;
+  seller_name: string | null;
+  currency: string | null;
+  payment_count: number;
+  revenue_amount: number;
+}
+
+export interface BillingRevenueSummaryReport extends BillingReportEnvelope {
+  summary: {
+    payment_count: number;
+    successful_payment_count: number;
+    revenue_amount: number;
+    average_successful_payment_amount: number | null;
+  };
+  currency_breakdown: BillingRevenueCurrencyRow[];
+  status_breakdown: BillingStatusBreakdownRow[];
+}
+
+export interface BillingPaymentStatusSummaryReport extends BillingReportEnvelope {
+  summary: {
+    payment_count: number;
+  };
+  status_breakdown: BillingStatusBreakdownRow[];
+}
+
+export interface BillingRevenueByPlanReport extends BillingReportEnvelope {
+  rows: BillingRevenuePlanRow[];
+}
+
+export interface BillingRevenueByCurrencyReport extends BillingReportEnvelope {
+  rows: BillingRevenueCurrencyRow[];
+}
+
+export interface BillingRevenueBySellerCompanyReport extends BillingReportEnvelope {
+  rows: BillingSellerCompanyRevenueRow[];
+}
+
+export interface BillingSubscriptionMetricsReport extends BillingReportEnvelope {
+  summary: {
+    subscription_count: number;
+    active_subscription_count: number;
+    trialing_subscription_count: number;
+    past_due_subscription_count: number;
+    cancelled_subscription_count: number;
+    new_subscription_count: number;
+  };
+  status_breakdown: BillingStatusBreakdownRow[];
+  plan_breakdown: Array<{
+    plan_id: number | null;
+    plan_slug: string | null;
+    plan_name: string | null;
+    subscription_count: number;
+  }>;
+}
+
+export interface BillingInvoiceMetricsReport extends BillingReportEnvelope {
+  summary: {
+    invoice_count: number;
+    issued_invoice_count: number;
+    paid_invoice_count: number;
+    void_invoice_count: number;
+    overdue_invoice_count: number;
+  };
+  status_breakdown: Array<{
+    status: string | null;
+    invoice_count: number;
+    total_amount: number;
+    paid_amount: number;
+    due_amount: number;
+  }>;
+  currency_breakdown: Array<{
+    currency: string | null;
+    invoice_count: number;
+    total_amount: number;
+    paid_amount: number;
+    due_amount: number;
+  }>;
+}
+
+export interface BillingWalletMetricsReport extends BillingReportEnvelope {
+  summary: {
+    wallet_count: number;
+    active_wallet_count: number;
+    suspended_wallet_count: number;
+    closed_wallet_count: number;
+    transaction_count: number;
+  };
+  wallet_status_breakdown: Array<{
+    status: string | null;
+    wallet_count: number;
+  }>;
+  currency_breakdown: Array<{
+    currency: string | null;
+    balance_count: number;
+    available_amount: number;
+    held_amount: number;
+  }>;
+  transaction_breakdown: Array<{
+    type: string | null;
+    direction: string | null;
+    status: string | null;
+    currency: string | null;
+    transaction_count: number;
+    credited_amount: number;
+    debited_amount: number;
+  }>;
+}

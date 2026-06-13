@@ -26,6 +26,7 @@ export class SidebarComponent {
     { route: '/billing/company', label: 'Company billing' },
     { route: '/billing/seller', label: 'Seller billing' },
     { route: '/admin/billing', label: 'Billing admin', permissions: ['billing.payments.view', 'billing.invoices.view', 'billing.subscriptions.view', 'billing.wallets.view', 'activity.view'] },
+    { route: '/admin/billing/reports', label: 'Billing reports', permissions: ['billing.reports.view'] },
     { route: '/chat', labelKey: 'layout.nav.chat', permissions: ['chat.view', 'chat.conversations.view'] },
   ];
 

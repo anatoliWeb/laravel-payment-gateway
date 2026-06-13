@@ -119,6 +119,7 @@ The read-only review sections for idempotency records, provider accounts, restri
 - Phase 22.2: user checkout / payment UI
 - Phase 22.3: admin / operator billing management UI
 - Phase 22.4: seller / company billing views
+- Phase 22.6: billing reports & analytics UI
 
 ## Notes
 

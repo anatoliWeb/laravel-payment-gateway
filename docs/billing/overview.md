@@ -17,6 +17,7 @@ The module is simulator-safe: it demonstrates a real SaaS billing lifecycle with
 - user-facing checkout/payment UI for plan purchase, invoice payment, and wallet top-up
 - admin/operator billing management UI for invoices, payments, subscriptions, wallets, idempotency records, provider accounts, restrictions, feature overrides, audit logs, webhook retry, and permission-gated wallet adjustments
 - backend billing reports API for authoritative revenue, invoice, wallet, and subscription aggregates
+- admin billing reports and analytics UI for authoritative report filters, summary cards, and breakdown tables
 - seller/company ownership-aware billing views with backend report aggregates for authoritative totals
 - idempotency for write operations
 - outbound webhook delivery and retry
@@ -91,6 +92,7 @@ The module is intentionally broader than chat billing:
 - company and seller ownership can be attached to payments and invoices
 - company and seller UI routes exist as frontend shells for future report dashboards
 - company and seller reporting totals are now calculated in backend report endpoints instead of the UI
+- the reporting dashboard is separate from the operational admin billing screen
 - manual wallet adjustments remain permission-gated
 - admin/operator views stay conservative when write endpoints are missing and use explicit read-only sections instead of synthetic data
 
@@ -122,6 +124,7 @@ Provider readiness, encrypted credentials, customer-scoped provider accounts, an
 - [Webhooks](./webhooks.md)
 - [Scheduler](./scheduler.md)
 - [Payment Providers](./payment-providers.md)
+- [Billing Reports UI](./reports-ui.md)
 
 ## Status
 

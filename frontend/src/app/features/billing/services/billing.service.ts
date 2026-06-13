@@ -20,13 +20,22 @@ import type {
   BillingAdminIdempotencyKey,
   BillingAdminProviderAccount,
   BillingAdminRestriction,
+  BillingInvoiceMetricsReport,
   BillingSubscription,
+  BillingPaymentStatusSummaryReport,
+  BillingReportFilters,
+  BillingRevenueByCurrencyReport,
+  BillingRevenueByPlanReport,
+  BillingRevenueBySellerCompanyReport,
+  BillingRevenueSummaryReport,
   BillingAdminWallet,
   BillingWallet,
   BillingWalletAdjustmentPayload,
   BillingWalletTopUpPayload,
   BillingWalletTopUpResponse,
   BillingWalletTransaction,
+  BillingSubscriptionMetricsReport,
+  BillingWalletMetricsReport,
   BillingWebhookDelivery,
 } from '../models/billing.model';
 
@@ -280,6 +289,38 @@ export class BillingService {
     );
   }
 
+  loadBillingRevenueSummary(filters: BillingReportFilters = {}) {
+    return this.loadBillingReport<BillingRevenueSummaryReport>('revenue-summary', filters);
+  }
+
+  loadBillingPaymentStatusSummary(filters: BillingReportFilters = {}) {
+    return this.loadBillingReport<BillingPaymentStatusSummaryReport>('payment-status-summary', filters);
+  }
+
+  loadBillingRevenueByPlan(filters: BillingReportFilters = {}) {
+    return this.loadBillingReport<BillingRevenueByPlanReport>('revenue-by-plan', filters);
+  }
+
+  loadBillingRevenueByCurrency(filters: BillingReportFilters = {}) {
+    return this.loadBillingReport<BillingRevenueByCurrencyReport>('revenue-by-currency', filters);
+  }
+
+  loadBillingRevenueBySellerCompany(filters: BillingReportFilters = {}) {
+    return this.loadBillingReport<BillingRevenueBySellerCompanyReport>('revenue-by-seller-company', filters);
+  }
+
+  loadBillingSubscriptionMetrics(filters: BillingReportFilters = {}) {
+    return this.loadBillingReport<BillingSubscriptionMetricsReport>('subscription-metrics', filters);
+  }
+
+  loadBillingInvoiceMetrics(filters: BillingReportFilters = {}) {
+    return this.loadBillingReport<BillingInvoiceMetricsReport>('invoice-metrics', filters);
+  }
+
+  loadBillingWalletMetrics(filters: BillingReportFilters = {}) {
+    return this.loadBillingReport<BillingWalletMetricsReport>('wallet-metrics', filters);
+  }
+
   createPayment(payload: BillingPaymentPayload, idempotencyKey: string) {
     return this.apiClient.post<BillingPayment, BillingPaymentPayload>(
       '/v1/billing/payments',
@@ -370,6 +411,20 @@ export class BillingService {
     ).pipe(
       map((response: ApiResponse<BillingWalletTransaction>) => response.data ?? null),
     );
+  }
+
+  private loadBillingReport<TReport>(endpoint: string, filters: BillingReportFilters = {}) {
+    return this.apiClient.get<TReport>(`/v1/billing/admin/reports/${endpoint}`, {
+      params: this.reportParams(filters),
+    }).pipe(
+      map((response: ApiResponse<TReport>) => response.data ?? null),
+    );
+  }
+
+  private reportParams(filters: BillingReportFilters): Record<string, string | number | boolean> {
+    return Object.fromEntries(
+      Object.entries(filters).filter(([, value]) => value !== null && value !== undefined && String(value) !== ''),
+    ) as Record<string, string | number | boolean>;
   }
 
   simulatePaymentSuccess(paymentIdOrUuid: string | number) {

@@ -1275,31 +1275,31 @@ Demo flows should make the portfolio easy to review without requiring Postman.
 
 ## Phase 22.6 - Billing Reports & Analytics UI
 
-- [ ] Design billing reports dashboard
-- [ ] Show revenue summary by period
-- [ ] Show successful payments summary
-- [ ] Show failed payments summary
-- [ ] Show pending payments summary
-- [ ] Show revenue by plan
-- [ ] Show revenue by currency
-- [ ] Show revenue by seller/company
+- [x] Design billing reports dashboard
+- [x] Show revenue summary by period
+- [x] Show successful payments summary
+- [x] Show failed payments summary
+- [x] Show pending payments summary
+- [x] Show revenue by plan
+- [x] Show revenue by currency
+- [x] Show revenue by seller/company
 - [ ] Show subscription MRR/ARR if supported
-- [ ] Show active subscriptions count
-- [ ] Show past_due subscriptions count
+- [x] Show active subscriptions count
+- [x] Show past_due subscriptions count
 - [ ] Show cancelled/expired subscriptions count
-- [ ] Show wallet top-up totals
-- [ ] Show wallet debit totals
-- [ ] Show invoice paid/unpaid totals
-- [ ] Add date range filters
-- [ ] Add status filters
-- [ ] Add currency filters
-- [ ] Add seller/company filters
-- [ ] Add export-ready tables
+- [x] Show wallet top-up totals
+- [x] Show wallet debit totals
+- [x] Show invoice paid/unpaid totals
+- [x] Add date range filters
+- [x] Add status filters
+- [x] Add currency filters
+- [x] Add seller/company filters
+- [x] Add export-ready tables
 - [ ] Add CSV export if backend supports it
-- [ ] Add backend reporting API gap notes where endpoints are missing
-- [ ] Ensure reports do not calculate authoritative revenue from partial frontend pages
-- [ ] Add frontend tests if project structure supports it
-- [ ] Document billing reports and analytics UI
+- [x] Add backend reporting API gap notes where endpoints are missing
+- [x] Ensure reports do not calculate authoritative revenue from partial frontend pages
+- [x] Add frontend tests if project structure supports it
+- [x] Document billing reports and analytics UI
 
 Note:
 Reports are separate from operational admin history. The frontend must not calculate authoritative financial totals from partial paginated lists. Real report totals require dedicated backend reporting endpoints.

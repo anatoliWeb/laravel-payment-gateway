@@ -51,6 +51,7 @@ This map is a living audit for Phase 23. It records which requested test areas a
 | Add backend tests for permissions | covered | `backend/tests/Feature/Billing/BillingRbacSeederTest.php`, `backend/tests/Feature/Billing/AdminBillingApiTest.php` | Seeder permissions and admin gate checks are covered. |
 | Add backend tests for demo seeders | covered | `backend/tests/Feature/Billing/BillingDemoSeederTest.php` | Demo data is idempotent and stable. |
 | Add frontend tests for updated admin billing UI | covered | `frontend/src/app/features/admin-billing/pages/admin-billing-dashboard/admin-billing-dashboard-page.component.spec.ts` | Dashboard now covers the read-only admin datasets. |
+| Add frontend tests for billing reports dashboard | covered | `frontend/src/app/features/admin-billing/pages/admin-billing-reports-dashboard/admin-billing-reports-dashboard-page.component.spec.ts`, `frontend/src/app/features/billing/services/billing.service.spec.ts` | Reports UI and report API wiring are covered with targeted Angular tests. |
 | Add frontend tests for checkout simulation buttons if implemented | covered | `frontend/src/app/features/billing/pages/billing-checkout/billing-checkout-page.component.spec.ts` | Checkout simulation interaction is already covered. |
 
 ## Notes
