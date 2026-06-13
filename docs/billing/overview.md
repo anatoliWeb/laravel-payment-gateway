@@ -15,7 +15,7 @@ The module is simulator-safe: it demonstrates a real SaaS billing lifecycle with
 - wallet balances and top-ups
 - payment methods and payment preferences
 - user-facing checkout/payment UI for plan purchase, invoice payment, and wallet top-up
-- admin/operator billing management UI for invoices, subscription lookups, audit logs, webhook retry, and permission-gated wallet adjustments
+- admin/operator billing management UI for invoices, payments, subscriptions, wallets, idempotency records, provider accounts, restrictions, feature overrides, audit logs, webhook retry, and permission-gated wallet adjustments
 - seller/company ownership-aware billing views with explicit gap notes for missing scoped report endpoints
 - idempotency for write operations
 - outbound webhook delivery and retry
@@ -88,7 +88,7 @@ The module is intentionally broader than chat billing:
 - company and seller ownership can be attached to payments and invoices
 - company and seller UI routes exist as frontend shells even though scoped report APIs are still missing
 - manual wallet adjustments remain permission-gated
-- admin/operator views stay conservative when list/detail endpoints are missing and show explicit gap notes instead of synthetic data
+- admin/operator views stay conservative when write endpoints are missing and use explicit read-only sections instead of synthetic data
 
 Future dialer feature keys are documented in [Future Dialer Billing Extension](./future-dialer.md).
 

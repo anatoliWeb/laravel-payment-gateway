@@ -131,19 +131,20 @@ It does not invent backend data or payment logic. It simply organizes the existi
 
 ### Failed payment
 
-- Status: `backend gap`
+- Status: `admin-only`
 - UI route: `/admin/billing`
 - Related docs: [Admin / Operator Billing Management UI](./admin-operator-ui.md)
 - Steps:
   - open the admin billing dashboard
-  - review the failure path notes
+  - review the payment detail and transaction history for a failed payment
   - use a safe failure path only if the current environment already exposes one
 - Notes:
   - the user-facing UI does not expose hidden simulation controls
+  - admin review is read-only; simulation remains permission/demo-gated elsewhere
 
 ### Webhook delivery history
 
-- Status: `admin-only`
+- Status: `available`
 - UI route: `/admin/billing`
 - Related docs: [Webhooks](./webhooks.md)
 - Steps:
@@ -154,21 +155,21 @@ It does not invent backend data or payment logic. It simply organizes the existi
 
 ### Billing restriction / blacklist
 
-- Status: `backend gap`
+- Status: `admin-only`
 - UI route: `/admin/billing`
 - Related docs: [Admin / Operator Billing Management UI](./admin-operator-ui.md)
 - Steps:
-  - review the docs
+  - review the read-only restriction list/detail data
   - note that restriction CRUD is intentionally not exposed yet
   - treat this as a roadmap note, not a live flow
 
 ### Feature override
 
-- Status: `planned`
+- Status: `admin-only`
 - UI route: `/admin/billing`
 - Related docs: [Overrides](./overrides.md)
 - Steps:
-  - review the docs
+  - review the read-only feature override list/detail data
   - note that feature override CRUD remains a backend gap
   - keep the demo guide honest about that gap
 

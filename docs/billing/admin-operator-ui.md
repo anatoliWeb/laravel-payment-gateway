@@ -16,8 +16,8 @@ The route is backed by a lazy-loaded Angular feature module and uses the existin
 
 ### Dashboard
 
-- summary cards for invoices, payments, activity logs, webhook deliveries, and wallet adjustment readiness
-- visible gap cards for backend areas that do not yet have admin UI screens
+- summary cards for invoices, payments, activity logs, webhook deliveries, wallets, idempotency, provider accounts, and wallet adjustment readiness
+- read-only coverage cards for the admin surfaces already wired into the dashboard
 
 ### Invoices
 
@@ -35,7 +35,7 @@ The route is backed by a lazy-loaded Angular feature module and uses the existin
 ### Subscriptions
 
 - subscription detail lookup from `GET /api/v1/billing/subscriptions/{subscription}`
-- subscription list is available on the backend admin API, while the UI still uses a focused lookup pattern
+- subscription list remains future UI work, so the dashboard keeps a focused lookup pattern for now
 
 ### Wallet Adjustments
 
@@ -57,16 +57,16 @@ The route is backed by a lazy-loaded Angular feature module and uses the existin
 - retry action via `POST /api/v1/billing/webhooks/{webhookDelivery}/retry`
 - retry button is permission-aware and disabled for final or delivered states
 
-### Gap Notes
+### Read-Only Admin Surfaces
 
-The UI intentionally shows placeholder cards for:
+The dashboard now renders read-only review sections for:
 
 - idempotency records
 - provider accounts
 - billing restrictions / blacklist
 - feature overrides
 
-These are documented gaps, not missed wiring.
+These sections are backed by real list/detail endpoints and use loading, empty, and error states. CRUD actions stay out of scope for this phase.
 
 ## APIs Consumed
 
@@ -105,13 +105,13 @@ Backend permissions remain the source of truth. The UI still expects `403` respo
 
 ## What Is Intentionally Not Implemented
 
-- idempotency records screen
+- subscription list screen
 - provider account CRUD
 - restrictions / blacklist CRUD
 - feature override CRUD
 - seller/company-specific views
 
-Those items depend on backend APIs that are not exposed in this phase.
+The read-only review sections for idempotency records, provider accounts, restrictions, and feature overrides are implemented already. The remaining items above are intentionally kept for future safe-management work.
 
 ## Relation To Other Billing Phases
 
@@ -122,8 +122,8 @@ Those items depend on backend APIs that are not exposed in this phase.
 
 ## Notes
 
-The admin billing UI is intentionally conservative. It prefers a visible gap note over fake data when the backend does not expose a safe list/detail endpoint.
+The admin billing UI is intentionally conservative. It prefers read-only review sections and clear gap notes when a safe CRUD endpoint does not yet exist.
 
 ## Relation to Demo Flows
 
-The failed payment, webhook delivery history, restriction / blacklist, and feature override entries in [Billing Demo Flows](./demo-flows.md) route back here for the current admin/operator surface and documented gaps.
+The failed payment, webhook delivery history, restriction / blacklist, and feature override entries in [Billing Demo Flows](./demo-flows.md) route back here for the current admin/operator surface and the remaining CRUD gaps.

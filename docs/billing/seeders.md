@@ -45,3 +45,23 @@ Running it multiple times does not create duplicates.
 You can also run it directly:
 - `php artisan db:seed --class=BillingSeeder`
 
+## BillingDemoSeeder
+
+`BillingDemoSeeder` seeds an opt-in review dataset for the admin/operator billing surface.
+
+It is controlled by `BILLING_DEMO_SEED=true` in non-production environments and remains disabled by default.
+
+Seeded demo data includes:
+
+- demo admin, operator, and normal users
+- demo payments in multiple statuses
+- demo payment transactions
+- demo subscriptions in multiple statuses
+- demo wallets and wallet transactions
+- demo invoices in multiple statuses
+- demo webhook deliveries
+- demo provider accounts
+- demo billing restrictions / blacklist entries
+- demo feature overrides
+
+The demo seeder is idempotent and safe to rerun. It exists for portfolio walkthroughs and review screens, not for real provider integration or production billing automation.

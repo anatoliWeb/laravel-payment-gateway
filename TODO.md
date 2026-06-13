@@ -1125,28 +1125,28 @@ Simulator actions use payment UUID and remain permission/demo-gated. Normal user
 ## Phase 22.3 - Admin / Operator Billing Management UI
 
 - [x] Design admin billing dashboard
-- [ ] Show payments list
-- [ ] Show payment details
-- [ ] Show payment transaction history
+- [x] Show payments list
+- [x] Show payment details
+- [x] Show payment transaction history
 - [x] Show invoices list
 - [x] Show invoice details
 - [ ] Show subscriptions list
 - [x] Show subscription details
-- [ ] Show wallet balances by user
-- [ ] Show wallet transaction history by user
+- [x] Show wallet balances by user
+- [x] Show wallet transaction history by user
 - [x] Add permission-gated wallet adjustment UI
 - [x] Allow manual wallet credit with required reason
 - [x] Allow manual wallet debit with required reason
 - [x] Show activity logs for billing entities
 - [x] Show webhook deliveries
 - [x] Allow manual webhook retry if permission exists
-- [ ] Show idempotency records if permission exists
-- [ ] Show provider accounts
+- [x] Show idempotency records if permission exists
+- [x] Show provider accounts
 - [ ] Add provider account form readiness UI
-- [ ] Show billing restrictions / blacklist
+- [x] Show billing restrictions / blacklist
 - [ ] Add billing restriction creation UI
 - [ ] Add billing restriction disable/expire UI
-- [ ] Show feature overrides
+- [x] Show feature overrides
 - [ ] Add feature override creation UI
 - [ ] Add feature override disable/expire UI
 - [x] Enforce frontend permission checks
@@ -1158,7 +1158,7 @@ Simulator actions use payment UUID and remain permission/demo-gated. Normal user
 Note:
 Admin / Operator Billing Management UI is focused on operational history and safe management actions: payments, transactions, invoices, subscriptions, wallets, webhooks, activity logs, idempotency, provider account readiness, restrictions, and feature overrides. Financial analytics and revenue reports are intentionally separated into a dedicated reporting phase.
 
-Payments list/detail/transactions, subscriptions detail lookup, wallet-by-user screens, idempotency records, provider accounts, restrictions, and feature overrides are now backed by read-only endpoints. Future CRUD flows remain intentionally out of scope.
+Read-only admin surfaces are implemented for payments list/detail/transactions, subscription detail lookup, wallet-by-user screens, idempotency records, provider accounts, restrictions, feature overrides, and webhook delivery review. The subscriptions list remains future UI work, and all CRUD flows for provider-account readiness, restrictions, and feature overrides stay intentionally out of scope.
 
 Frontend permission checks are only UX helpers. Backend permissions remain the source of truth.
 
@@ -1168,7 +1168,7 @@ Frontend permission checks are only UX helpers. Backend permissions remain the s
 
 Checklist:
 
-- [ ] Design admin billing backend API scope
+- [x] Design admin billing backend API scope
 - [x] Add admin payments list endpoint
 - [x] Add admin payment detail endpoint
 - [x] Add admin payment transaction history endpoint
@@ -1214,10 +1214,10 @@ Checklist:
 - [x] Add backend tests for demo seeders
 - [x] Add frontend tests for updated admin billing UI
 - [x] Add frontend tests for checkout simulation buttons if implemented
-- [ ] Document admin billing backend APIs
-- [ ] Document demo seed data
-- [ ] Document admin permissions
-- [ ] Update Phase 22.3 checklist after real endpoints are implemented
+- [x] Document admin billing backend APIs
+- [x] Document demo seed data
+- [x] Document admin permissions
+- [x] Update Phase 22.3 checklist after real endpoints are implemented
 
 Note:
 This phase closes backend/API gaps for the Admin / Operator Billing Management UI. It is focused on operational history and safe admin actions, not financial analytics. Reports and revenue aggregates belong to Phase 22.6 and Phase 22.6.1.

@@ -171,6 +171,20 @@ Expected future endpoint guards:
 - currency administration endpoints require `billing.currencies.manage`
 - billing reports require `billing.reports.view`
 
+## Implemented Admin Read Surfaces
+
+The following read-only admin billing surfaces are already implemented and use the permissions above as their source of truth:
+
+- payments list/detail/transactions: `billing.payments.view_any`, `billing.payments.view_transactions`
+- subscriptions list/detail: `billing.subscriptions.view_any`
+- wallets list/detail/transactions: `billing.wallets.view_any`, `billing.wallets.view_transactions`
+- idempotency records list/detail: `billing.idempotency.view_any`
+- provider accounts list/detail: `billing.provider_accounts.view_any`
+- restrictions list/detail: `billing.restrictions.view_any`
+- feature overrides list/detail: `billing.overrides.view_any`
+
+Frontend checks are UX-only. Backend permission checks stay authoritative.
+
 ## Non-Goals
 
 Phase 10.2 does not create:

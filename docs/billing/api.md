@@ -91,6 +91,86 @@ The stable error catalog is documented in [Billing API Errors](./api-errors.md).
 
 - `POST /api/v1/billing/wallet-adjustments`
 
+## Admin Billing API
+
+The admin billing API is read-only for operational review except for permission-gated simulator actions and manual wallet adjustments documented elsewhere.
+
+All admin read surfaces require backend permissions; frontend checks are UX-only.
+
+### Payments
+
+- `GET /api/v1/billing/admin/payments`
+- `GET /api/v1/billing/admin/payments/{payment}`
+- `GET /api/v1/billing/admin/payments/{payment}/transactions`
+
+Permissions:
+
+- `billing.payments.view_any`
+- `billing.payments.view_transactions`
+
+### Subscriptions
+
+- `GET /api/v1/billing/admin/subscriptions`
+- `GET /api/v1/billing/admin/subscriptions/{subscription}`
+
+Permissions:
+
+- `billing.subscriptions.view_any`
+
+### Wallets
+
+- `GET /api/v1/billing/admin/wallets`
+- `GET /api/v1/billing/admin/wallets/{wallet}`
+- `GET /api/v1/billing/admin/wallets/{wallet}/transactions`
+
+Permissions:
+
+- `billing.wallets.view_any`
+- `billing.wallets.view_transactions`
+
+### Idempotency Records
+
+- `GET /api/v1/billing/admin/idempotency-keys`
+- `GET /api/v1/billing/admin/idempotency-keys/{idempotencyKey}`
+
+Permissions:
+
+- `billing.idempotency.view_any`
+
+### Provider Accounts
+
+- `GET /api/v1/billing/admin/provider-accounts`
+- `GET /api/v1/billing/admin/provider-accounts/{providerAccount}`
+
+Permissions:
+
+- `billing.provider_accounts.view_any`
+
+### Restrictions / Blacklist
+
+- `GET /api/v1/billing/admin/restrictions`
+- `GET /api/v1/billing/admin/restrictions/{billingRestriction}`
+
+Permissions:
+
+- `billing.restrictions.view_any`
+
+### Feature Overrides
+
+- `GET /api/v1/billing/admin/overrides`
+- `GET /api/v1/billing/admin/overrides/{featureOverride}`
+
+Permissions:
+
+- `billing.overrides.view_any`
+
+### Safety Notes
+
+- safe fields only
+- no raw idempotency keys
+- no provider secrets
+- no mutation endpoints for these read surfaces in this phase
+
 ## Payment Creation
 
 ### `POST /api/v1/billing/payments`
