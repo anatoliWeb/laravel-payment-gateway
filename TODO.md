@@ -1286,7 +1286,7 @@ Demo flows should make the portfolio easy to review without requiring Postman.
 - [ ] Show subscription MRR/ARR if supported
 - [x] Show active subscriptions count
 - [x] Show past_due subscriptions count
-- [ ] Show cancelled/expired subscriptions count
+- [x] Show cancelled/expired subscriptions count
 - [x] Show wallet top-up totals
 - [x] Show wallet debit totals
 - [x] Show invoice paid/unpaid totals
@@ -1303,6 +1303,7 @@ Demo flows should make the portfolio easy to review without requiring Postman.
 
 Note:
 Reports are separate from operational admin history. The frontend must not calculate authoritative financial totals from partial paginated lists. Real report totals require dedicated backend reporting endpoints.
+Export remains future work. When implemented, it should use an extensible export layer rather than a CSV-only implementation, so additional formats such as CSV, XLSX, PDF, JSON, or other project-specific formats can be added later without rewriting report queries or the reports dashboard.
 
 ---
 
@@ -1326,6 +1327,27 @@ Reports are separate from operational admin history. The frontend must not calcu
 
 Note:
 This backend phase is needed before reports UI can show authoritative financial totals.
+
+---
+
+## Phase 22 Final Status
+
+- [x] Billing documentation is portfolio-ready
+- [x] User billing portal is portfolio-ready
+- [x] Checkout/payment UI is portfolio-ready
+- [x] Admin read-only operational billing surfaces are portfolio-ready
+- [x] Demo billing flows are portfolio-ready
+- [x] Reports backend API is portfolio-ready
+- [x] Reports analytics UI is portfolio-ready
+- [ ] Safe-management CRUD for provider readiness/restrictions/feature overrides remains future work
+- [ ] CSV export remains future work
+- [ ] Extensible reports export layer remains future work
+- [ ] MRR/ARR remains future work unless authoritative subscription interval pricing is added
+- [ ] Full seller/company backend reporting remains future work if scoped backend list/report endpoints are incomplete
+
+Note:
+Phase 22 is portfolio-ready with intentionally deferred safe-management, export, and advanced subscription analytics gaps. Deferred items remain tracked and should not block the billing module from being presented as a portfolio feature.
+Reports export should be designed as a reusable export layer with pluggable formats, not as a hardcoded CSV-only button.
 
 ---
 

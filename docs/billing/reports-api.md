@@ -79,6 +79,7 @@ Every response uses the standard API envelope and returns report metadata in `da
 - payment status summary is intended for operational visibility, not revenue math
 - invoice and wallet totals remain grouped and auditable in backend query results
 - subscription metrics are lifecycle counts, not billing revenue
+- export remains future work and should be implemented as an extensible export layer with pluggable formats, not as a CSV-only shortcut
 
 ## Validation
 
