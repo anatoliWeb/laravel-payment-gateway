@@ -129,4 +129,4 @@ Provider readiness, encrypted credentials, customer-scoped provider accounts, an
 ## Status
 
 This billing module is implemented as a simulator-first portfolio system.
-The remaining work is refinement, documentation polish, and future provider expansion.
+Phase 22 is portfolio-ready. Advanced production extensions are tracked in the Future Billing Roadmap.

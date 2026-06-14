@@ -1158,7 +1158,7 @@ Simulator actions use payment UUID and remain permission/demo-gated. Normal user
 Note:
 Admin / Operator Billing Management UI is focused on operational history and safe management actions: payments, transactions, invoices, subscriptions, wallets, webhooks, activity logs, idempotency, provider account readiness, restrictions, and feature overrides. Financial analytics and revenue reports are intentionally separated into a dedicated reporting phase.
 
-Read-only admin surfaces are implemented for payments list/detail/transactions, subscription detail lookup, wallet-by-user screens, idempotency records, provider accounts, restrictions, feature overrides, and webhook delivery review. The subscriptions list remains future UI work, and all CRUD flows for provider-account readiness, restrictions, and feature overrides stay intentionally out of scope.
+Read-only admin surfaces are implemented for payments list/detail/transactions, subscription detail lookup, wallet-by-user screens, idempotency records, provider accounts, restrictions, feature overrides, and webhook delivery review. Any deferred safe-management CRUD items are tracked in the Future Billing Roadmap section below.
 
 Frontend permission checks are only UX helpers. Backend permissions remain the source of truth.
 
@@ -1303,7 +1303,7 @@ Demo flows should make the portfolio easy to review without requiring Postman.
 
 Note:
 Reports are separate from operational admin history. The frontend must not calculate authoritative financial totals from partial paginated lists. Real report totals require dedicated backend reporting endpoints.
-Export remains future work. When implemented, it should use an extensible export layer rather than a CSV-only implementation, so additional formats such as CSV, XLSX, PDF, JSON, or other project-specific formats can be added later without rewriting report queries or the reports dashboard.
+Deferred report analytics and export extensions are tracked in the Future Billing Roadmap section below. When export is implemented, it should use an extensible export layer rather than a CSV-only implementation, so additional formats such as CSV, XLSX, PDF, JSON, or other project-specific formats can be added later without rewriting report queries or the reports dashboard.
 
 ---
 
@@ -1339,15 +1339,75 @@ This backend phase is needed before reports UI can show authoritative financial 
 - [x] Demo billing flows are portfolio-ready
 - [x] Reports backend API is portfolio-ready
 - [x] Reports analytics UI is portfolio-ready
-- [ ] Safe-management CRUD for provider readiness/restrictions/feature overrides remains future work
-- [ ] CSV export remains future work
-- [ ] Extensible reports export layer remains future work
-- [ ] MRR/ARR remains future work unless authoritative subscription interval pricing is added
-- [ ] Full seller/company backend reporting remains future work if scoped backend list/report endpoints are incomplete
 
 Note:
-Phase 22 is portfolio-ready with intentionally deferred safe-management, export, and advanced subscription analytics gaps. Deferred items remain tracked and should not block the billing module from being presented as a portfolio feature.
-Reports export should be designed as a reusable export layer with pluggable formats, not as a hardcoded CSV-only button.
+Phase 22 is portfolio-ready. Advanced safe-management CRUD, extensible exports, MRR/ARR, and full seller/company backend reporting are intentionally tracked in the Future Billing Roadmap instead of blocking the portfolio-ready billing module.
+
+---
+
+## Future Billing Roadmap
+
+These items are intentionally deferred production extensions. They should not block Phase 22 portfolio readiness.
+
+### Safe Management CRUD
+
+- [ ] Add provider account readiness API/UI
+- [ ] Add billing restriction create endpoint
+- [ ] Add billing restriction disable/expire endpoint
+- [ ] Add billing restriction creation UI
+- [ ] Add billing restriction disable/expire UI
+- [ ] Add feature override create endpoint
+- [ ] Add feature override disable/expire endpoint
+- [ ] Add feature override creation UI
+- [ ] Add feature override disable/expire UI
+- [ ] Add required reason fields for all mutating safe-management actions
+- [ ] Add activity logs for all mutating safe-management actions
+- [ ] Add permission tests for all mutating safe-management actions
+- [ ] Document safe-management CRUD flows
+
+### Admin Subscription Management
+
+- [ ] Add subscriptions list UI in admin billing dashboard
+- [ ] Add filters for admin subscriptions list
+- [ ] Add pagination for admin subscriptions list
+- [ ] Add frontend tests for admin subscriptions list
+
+### Extensible Reports Export Layer
+
+- [ ] Design reusable reports export contract
+- [ ] Add backend export endpoint with validated format parameter
+- [ ] Add CSV export format
+- [ ] Add XLSX export format
+- [ ] Add PDF export format if needed
+- [ ] Add JSON export format
+- [ ] Add support for project-specific export formats
+- [ ] Reuse backend report filters and aggregate queries for exports
+- [ ] Ensure frontend does not calculate exported financial totals locally
+- [ ] Add queueable or streamed export strategy for large exports if needed
+- [ ] Add backend permission checks for exports
+- [ ] Add tests for export permissions
+- [ ] Add tests for export format selection
+- [ ] Document extensible export architecture
+
+### Subscription Analytics
+
+- [ ] Add authoritative subscription interval pricing model
+- [ ] Add MRR calculation
+- [ ] Add ARR calculation
+- [ ] Add churn metrics if needed
+- [ ] Add cancelled/expired subscription analytics
+- [ ] Add tests for subscription analytics
+- [ ] Document MRR/ARR calculation rules and limitations
+
+### Seller / Company Backend Reporting
+
+- [ ] Add full company-scoped backend payment list endpoint
+- [ ] Add full seller-scoped backend payment list endpoint
+- [ ] Add full company-scoped invoice list endpoint
+- [ ] Add full seller-scoped invoice list endpoint
+- [ ] Add company/seller scoped reporting permissions
+- [ ] Add company/seller scoped report tests
+- [ ] Document seller/company backend reporting
 
 ---
 
