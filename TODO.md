@@ -1415,45 +1415,51 @@ These items are intentionally deferred production extensions. They should not bl
 
 - [ ] Add feature tests for plans API
 - [ ] Add feature tests for current subscription API
-- [ ] Add feature tests for subscription creation
-- [ ] Add feature tests for payment creation
-- [ ] Add feature tests for payment success
-- [ ] Add feature tests for payment failure
-- [ ] Add feature tests for transaction history
-- [ ] Add feature tests for webhooks
-- [ ] Add feature tests for idempotency
-- [ ] Add feature tests for paid chat limits
-- [ ] Add feature tests for wallet balance API
-- [ ] Add feature tests for wallet top-up API
-- [ ] Add feature tests for wallet debit API
-- [ ] Add feature tests for payment methods API
-- [ ] Add feature tests for payment preferences API
-- [ ] Add feature tests for wallet-only payment strategy
-- [ ] Add feature tests for card-only payment strategy
-- [ ] Add feature tests for wallet-first fallback strategy
-- [ ] Add idempotency tests for wallet debit
-- [ ] Add idempotency tests for payment method charge
-- [ ] Add unit tests for services
+- [x] Add feature tests for subscription creation
+- [x] Add feature tests for payment creation
+- [x] Add feature tests for payment success
+- [x] Add feature tests for payment failure
+- [x] Add feature tests for transaction history
+- [x] Add feature tests for webhooks
+- [x] Add feature tests for idempotency
+- [x] Add feature tests for paid chat limits
+- [x] Add feature tests for wallet balance API
+- [x] Add feature tests for wallet top-up API
+- [x] Add feature tests for wallet debit API
+- [x] Add feature tests for payment methods API
+- [x] Add feature tests for payment preferences API
+- [x] Add feature tests for wallet-only payment strategy
+- [x] Add feature tests for card-only payment strategy
+- [x] Add feature tests for wallet-first fallback strategy
+- [x] Add idempotency tests for wallet debit
+- [x] Add idempotency tests for payment method charge
+- [x] Add unit tests for services
 - [ ] Add unit tests for DTOs
 - [ ] Add unit tests for webhook payload builder
-- [ ] Add unit tests for `PaymentProviderInterface` implementations
-- [ ] Add unit tests for provider factory
-- [ ] Add unit tests for provider config resolver
-- [ ] Add unit tests for env-based provider configuration
-- [ ] Add unit tests for DB-based provider configuration
-- [ ] Add unit tests for encrypted credential masking
-- [ ] Add unit tests for provider response mapping
-- [ ] Add unit tests for provider error mapping
-- [ ] Add feature tests for simulator provider charge flow
-- [ ] Add feature tests for simulator provider webhook verification
-- [ ] Add tests that real providers are disabled in demo mode
-- [ ] Add tests that no real provider secrets are required for local setup
-- [ ] Add tests that customer provider credentials are isolated
-- [ ] Add tests that one customer cannot use another customer's provider account
-- [ ] Add command tests for scheduler tasks
-- [ ] Add queue fake tests
-- [ ] Add HTTP fake tests
-- [ ] Add test docs
+- [x] Add unit tests for `PaymentProviderInterface` implementations
+- [x] Add unit tests for provider factory
+- [x] Add unit tests for provider config resolver
+- [x] Add unit tests for env-based provider configuration
+- [x] Add unit tests for DB-based provider configuration
+- [x] Add unit tests for encrypted credential masking
+- [x] Add unit tests for provider response mapping
+- [x] Add unit tests for provider error mapping
+- [x] Add feature tests for simulator provider charge flow
+- [x] Add feature tests for simulator provider webhook verification
+- [x] Add tests that real providers are disabled in demo mode
+- [x] Add tests that no real provider secrets are required for local setup
+- [x] Add tests that customer provider credentials are isolated
+- [x] Add tests that one customer cannot use another customer's provider account
+- [x] Add command tests for scheduler tasks
+- [x] Add queue fake tests
+- [x] Add HTTP fake tests
+- [x] Add test docs
+
+Note:
+Phase 23 tracks test coverage, not feature implementation. Items remain unchecked when the feature is future work, when coverage is only partial, or when a dedicated unit boundary has not been extracted yet.
+Plans API coverage is intentionally future because the endpoint is not implemented yet.
+Current subscription API and DTO-only coverage remain partial because they are exercised through broader billing flows rather than isolated dedicated boundaries.
+Webhook payload builder coverage stays future until that class is extracted.
 
 ---
 

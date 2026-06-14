@@ -46,5 +46,13 @@ class BillingReportsPermissionTest extends TestCase
         $this->getJson('/api/v1/billing/admin/reports/revenue-summary')
             ->assertOk()
             ->assertJsonPath('data.scope', 'revenue_summary');
+
+        $normalUser = User::factory()->create();
+
+        Sanctum::actingAs($normalUser);
+        $this->getJson('/api/v1/billing/admin/reports/payment-status-summary')
+            ->assertForbidden();
+        $this->getJson('/api/v1/billing/admin/reports/revenue-summary')
+            ->assertForbidden();
     }
 }
