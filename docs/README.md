@@ -59,6 +59,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - [devops/queues.md](./devops/queues.md) - Queue worker and Horizon operations
 - [devops/scheduler.md](./devops/scheduler.md) - Scheduler strategy and runtime commands
 - [devops/troubleshooting.md](./devops/troubleshooting.md) - Common Docker and Windows troubleshooting notes
+- [portfolio/screenshots.md](./portfolio/screenshots.md) - Phase 25.0 runtime smoke and screenshot plan
 - [billing/providers/README.md](./billing/providers/README.md) - Provider adapter documentation convention
 - [billing/providers/_template/README.md](./billing/providers/_template/README.md) - Provider adapter documentation template
 - [billing/providers/simulator/README.md](./billing/providers/simulator/README.md) - Implemented simulator provider notes
@@ -107,6 +108,7 @@ The project follows an API-first, modular architecture with clear separation bet
 - Queue Operations -> [./devops/queues.md](./devops/queues.md)
 - Scheduler Operations -> [./devops/scheduler.md](./devops/scheduler.md)
 - Troubleshooting -> [./devops/troubleshooting.md](./devops/troubleshooting.md)
+- Portfolio Screenshot Plan -> [./portfolio/screenshots.md](./portfolio/screenshots.md)
 - Billing Subscription Lifecycle -> [./billing/subscription-lifecycle.md](./billing/subscription-lifecycle.md)
 - Billing Invoices -> [./billing/invoices.md](./billing/invoices.md)
 - Billing Webhooks -> [./billing/webhooks.md](./billing/webhooks.md)
@@ -275,6 +277,7 @@ Improves developer navigation and onboarding experience.
 - [Queue Operations](./devops/queues.md)
 - [Scheduler Operations](./devops/scheduler.md)
 - [Troubleshooting](./devops/troubleshooting.md)
+- [Portfolio Screenshot Plan](./portfolio/screenshots.md)
 - [Billing Subscription Lifecycle](./billing/subscription-lifecycle.md)
 - [Billing Ownership Scope](./billing/ownership-scope.md)
 - [Billing Payment Providers](./billing/payment-providers.md)

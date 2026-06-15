@@ -149,6 +149,7 @@ Runtime and operations references:
 - [Queue Operations](docs/devops/queues.md)
 - [Scheduler Operations](docs/devops/scheduler.md)
 - [Troubleshooting](docs/devops/troubleshooting.md)
+- [Portfolio Screenshot Plan](docs/portfolio/screenshots.md)
 
 ## Useful URLs
 

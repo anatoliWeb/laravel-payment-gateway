@@ -1484,6 +1484,31 @@ The stack is already renamed to `payment_gateway_*` in active compose services. 
 
 ---
 
+## Phase 25.0 - Runtime Smoke Check & Screenshot Plan
+
+- [x] Verify app boots from Docker
+- [x] Verify backend billing routes are registered
+- [x] Verify frontend build passes
+- [x] Verify demo seed command and demo users
+- [ ] Verify user billing portal route
+- [ ] Verify checkout/payment route
+- [ ] Verify wallet top-up route
+- [ ] Verify invoice payment route
+- [ ] Verify admin billing route
+- [ ] Verify admin reports route
+- [ ] Verify demo flows route
+- [ ] Verify company billing route
+- [ ] Verify seller billing route
+- [x] Create screenshot folder structure
+- [x] Add screenshot naming plan
+- [x] Add diagram naming plan
+- [x] Document manual smoke checklist
+
+Note:
+Phase 25.0 is a docs-first smoke plan. Browser verification and screenshot capture remain manual follow-up work for the README/portfolio polish phase.
+
+---
+
 ## Phase 25 — Portfolio Polish
 
 - [ ] Add README section: SaaS Billing Module
