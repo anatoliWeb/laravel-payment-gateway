@@ -56,7 +56,7 @@ describe('authService token/session behavior', async () => {
     expect(window.localStorage.getItem('admin_access_token')).toBe('persisted-token');
   });
 
-  it('fetchSession falls back to session/me when bearer is missing', async () => {
+  it('fetchSession uses auth/me for session-first SPA hydration when bearer is missing', async () => {
     apiMock.get.mockResolvedValueOnce({
       data: {
         user: { id: 2, name: 'Ops', email: 'ops@example.com' },
@@ -64,7 +64,7 @@ describe('authService token/session behavior', async () => {
       },
     });
     await authService.fetchSession();
-    expect(apiMock.get).toHaveBeenCalledWith('/v1/auth/session/me');
+    expect(apiMock.get).toHaveBeenCalledWith('/v1/auth/me');
   });
 
   it('fetchSession uses token/me first and falls back to session/me on token failure', async () => {

@@ -6,9 +6,9 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 use App\Http\Middleware\CorsMiddleware;
+use App\Http\Middleware\EnsureFirstPartyApiRequestsAreStateful;
 use App\Http\Middleware\PermissionMiddleware;
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\LogRequestMiddleware;
@@ -121,10 +121,9 @@ return Application::configure(basePath: dirname(__DIR__))
          * - session/cookie auth for web-embedded admin SPA
          * - Bearer token auth for token-based API clients
          */
-        $middleware->statefulApi();
         $middleware->api(prepend: [
             SetRequestLocale::class,
-            EnsureFrontendRequestsAreStateful::class,
+            EnsureFirstPartyApiRequestsAreStateful::class,
         ]);
 
         /**
@@ -162,7 +161,7 @@ return Application::configure(basePath: dirname(__DIR__))
          * NOTE:
          * This replaces any nginx-level CORS handling,
          * keeping behavior consistent across environments.
-         */
+        */
         $middleware->prepend(CorsMiddleware::class);
         $middleware->append(SecurityHeadersMiddleware::class);
 

@@ -32,17 +32,18 @@ export const authService = {
   fetchSession: async (): Promise<SessionAuthPayload> => {
     const bearer = getToken();
 
-    if (bearer) {
-      try {
-        const tokenResponse = await api.get<SessionAuthPayload>('/v1/auth/me');
-        return (tokenResponse as ApiResponse<SessionAuthPayload>).data ?? { user: null, permissions: [] };
-      } catch {
+    try {
+      const authResponse = await api.get<SessionAuthPayload>('/v1/auth/me');
+      return (authResponse as ApiResponse<SessionAuthPayload>).data ?? { user: null, permissions: [] };
+    } catch (error) {
+      if (bearer) {
         removeToken();
+        const sessionResponse = await api.get<SessionAuthPayload>('/v1/auth/session/me');
+        return (sessionResponse as ApiResponse<SessionAuthPayload>).data ?? { user: null, permissions: [] };
       }
-    }
 
-    const sessionResponse = await api.get<SessionAuthPayload>('/v1/auth/session/me');
-    return (sessionResponse as ApiResponse<SessionAuthPayload>).data ?? { user: null, permissions: [] };
+      throw error;
+    }
   },
   /**
    * Session logout endpoint for Laravel web guard.

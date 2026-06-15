@@ -19,6 +19,7 @@ import TranslationsPage from '../modules/translations/pages/TranslationsPage.vue
 import NotificationsPage from '../modules/notifications/pages/NotificationsPage.vue';
 import ChatAdminMonitoringPage from '../modules/chat-admin/pages/ChatAdminMonitoringPage.vue';
 import NotFoundView from '../shared/components/NotFoundView.vue';
+import { BILLING_ADMIN_ACCESS_PERMISSIONS } from '../shared/constants/billing';
 
 /**
  * Router architecture notes:
@@ -129,7 +130,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: 'Billing',
           subtitle: 'Subscription and usage',
-          permission: 'billing.view',
+          permissions: BILLING_ADMIN_ACCESS_PERMISSIONS,
         },
       },
       {

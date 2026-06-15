@@ -39,6 +39,44 @@ Typical response:
 - prefer containerized execution for validation
 - use targeted frontend commands instead of broad rebuild loops
 
+## Vue Admin 401 After Login
+
+If the Vue admin shell loads but protected API requests such as `/api/v1/me`, `/api/v1/bootstrap`, or `/api/v1/stats` return `401`, verify that the SPA dev origins are listed in `SANCTUM_STATEFUL_DOMAINS`.
+
+For local Docker development, the list should include the Vue and Angular ports, for example:
+
+- `localhost:5173`
+- `127.0.0.1:5173`
+- `localhost:4200`
+- `127.0.0.1:4200`
+
+If those origins are missing, Sanctum treats the requests as non-stateful and the browser session cookie will not authenticate the API calls.
+
+If `/api/v1/auth/session/me` returns `200` but other `auth:sanctum` endpoints such as `/api/v1/stats`, `/api/v1/meta/bootstrap`, `/api/v1/notifications/unread-count`, or `/api/v1/chat/conversations` still return `401`, check nginx FastCGI header forwarding.
+
+Same-origin browser `GET` requests usually do not include an `Origin` header. This project uses `EnsureFirstPartyApiRequestsAreStateful` to keep Sanctum session auth working for configured first-party hosts while preserving Sanctum's normal `Origin` / `Referer` checks for cross-origin requests.
+
+The local nginx config should also forward the host and origin-related FastCGI headers so Laravel receives the same request context the browser sent:
+
+```nginx
+map $http_origin $sanctum_origin {
+    default $http_origin;
+    "" "$scheme://$http_host";
+}
+
+fastcgi_param HTTP_REFERER $http_referer;
+fastcgi_param HTTP_ORIGIN $sanctum_origin;
+fastcgi_param HTTP_HOST $http_host;
+fastcgi_param HTTP_X_FORWARDED_HOST $http_host;
+fastcgi_param HTTP_X_FORWARDED_PROTO $scheme;
+```
+
+After changing nginx config, restart only nginx:
+
+```bash
+docker compose restart nginx
+```
+
 ## Line Ending Warnings
 
 Git may warn about LF/CRLF normalization on Windows.

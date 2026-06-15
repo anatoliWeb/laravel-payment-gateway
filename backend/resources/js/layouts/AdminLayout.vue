@@ -149,6 +149,7 @@ import type { LocaleCode } from '../shared/i18n/config';
 import { realtimeClient } from '../shared/services/realtime/realtime.client';
 import { REALTIME_CHANNELS } from '../shared/services/realtime/realtime.channels';
 import type { RealtimeStatusMetric } from '../shared/services/realtime/realtime.types';
+import { BILLING_ADMIN_ACCESS_PERMISSIONS } from '../shared/constants/billing';
 import { notificationsService } from '../modules/notifications/services/notifications.service';
 import { chatAdminService } from '../modules/chat-admin/services/chat-admin.service';
 import { useAuthStore } from '../stores/auth.store';
@@ -212,6 +213,7 @@ const IconDocs = defineIcon('M6 2h8l4 4v16H6V2zm8 1.5V7h3.5L14 3.5zM8 10h8v1.5H8
 const IconTranslate = defineIcon('M5 4h10v2H9.6l-.1.4c-.4 1.4-1 2.8-1.8 4a18 18 0 0 0 2.6 2.5l-1.4 1.4a20 20 0 0 1-2.3-2.2 14 14 0 0 1-3.2 2.4L2.5 13A11.4 11.4 0 0 0 5.2 11a13 13 0 0 1-1.8-3.8H1V5h4V4zm2.3 3.2h-2a10.2 10.2 0 0 0 1.3 2.4 9.6 9.6 0 0 0 .7-2.4zM17 10l5 12h-2.2l-1.2-3h-5.2l-1.2 3H10l5-12h2zm-2.9 7h3.8L16 12.2 14.1 17z');
 const IconBell = defineIcon('M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22zm6-6v-5a6 6 0 1 0-12 0v5l-2 2v1h16v-1l-2-2z');
 const IconChat = defineIcon('M4 4h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H8l-4 3v-3H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z');
+const IconBilling = defineIcon('M4 6h16a2 2 0 0 1 2 2v2H2V8a2 2 0 0 1 2-2zm-2 6h20v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4zm3 2v2h4v-2H5z');
 
 const overviewLinks: NavItem[] = [
   {
@@ -245,6 +247,12 @@ const managementLinks: NavItem[] = [
     labelKey: 'common.translations',
     icon: IconTranslate,
     permission: 'translations.view',
+  },
+  {
+    to: '/billing',
+    labelKey: 'common.billing',
+    icon: IconBilling,
+    permissions: BILLING_ADMIN_ACCESS_PERMISSIONS,
   },
   {
     to: '/notifications',

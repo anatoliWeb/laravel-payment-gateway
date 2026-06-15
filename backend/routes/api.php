@@ -87,8 +87,10 @@ Route::post('/login', [AuthController::class, 'token'])->middleware('throttle:au
 Route::middleware(['web'])->prefix('v1/auth/session')->group(function () {
 
     Route::post('/login', [AuthController::class, 'sessionLogin'])->middleware('throttle:auth-login');
-    Route::get('/me', [AuthController::class, 'sessionUser']);
-    Route::post('/logout', [AuthController::class, 'sessionLogout']);
+    Route::middleware('auth')->group(function (): void {
+        Route::get('/me', [AuthController::class, 'sessionUser']);
+        Route::post('/logout', [AuthController::class, 'sessionLogout']);
+    });
 
 });
 
@@ -262,12 +264,6 @@ Route::prefix('v1')
                             ->name('me');
                         Route::post('/logout', [AuthController::class, 'logout'])
                             ->name('logout');
-                        Route::get('/session/me', [AuthController::class, 'sessionUser'])
-                            ->middleware('web')
-                            ->name('session.me');
-                        Route::post('/session/logout', [AuthController::class, 'sessionLogout'])
-                            ->middleware('web')
-                            ->name('session.logout');
                     });
 
                 /**

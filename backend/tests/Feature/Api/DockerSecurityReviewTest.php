@@ -73,6 +73,12 @@ class DockerSecurityReviewTest extends TestCase
         $this->assertStringContainsString('location ~ /\\.(?!well-known).*', $nginxConf);
         $this->assertStringContainsString('deny all;', $nginxConf);
         $this->assertStringContainsString('autoindex off;', $nginxConf);
+        $this->assertStringContainsString('map $http_origin $sanctum_origin', $nginxConf);
+        $this->assertStringContainsString('fastcgi_param HTTP_HOST $http_host;', $nginxConf);
+        $this->assertStringContainsString('fastcgi_param HTTP_X_FORWARDED_HOST $http_host;', $nginxConf);
+        $this->assertStringContainsString('fastcgi_param HTTP_X_FORWARDED_PROTO $scheme;', $nginxConf);
+        $this->assertStringContainsString('fastcgi_param HTTP_REFERER $http_referer;', $nginxConf);
+        $this->assertStringContainsString('fastcgi_param HTTP_ORIGIN $sanctum_origin;', $nginxConf);
 
         // 5) Compose includes healthchecks for core dependencies/services.
         $this->assertMatchesRegularExpression('/backend:.*?healthcheck:/si', $compose);

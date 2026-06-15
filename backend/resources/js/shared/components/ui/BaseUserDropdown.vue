@@ -32,7 +32,15 @@
         <div class="account-panel__actions">
           <button type="button" class="account-action" :class="{ 'is-active': isActive('/profile') }" @click="navigate('/profile', close)">{{ t('common.actions.profile') }}</button>
           <button type="button" class="account-action" :class="{ 'is-active': isActive('/settings') }" @click="navigate('/settings', close)">{{ t('common.actions.settings') }}</button>
-          <button type="button" class="account-action" :class="{ 'is-active': isActive('/billing') }" @click="navigate('/billing', close)">{{ t('common.actions.billing') }}</button>
+          <button
+            v-if="canAccessBilling"
+            type="button"
+            class="account-action"
+            :class="{ 'is-active': isActive('/billing') }"
+            @click="navigate('/billing', close)"
+          >
+            {{ t('common.actions.billing') }}
+          </button>
         </div>
 
         <div class="account-panel__divider" />
@@ -48,6 +56,8 @@ import { computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 
+import { BILLING_ADMIN_ACCESS_PERMISSIONS } from '../../constants/billing';
+import { useAuthStore } from '../../../stores/auth.store';
 import BaseDropdown from './BaseDropdown.vue';
 
 /**
@@ -76,6 +86,7 @@ const props = withDefaults(defineProps<Props>(), {
 const route = useRoute();
 const router = useRouter();
 const { t } = useI18n({ useScope: 'global' });
+const authStore = useAuthStore();
 
 const initials = computed(() => {
   return props.name
@@ -87,6 +98,7 @@ const initials = computed(() => {
 });
 
 const isActive = (path: string): boolean => route.path === path;
+const canAccessBilling = computed(() => authStore.hasAnyPermission(BILLING_ADMIN_ACCESS_PERMISSIONS));
 
 /**
  * Account navigation intentionally routes to dedicated account/platform pages.

@@ -1,6 +1,8 @@
 import { flushPromises, shallowMount } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { BILLING_ADMIN_ACCESS_PERMISSIONS } from '../shared/constants/billing';
+
 const hydrateSessionMock = vi.fn();
 const hasPermissionMock = vi.fn(() => true);
 const hasAnyPermissionMock = vi.fn(() => true);
@@ -228,6 +230,46 @@ describe('AdminLayout auth bootstrap guard', () => {
     await flushPromises();
 
     expect(wrapper.text()).toContain('common.chat');
+  });
+
+  it('shows billing navigation item when a billing permission is available', async () => {
+    hydrateSessionMock.mockResolvedValue(true);
+    hasAnyPermissionMock.mockImplementation((permissions: string[]) => {
+      if (permissions.includes('billing.reports.view')) {
+        return true;
+      }
+
+      if (permissions === BILLING_ADMIN_ACCESS_PERMISSIONS) {
+        return true;
+      }
+
+      if (permissions.includes('chat.admin.view') || permissions.includes('chat.admin.view_metadata')) {
+        return false;
+      }
+
+      return true;
+    });
+
+    const { default: AdminLayout } = await import('./AdminLayout.vue');
+    const wrapper = shallowMount(AdminLayout, {
+      global: {
+        stubs: {
+          BaseIconButton: true,
+          BaseLanguageSwitcher: true,
+          BaseRealtimeStatus: true,
+          BaseTopbarSearch: true,
+          BaseUserDropdown: true,
+          RouterView: true,
+          'router-link': {
+            template: '<a><slot /></a>',
+          },
+        },
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper.text()).toContain('common.billing');
   });
 
   it('shows API documentation sidebar link when api.docs.view permission is available', async () => {

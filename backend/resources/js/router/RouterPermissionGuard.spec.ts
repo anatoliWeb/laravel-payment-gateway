@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { evaluateAdminRouteAccess } from './permission-guard';
+import { BILLING_ADMIN_ACCESS_PERMISSIONS } from '../shared/constants/billing';
 
 const makeRoute = (
   path: string,
@@ -41,6 +42,32 @@ describe('RouterPermissionGuard', () => {
   it('denies /admin/chat when user has neither permission', async () => {
     const result = await evaluateAdminRouteAccess(
       makeRoute('/chat', { requiresAuth: true, permissions: ['chat.admin.view', 'chat.admin.view_metadata'] }),
+      {
+        hydrateSession: async () => true,
+        hasPermission: () => false,
+        hasAnyPermission: () => false,
+      },
+    );
+
+    expect(result).toEqual({ path: '/dashboard' });
+  });
+
+  it('allows /admin/billing when user has a supported billing permission', async () => {
+    const result = await evaluateAdminRouteAccess(
+      makeRoute('/billing', { requiresAuth: true, permissions: BILLING_ADMIN_ACCESS_PERMISSIONS }),
+      {
+        hydrateSession: async () => true,
+        hasPermission: (permission) => permission === 'billing.reports.view',
+        hasAnyPermission: (permissions) => permissions.includes('billing.reports.view'),
+      },
+    );
+
+    expect(result).toBe(true);
+  });
+
+  it('redirects /admin/billing when billing permissions are missing', async () => {
+    const result = await evaluateAdminRouteAccess(
+      makeRoute('/billing', { requiresAuth: true, permissions: BILLING_ADMIN_ACCESS_PERMISSIONS }),
       {
         hydrateSession: async () => true,
         hasPermission: () => false,
