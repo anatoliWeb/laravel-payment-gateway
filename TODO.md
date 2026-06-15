@@ -1465,19 +1465,22 @@ Webhook payload builder coverage stays future until that class is extracted.
 
 ## Phase 24 — Docker & DevOps Polish
 
-- [ ] Verify backend container
-- [ ] Verify nginx container
-- [ ] Verify mysql container
-- [ ] Verify redis container
-- [ ] Verify queue-worker container
-- [ ] Add scheduler container or cron strategy if needed
-- [ ] Review old `saas_*` names
-- [ ] Decide whether to rename containers
-- [ ] Keep frontend containers untouched unless needed
-- [ ] Document Docker commands
-- [ ] Document queue worker commands
-- [ ] Document scheduler commands
-- [ ] Add troubleshooting docs
+- [x] Verify backend container
+- [x] Verify nginx container
+- [x] Verify mysql container
+- [x] Verify redis container
+- [x] Verify queue-worker container
+- [x] Add scheduler container or cron strategy if needed
+- [x] Review old `saas_*` names
+- [x] Decide whether to rename containers
+- [x] Keep frontend containers untouched unless needed
+- [x] Document Docker commands
+- [x] Document queue worker commands
+- [x] Document scheduler commands
+- [x] Add troubleshooting docs
+
+Note:
+The stack is already renamed to `payment_gateway_*` in active compose services. `horizon` remains optional, while `queue-worker` and `scheduler` cover the default development runtime. No destructive volume commands are required for routine operations.
 
 ---
 

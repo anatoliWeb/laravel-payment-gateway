@@ -143,6 +143,13 @@ docker compose exec frontend npm ci
 docker compose exec frontend npm run build
 ```
 
+Runtime and operations references:
+
+- [Docker Operations](docs/devops/docker.md)
+- [Queue Operations](docs/devops/queues.md)
+- [Scheduler Operations](docs/devops/scheduler.md)
+- [Troubleshooting](docs/devops/troubleshooting.md)
+
 ## Useful URLs
 
 Based on default `docker-compose.yml` / `.env` values:

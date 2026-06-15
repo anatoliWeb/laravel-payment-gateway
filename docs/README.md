@@ -55,6 +55,10 @@ The project follows an API-first, modular architecture with clear separation bet
 - [billing/payment-providers.md](./billing/payment-providers.md) - External provider integration readiness
 - [billing/testing.md](./billing/testing.md) - Billing testing and validation notes
 - [billing/webhooks.md](./billing/webhooks.md) - Outbound billing webhook delivery flow
+- [devops/docker.md](./devops/docker.md) - Docker runtime operations and safe stack handling
+- [devops/queues.md](./devops/queues.md) - Queue worker and Horizon operations
+- [devops/scheduler.md](./devops/scheduler.md) - Scheduler strategy and runtime commands
+- [devops/troubleshooting.md](./devops/troubleshooting.md) - Common Docker and Windows troubleshooting notes
 - [billing/providers/README.md](./billing/providers/README.md) - Provider adapter documentation convention
 - [billing/providers/_template/README.md](./billing/providers/_template/README.md) - Provider adapter documentation template
 - [billing/providers/simulator/README.md](./billing/providers/simulator/README.md) - Implemented simulator provider notes
@@ -99,6 +103,10 @@ The project follows an API-first, modular architecture with clear separation bet
 - Billing Payment Events -> [./billing/payment-events.md](./billing/payment-events.md)
 - Billing Activity Logging -> [./billing/activity-logging.md](./billing/activity-logging.md)
 - Billing Scheduler -> [./billing/scheduler.md](./billing/scheduler.md)
+- Docker Operations -> [./devops/docker.md](./devops/docker.md)
+- Queue Operations -> [./devops/queues.md](./devops/queues.md)
+- Scheduler Operations -> [./devops/scheduler.md](./devops/scheduler.md)
+- Troubleshooting -> [./devops/troubleshooting.md](./devops/troubleshooting.md)
 - Billing Subscription Lifecycle -> [./billing/subscription-lifecycle.md](./billing/subscription-lifecycle.md)
 - Billing Invoices -> [./billing/invoices.md](./billing/invoices.md)
 - Billing Webhooks -> [./billing/webhooks.md](./billing/webhooks.md)
@@ -263,6 +271,10 @@ Improves developer navigation and onboarding experience.
 - [Billing Webhooks](./billing/webhooks.md)
 - [Billing Activity Logging](./billing/activity-logging.md)
 - [Billing Scheduler](./billing/scheduler.md)
+- [Docker Operations](./devops/docker.md)
+- [Queue Operations](./devops/queues.md)
+- [Scheduler Operations](./devops/scheduler.md)
+- [Troubleshooting](./devops/troubleshooting.md)
 - [Billing Subscription Lifecycle](./billing/subscription-lifecycle.md)
 - [Billing Ownership Scope](./billing/ownership-scope.md)
 - [Billing Payment Providers](./billing/payment-providers.md)
