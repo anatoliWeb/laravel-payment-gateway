@@ -328,29 +328,32 @@ abstract class BillingDemoSeederSupport extends Seeder
         int $statusCode,
         string $responseBody,
     ): WebhookDelivery {
-        return WebhookDelivery::query()->updateOrCreate(
-            [
-                'payment_id' => $paymentId,
-                'event' => $event,
-                'status' => $status,
-            ],
-            [
-                'uuid' => 'demo-wh-'.substr(hash('sha256', $event.'|'.$status), 0, 24),
-                'subscription_id' => $subscriptionId,
-                'invoice_id' => $invoiceId,
-                'url' => 'https://example.test/webhooks/billing',
-                'payload' => $this->seedMetadata(),
-                'response_status' => $statusCode,
-                'response_body' => $responseBody,
-                'attempts' => $attempts,
-                'max_attempts' => 5,
-                'next_retry_at' => $status === 'failed' ? now()->addMinutes(15) : null,
-                'last_attempt_at' => now(),
-                'delivered_at' => $status === 'delivered' ? now() : null,
-                'failed_at' => in_array($status, ['failed', 'permanently_failed'], true) ? now() : null,
-                'metadata' => $this->seedMetadata(),
-            ],
-        );
+        $uuid = 'demo-wh-'.substr(hash('sha256', $event.'|'.$status), 0, 24);
+
+        $webhookDelivery = WebhookDelivery::query()->firstOrNew([
+            'uuid' => $uuid,
+        ]);
+        $webhookDelivery->fill([
+            'payment_id' => $paymentId,
+            'subscription_id' => $subscriptionId,
+            'invoice_id' => $invoiceId,
+            'event' => $event,
+            'status' => $status,
+            'url' => 'https://example.test/webhooks/billing',
+            'payload' => $this->seedMetadata(),
+            'response_status' => $statusCode,
+            'response_body' => $responseBody,
+            'attempts' => $attempts,
+            'max_attempts' => 5,
+            'next_retry_at' => $status === 'failed' ? now()->addMinutes(15) : null,
+            'last_attempt_at' => now(),
+            'delivered_at' => $status === 'delivered' ? now() : null,
+            'failed_at' => in_array($status, ['failed', 'permanently_failed'], true) ? now() : null,
+            'metadata' => $this->seedMetadata(),
+        ]);
+        $webhookDelivery->save();
+
+        return $webhookDelivery;
     }
 
     protected function upsertIdempotencyKey(int $userId, string $scope, string $method, string $endpoint, string $status, ?int $responseStatus, ?Payment $payment): IdempotencyKey
