@@ -132,6 +132,7 @@ docker compose up -d
 docker compose exec backend composer install
 docker compose exec backend php artisan key:generate
 docker compose exec backend php artisan migrate --seed
+docker compose exec -T backend sh -lc 'APP_ENV=local BILLING_DEMO_SEED=true php artisan db:seed'
 docker compose exec backend npm ci
 docker compose exec backend npm run build
 ```

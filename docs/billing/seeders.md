@@ -49,19 +49,47 @@ You can also run it directly:
 
 `BillingDemoSeeder` seeds an opt-in review dataset for the admin/operator billing surface.
 
-It is controlled by `BILLING_DEMO_SEED=true` in non-production environments and remains disabled by default.
+It is controlled by `BILLING_DEMO_SEED=true` in the local environment and remains disabled by default everywhere else.
+
+`DatabaseSeeder` only auto-runs the demo dataset when `app()->environment('local')` and `BILLING_DEMO_SEED=true`.
+
+`php artisan db:seed` always runs the baseline seeders first. The demo dataset is an additional local-only layer and must never replace the baseline bootstrap path.
+
+The demo dataset is split into modular seeders under `backend/database/seeders/billing/`:
+
+- `BillingDemoUserSeeder`
+- `BillingDemoPlanSeeder`
+- `BillingDemoProviderAccountSeeder`
+- `BillingDemoWalletSeeder`
+- `BillingDemoSubscriptionSeeder`
+- `BillingDemoInvoiceSeeder`
+- `BillingDemoPaymentSeeder`
+- `BillingDemoWebhookSeeder`
+- `BillingDemoRestrictionSeeder`
+- `BillingDemoFeatureOverrideSeeder`
+- `BillingDemoReportDataSeeder`
 
 Seeded demo data includes:
 
 - demo admin, operator, and normal users
+- demo company owner and seller owner users
+- demo customers `demo-customer-01@example.com`, `demo-customer-02@example.com`, and `demo-customer-03@example.com`
 - demo payments in multiple statuses
 - demo payment transactions
+- demo idempotency records
 - demo subscriptions in multiple statuses
-- demo wallets and wallet transactions
+- demo wallets, balances, and wallet transactions
 - demo invoices in multiple statuses
 - demo webhook deliveries
 - demo provider accounts
 - demo billing restrictions / blacklist entries
 - demo feature overrides
+- report-friendly historical rows for dashboard aggregates
 
 The demo seeder is idempotent and safe to rerun. It exists for portfolio walkthroughs and review screens, not for real provider integration or production billing automation.
+
+Recommended local seed flow:
+
+- `APP_ENV=local BILLING_DEMO_SEED=true php artisan db:seed`
+
+Direct seeding the wrapper class still works after the prerequisite billing seeders have run, but the local-only gate is the preferred path for regular development.

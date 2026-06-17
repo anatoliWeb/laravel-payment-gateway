@@ -3,6 +3,13 @@
 This file is a docs-only capture plan for the portfolio-ready billing module.
 It does not define product behavior. It documents what should be verified in runtime and what screenshots should be created for the README/portfolio story.
 
+## Vue Admin Billing Launchpad
+
+The Vue Admin `/billing` route is a permission-aware launchpad, not a duplicated billing management UI.
+It should route admins to the real Angular surfaces instead of rendering placeholder financial data.
+
+- `docs/assets/screenshots/billing/00-vue-admin-billing-launchpad.png`
+
 ## Runtime Smoke Checklist
 
 - [ ] Verify app boots from Docker
@@ -18,6 +25,7 @@ It does not define product behavior. It documents what should be verified in run
 - [ ] Verify demo flows route
 - [ ] Verify company billing route
 - [ ] Verify seller billing route
+- [ ] Verify Vue admin billing launchpad route
 - [ ] Create screenshot folder structure
 - [ ] Add screenshot naming plan
 - [ ] Add diagram naming plan
@@ -25,15 +33,19 @@ It does not define product behavior. It documents what should be verified in run
 
 ## Demo Seed Notes
 
-- Seed command: `docker compose exec -T backend sh -lc 'BILLING_DEMO_SEED=true php artisan db:seed --class=BillingDemoSeeder'`
+- Seed command: `docker compose exec -T backend sh -lc 'APP_ENV=local BILLING_DEMO_SEED=true php artisan db:seed'`
 - Demo users:
   - admin: `demo-admin@example.com`
   - operator: `demo-operator@example.com`
   - normal user: `demo-normal@example.com`
+  - company owner: `demo-company-owner@example.com`
+  - seller owner: `demo-seller-owner@example.com`
+  - customers: `demo-customer@example.com`, `demo-customer-01@example.com`, `demo-customer-02@example.com`, `demo-customer-03@example.com`
 - Roles/permissions:
   - admin gets full billing management permissions
   - operator gets read-only billing review permissions
   - normal user remains customer-scoped and must not access admin billing surfaces
+- Demo data is local-only and intentionally richer than a single happy-path payment so the reports and admin history screens have realistic state transitions.
 
 ## Manual Smoke Checklist
 
@@ -51,6 +63,7 @@ Verify the following routes in a browser after the Docker stack is running:
 | `/billing/demo` | customer/admin/operator | demo flow cards and walkthrough notes render | `docs/assets/screenshots/billing/08-billing-demo-flows.png` | planned |
 | `/billing/company` | company user | company-scoped billing overview renders | `docs/assets/screenshots/billing/09-company-billing-view.png` | planned |
 | `/billing/seller` | seller user | seller-scoped billing overview renders | `docs/assets/screenshots/billing/10-seller-billing-view.png` | planned |
+| Vue admin `/billing` | admin/operator | billing launchpad routes to the Angular operational and reports surfaces | `docs/assets/screenshots/billing/00-vue-admin-billing-launchpad.png` | planned |
 
 ## Screenshot Naming Plan
 

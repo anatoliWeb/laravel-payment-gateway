@@ -129,7 +129,7 @@ const routes: RouteRecordRaw[] = [
         component: BillingPage,
         meta: {
           title: 'Billing',
-          subtitle: 'Subscription and usage',
+          subtitle: 'Billing control center',
           permissions: BILLING_ADMIN_ACCESS_PERMISSIONS,
         },
       },

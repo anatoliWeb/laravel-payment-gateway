@@ -80,7 +80,7 @@ commandPaletteStore.registerNavigation({
 commandPaletteStore.registerNavigation({
   id: 'nav-billing',
   title: 'Billing',
-  subtitle: 'Open subscription settings',
+  subtitle: 'Open billing control center',
   icon: '◓',
   keywords: ['plan', 'invoice'],
   group: 'Navigation',

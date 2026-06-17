@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Database\Seeders\settings\SettingsSeeder;
 use Database\Seeders\Translations\TranslationsSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Seeders\Billing\BillingDemoSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -28,14 +29,20 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // WHY:
-        // Demo billing data is useful for portfolio walkthroughs, but it must
-        // stay opt-in so the base seeder remains safe for normal environments.
-        if (! app()->environment('production') && (bool) env('BILLING_DEMO_SEED', false)) {
+        // Demo billing data is local-only for screenshots and portfolio review.
+        // It must never replace the baseline seeders.
+        if ($this->shouldSeedBillingDemoData()) {
             $this->call(BillingDemoSeeder::class);
         }
 
         if (! app()->environment('production') && (bool) env('CHAT_DEMO_SEED', false)) {
             $this->call(ChatDemoSeeder::class);
         }
+    }
+
+    private function shouldSeedBillingDemoData(): bool
+    {
+        return app()->environment('local')
+            && filter_var(env('BILLING_DEMO_SEED', false), FILTER_VALIDATE_BOOLEAN);
     }
 }

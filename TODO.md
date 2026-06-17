@@ -1206,6 +1206,7 @@ Checklist:
 - [x] Add demo simulator provider accounts
 - [x] Add demo billing restrictions / blacklist entries
 - [x] Add demo feature overrides
+- [x] Split demo billing seed data into modular local-only seeders
 - [x] Make demo seeders idempotent and safe to rerun
 - [x] Update Angular admin billing UI to consume new endpoints
 - [x] Update Angular checkout UI simulation buttons if endpoint is added
@@ -1490,6 +1491,7 @@ The stack is already renamed to `payment_gateway_*` in active compose services. 
 - [x] Verify backend billing routes are registered
 - [x] Verify frontend build passes
 - [x] Verify demo seed command and demo users
+- [ ] Verify Vue admin billing launchpad route
 - [ ] Verify user billing portal route
 - [ ] Verify checkout/payment route
 - [ ] Verify wallet top-up route
@@ -1500,6 +1502,7 @@ The stack is already renamed to `payment_gateway_*` in active compose services. 
 - [ ] Verify company billing route
 - [ ] Verify seller billing route
 - [x] Create screenshot folder structure
+- [x] Add Vue admin billing launchpad screenshot note
 - [x] Add screenshot naming plan
 - [x] Add diagram naming plan
 - [x] Document manual smoke checklist
