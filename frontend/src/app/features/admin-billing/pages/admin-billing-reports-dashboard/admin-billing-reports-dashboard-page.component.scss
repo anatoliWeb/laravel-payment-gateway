@@ -1,4 +1,7 @@
+@use '../../../billing/styles/billing-dark-theme' as billing-theme;
+
 .admin-reports-page {
+  @include billing-theme.billing-dark-root;
   display: grid;
   gap: 1rem;
 }
@@ -18,6 +21,7 @@
 .section-head h3,
 .section-head h4 {
   margin: 0;
+  color: var(--billing-text-strong);
 }
 
 .hero__copy p,
@@ -27,7 +31,7 @@
 .gap-callout,
 .mini-kpi span,
 .export-row small {
-  color: #677185;
+  color: var(--billing-text-muted);
 }
 
 .hero__actions {
@@ -39,9 +43,9 @@
 }
 
 .secondary-link {
-  color: #4a59a8;
-  text-decoration: none;
+  @include billing-theme.billing-link;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .secondary-link--button {
@@ -57,7 +61,7 @@
   letter-spacing: 0;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #5661b3;
+  color: var(--billing-accent);
 }
 
 .summary-grid,
@@ -78,10 +82,7 @@
 .table-panel,
 .mini-kpi,
 .detail-panel {
-  border: 1px solid #e3e8ef;
-  border-radius: 8px;
-  padding: 0.95rem;
-  background: #fff;
+  @include billing-theme.billing-surface(1rem, true);
 }
 
 .summary-card {
@@ -93,7 +94,7 @@
   display: block;
   font-size: 0.75rem;
   text-transform: uppercase;
-  color: #77839a;
+  color: var(--billing-text-muted);
 }
 
 .summary-card__value {
@@ -101,6 +102,7 @@
   font-size: 1.15rem;
   line-height: 1.2;
   word-break: break-word;
+  color: var(--billing-text-strong);
 }
 
 .summary-card__hint {
@@ -117,33 +119,31 @@
 }
 
 .status {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.55rem;
-  border-radius: 999px;
-  background: #eef2f7;
-  color: #3e4a63;
-  font-size: 0.92rem;
+  @include billing-theme.billing-status-base;
 }
 
 .status--positive {
-  background: #e8f7ee;
-  color: #18794e;
+  border-color: var(--billing-positive-border);
+  background: var(--billing-positive-bg);
+  color: var(--billing-positive-text);
 }
 
 .status--pending {
-  background: #fff3db;
-  color: #8a5b00;
+  border-color: var(--billing-pending-border);
+  background: var(--billing-pending-bg);
+  color: var(--billing-pending-text);
 }
 
 .status--negative {
-  background: #fdecec;
-  color: #bf1f2f;
+  border-color: var(--billing-negative-border);
+  background: var(--billing-negative-bg);
+  color: var(--billing-negative-text);
 }
 
 .status--neutral {
-  background: #eef2f7;
-  color: #3e4a63;
+  border-color: var(--billing-neutral-border);
+  background: var(--billing-neutral-bg);
+  color: var(--billing-neutral-text);
 }
 
 .filters-grid {
@@ -154,16 +154,12 @@
 .filters-grid label {
   display: grid;
   gap: 0.3rem;
+  color: var(--billing-text-soft);
 }
 
 .filters-grid input,
 .filters-grid select {
-  width: 100%;
-  border-radius: 6px;
-  border: 1px solid #d8e0ea;
-  padding: 0.6rem 0.7rem;
-  background: #fff;
-  color: #1f2937;
+  @include billing-theme.billing-form-control;
 }
 
 .filters-actions {
@@ -185,39 +181,19 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
-  color: #b42318;
+  color: #ffb2b2;
 }
 
 .error-fields {
   margin: 0 0 0.75rem;
   padding-left: 1rem;
-  color: #b42318;
+  color: #ffb2b2;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  text-align: left;
-  padding: 0.7rem 0.5rem;
-  border-bottom: 1px solid #eef2f7;
-  vertical-align: top;
-}
-
-td small {
-  display: block;
-  color: #677185;
-  margin-top: 0.2rem;
-}
+@include billing-theme.billing-table-chrome;
 
 .gap-callout {
-  padding: 0.75rem;
-  border-radius: 8px;
-  background: #f7f9fc;
-  border: 1px dashed #dbe3ef;
+  @include billing-theme.billing-callout;
 }
 
 .table-grid {
@@ -231,6 +207,7 @@ td small {
 .gap-card h4,
 .mini-kpi strong {
   margin: 0;
+  color: var(--billing-text-strong);
 }
 
 .export-row {
@@ -258,6 +235,13 @@ td small {
 
 .mini-kpi strong {
   font-size: 1.1rem;
+}
+
+.table-panel app-empty-state,
+.table-panel app-data-table,
+.table-panel app-loading-state {
+  display: block;
+  margin-top: 0.5rem;
 }
 
 @media (max-width: 1200px) {

@@ -1,7 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { firstValueFrom, type Observable } from 'rxjs';
 import { PermissionService } from '../../../../rbac/services/permission.service';
+import { TranslationFacadeService } from '../../../../i18n/services/translation-facade.service';
 import { BillingService } from '../../../billing/services/billing.service';
 import type {
   BillingInvoiceMetricsReport,
@@ -17,9 +18,9 @@ import type {
 } from '../../../billing/models/billing.model';
 
 type ReportMetricCard = {
-  label: string;
+  labelKey: string;
   value: string;
-  hint: string;
+  hintKey: string;
   tone: 'positive' | 'pending' | 'negative' | 'neutral';
 };
 
@@ -30,8 +31,11 @@ type ReportMetricCard = {
   standalone: false,
 })
 export class AdminBillingReportsDashboardPageComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   private readonly permissionService = inject(PermissionService);
+  private readonly translations = inject(TranslationFacadeService);
 
   readonly reportFiltersForm = this.fb.group({
     date_from: [this.defaultDateFrom(), [Validators.maxLength(10)]],
@@ -108,83 +112,83 @@ export class AdminBillingReportsDashboardPageComponent implements OnInit {
 
     return [
       {
-        label: 'Successful revenue',
-        value: this.canViewFinancialReports ? this.revenueSummaryCurrencyLabel() : 'Locked',
-        hint: this.canViewFinancialReports
-          ? 'Authoritative backend aggregate by currency'
-          : 'Grant billing.reports.view_financials to unlock money totals',
+        labelKey: 'billing.reports.summary.successfulRevenue.label',
+        value: this.canViewFinancialReports ? this.revenueSummaryCurrencyLabel() : this.translations.t('billing.reports.values.locked'),
+        hintKey: this.canViewFinancialReports
+          ? 'billing.reports.summary.successfulRevenue.hint'
+          : 'billing.reports.summary.successfulRevenue.lockedHint',
         tone: this.canViewFinancialReports ? 'positive' : 'neutral',
       },
       {
-        label: 'Successful payments',
+        labelKey: 'billing.reports.summary.successfulPayments.label',
         value: this.countFromPaymentStatus(paymentBreakdown, 'succeeded').toString(),
-        hint: 'Backend payment status summary',
+        hintKey: 'billing.reports.summary.successfulPayments.hint',
         tone: 'positive',
       },
       {
-        label: 'Failed payments',
+        labelKey: 'billing.reports.summary.failedPayments.label',
         value: this.countFromPaymentStatus(paymentBreakdown, 'failed').toString(),
-        hint: 'Backend payment status summary',
+        hintKey: 'billing.reports.summary.failedPayments.hint',
         tone: 'negative',
       },
       {
-        label: 'Pending payments',
+        labelKey: 'billing.reports.summary.pendingPayments.label',
         value: this.countFromPaymentStatus(paymentBreakdown, 'pending').toString(),
-        hint: 'Backend payment status summary',
+        hintKey: 'billing.reports.summary.pendingPayments.hint',
         tone: 'pending',
       },
       {
-        label: 'Active subscriptions',
+        labelKey: 'billing.reports.summary.activeSubscriptions.label',
         value: this.countFromSubscriptionStatus(subscriptionBreakdown, 'active').toString(),
-        hint: 'Lifecycle count from backend aggregates',
+        hintKey: 'billing.reports.summary.activeSubscriptions.hint',
         tone: 'positive',
       },
       {
-        label: 'Past due subscriptions',
+        labelKey: 'billing.reports.summary.pastDueSubscriptions.label',
         value: this.countFromSubscriptionStatus(subscriptionBreakdown, 'past_due').toString(),
-        hint: 'Lifecycle count from backend aggregates',
+        hintKey: 'billing.reports.summary.pastDueSubscriptions.hint',
         tone: 'pending',
       },
       {
-        label: 'Paid invoices',
+        labelKey: 'billing.reports.summary.paidInvoices.label',
         value: this.countFromInvoiceStatus(invoiceBreakdown, 'paid').toString(),
-        hint: 'Invoice metric summary',
+        hintKey: 'billing.reports.summary.paidInvoices.hint',
         tone: 'positive',
       },
       {
-        label: 'Unpaid / pending invoices',
+        labelKey: 'billing.reports.summary.unpaidInvoices.label',
         value: this.countOutstandingInvoices(invoiceBreakdown).toString(),
-        hint: 'Issued, failed, overdue, and payment-pending invoices',
+        hintKey: 'billing.reports.summary.unpaidInvoices.hint',
         tone: 'pending',
       },
       {
-        label: 'Wallet top-ups',
+        labelKey: 'billing.reports.summary.walletTopUps.label',
         value: this.walletAmountSummary(walletBreakdown, 'top_up', 'credited_amount'),
-        hint: 'Wallet transaction aggregate',
+        hintKey: 'billing.reports.summary.walletTopUps.hint',
         tone: 'positive',
       },
       {
-        label: 'Wallet debits',
+        labelKey: 'billing.reports.summary.walletDebits.label',
         value: this.walletAmountSummary(walletBreakdown, 'debit', 'debited_amount'),
-        hint: 'Wallet transaction aggregate',
+        hintKey: 'billing.reports.summary.walletDebits.hint',
         tone: 'negative',
       },
     ];
   }
 
-  get notes(): Array<{ title: string; body: string }> {
+  get notes(): Array<{ titleKey: string; bodyKey: string }> {
     return [
       {
-        title: 'MRR / ARR',
-        body: 'MRR/ARR stays unavailable until subscription interval pricing is authoritative in the backend.',
+        titleKey: 'billing.reports.notes.mrrArr.title',
+        bodyKey: 'billing.reports.notes.mrrArr.body',
       },
       {
-        title: 'CSV export',
-        body: 'CSV export requires a backend export endpoint, so the button remains disabled for now.',
+        titleKey: 'billing.reports.notes.csvExport.title',
+        bodyKey: 'billing.reports.notes.csvExport.body',
       },
       {
-        title: 'Source of truth',
-        body: 'All money totals come from backend report aggregates, not paginated payment lists.',
+        titleKey: 'billing.reports.notes.sourceOfTruth.title',
+        bodyKey: 'billing.reports.notes.sourceOfTruth.body',
       },
     ];
   }
@@ -195,7 +199,7 @@ export class AdminBillingReportsDashboardPageComponent implements OnInit {
       this.reportsError = {
         status: 422,
         code: 'validation',
-        message: 'Please fix the report filters before loading data.',
+        message: this.translations.t('billing.reports.validation.fixFilters'),
         errors: null,
       };
       return;
@@ -212,6 +216,7 @@ export class AdminBillingReportsDashboardPageComponent implements OnInit {
     ]);
 
     this.reportsLoading = false;
+    this.syncView();
   }
 
   async resetFilters(): Promise<void> {
@@ -389,6 +394,7 @@ export class AdminBillingReportsDashboardPageComponent implements OnInit {
       if (key === 'revenueByPlan') this.revenueByPlanLoading = false;
       if (key === 'revenueByCurrency') this.revenueByCurrencyLoading = false;
       if (key === 'revenueBySellerCompany') this.revenueBySellerCompanyLoading = false;
+      this.syncView();
     }
   }
 
@@ -422,6 +428,7 @@ export class AdminBillingReportsDashboardPageComponent implements OnInit {
       if (key === 'subscriptionMetrics') this.subscriptionMetricsLoading = false;
       if (key === 'invoiceMetrics') this.invoiceMetricsLoading = false;
       if (key === 'walletMetrics') this.walletMetricsLoading = false;
+      this.syncView();
     }
   }
 
@@ -438,6 +445,7 @@ export class AdminBillingReportsDashboardPageComponent implements OnInit {
     this.revenueByPlanError = null;
     this.revenueByCurrencyError = null;
     this.revenueBySellerCompanyError = null;
+    this.syncView();
   }
 
   private reportFilters(): BillingReportFilters {
@@ -466,7 +474,7 @@ export class AdminBillingReportsDashboardPageComponent implements OnInit {
     }
 
     return breakdown
-      .map((row) => `${this.formatAmount(row.revenue_amount, row.currency ?? 'USD')} (${row.currency ?? 'unknown'})`)
+      .map((row) => `${this.formatAmount(row.revenue_amount, row.currency ?? 'USD')} (${row.currency ?? this.translations.t('billing.reports.values.unknownCurrency')})`)
       .join(' | ');
   }
 
@@ -534,5 +542,11 @@ export class AdminBillingReportsDashboardPageComponent implements OnInit {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  private syncView(): void {
+    if (!this.destroyRef.destroyed) {
+      this.cdr.markForCheck();
+    }
   }
 }

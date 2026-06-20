@@ -1,4 +1,7 @@
+@use '../../styles/billing-dark-theme' as billing-theme;
+
 .ownership-page {
+  @include billing-theme.billing-dark-root;
   display: grid;
   gap: 1rem;
 }
@@ -17,6 +20,7 @@
 .hero__copy h2,
 .section-head h3 {
   margin: 0;
+  color: var(--billing-text-strong);
 }
 
 .hero__copy p,
@@ -24,7 +28,7 @@
 .summary-card__hint,
 .filter-note,
 .gap-callout {
-  color: #677185;
+  color: var(--billing-text-muted);
 }
 
 .eyebrow {
@@ -33,7 +37,7 @@
   letter-spacing: 0;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #5661b3;
+  color: var(--billing-accent);
 }
 
 .hero__actions {
@@ -46,9 +50,9 @@
 }
 
 .secondary-link {
-  color: #4a59a8;
-  text-decoration: none;
+  @include billing-theme.billing-link;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .secondary-link--button {
@@ -65,17 +69,14 @@
 }
 
 .summary-card {
-  border: 1px solid #e3e8ef;
-  border-radius: 8px;
-  padding: 0.95rem;
-  background: #fff;
+  @include billing-theme.billing-surface(1rem, true);
 }
 
 .summary-card__label {
   display: block;
   font-size: 0.75rem;
   text-transform: uppercase;
-  color: #77839a;
+  color: var(--billing-text-muted);
   margin-bottom: 0.3rem;
 }
 
@@ -84,6 +85,7 @@
   font-size: 1.35rem;
   line-height: 1.2;
   margin-bottom: 0.3rem;
+  color: var(--billing-text-strong);
 }
 
 .summary-card__hint {
@@ -100,23 +102,31 @@
 }
 
 .status {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.55rem;
-  border-radius: 999px;
-  background: #eef2f7;
-  color: #3e4a63;
-  font-size: 0.92rem;
+  @include billing-theme.billing-status-base;
 }
 
 .status--positive {
-  background: #e8f7ee;
-  color: #18794e;
+  border-color: var(--billing-positive-border);
+  background: var(--billing-positive-bg);
+  color: var(--billing-positive-text);
 }
 
 .status--pending {
-  background: #fff3db;
-  color: #8a5b00;
+  border-color: var(--billing-pending-border);
+  background: var(--billing-pending-bg);
+  color: var(--billing-pending-text);
+}
+
+.status--negative {
+  border-color: var(--billing-negative-border);
+  background: var(--billing-negative-bg);
+  color: var(--billing-negative-text);
+}
+
+.status--neutral {
+  border-color: var(--billing-neutral-border);
+  background: var(--billing-neutral-bg);
+  color: var(--billing-neutral-text);
 }
 
 .filters {
@@ -129,15 +139,11 @@
 .filters label {
   display: grid;
   gap: 0.3rem;
+  color: var(--billing-text-soft);
 }
 
 .filters input {
-  width: 100%;
-  border-radius: 6px;
-  border: 1px solid #d8e0ea;
-  padding: 0.6rem 0.7rem;
-  background: #fff;
-  color: #1f2937;
+  @include billing-theme.billing-form-control;
 }
 
 .filter-actions {
@@ -149,15 +155,14 @@
 
 .filter-note {
   margin-top: 0.75rem;
-  border: 1px solid #e3e8ef;
-  border-radius: 8px;
-  padding: 0.85rem;
-  background: #fafbfd;
+  @include billing-theme.billing-surface(0.85rem);
+  background: var(--billing-surface-soft);
 }
 
 .filter-note p {
   margin: 0 0 0.45rem;
   font-weight: 600;
+  color: var(--billing-text-soft);
 }
 
 .filter-note ul {
@@ -169,24 +174,10 @@
 
 .gap-callout {
   margin-bottom: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 8px;
-  background: #f7f9fc;
-  border: 1px dashed #dbe3ef;
+  @include billing-theme.billing-callout;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th,
-td {
-  text-align: left;
-  padding: 0.7rem 0.5rem;
-  border-bottom: 1px solid #eef2f7;
-  vertical-align: top;
-}
+@include billing-theme.billing-table-chrome;
 
 @media (max-width: 1100px) {
   .summary-grid,

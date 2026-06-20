@@ -5,6 +5,7 @@ import { vi } from 'vitest';
 import { BillingModule } from '../../billing.module';
 import { BillingIdempotencyService } from '../../services/billing-idempotency.service';
 import { BillingService } from '../../services/billing.service';
+import { LocaleService } from '../../../../i18n/services/locale.service';
 import { WalletTopUpPageComponent } from './wallet-top-up-page.component';
 
 describe('WalletTopUpPageComponent', () => {
@@ -97,6 +98,7 @@ describe('WalletTopUpPageComponent', () => {
       ],
     }).compileComponents();
 
+    TestBed.inject(LocaleService).setLocale('uk');
     fixture = TestBed.createComponent(WalletTopUpPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -105,8 +107,9 @@ describe('WalletTopUpPageComponent', () => {
   });
 
   it('renders wallet top-up screen', () => {
-    expect(fixture.nativeElement.textContent).toContain('Wallet Top-Up');
-    expect(fixture.nativeElement.textContent).toContain('Top up wallet');
+    expect(fixture.nativeElement.textContent).toContain('Поповнення гаманця');
+    expect(fixture.nativeElement.textContent).toContain('Поповнити гаманець');
+    expect(fixture.nativeElement.textContent).not.toContain('billing.walletTopUp.title');
   });
 
   it('submits a wallet top-up and shows the resulting payment status', async () => {
@@ -127,7 +130,7 @@ describe('WalletTopUpPageComponent', () => {
       }),
       'top-up-test-key',
     );
-    expect(fixture.nativeElement.textContent).toContain('Wallet top-up created successfully.');
+    expect(fixture.nativeElement.textContent).toContain('Поповнення гаманця створено успішно.');
     expect(fixture.nativeElement.textContent).toContain('succeeded');
   });
 });

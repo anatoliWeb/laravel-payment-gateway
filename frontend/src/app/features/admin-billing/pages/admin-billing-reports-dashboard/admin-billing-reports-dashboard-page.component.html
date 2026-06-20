@@ -2,16 +2,16 @@
   <ui-card>
     <header class="hero">
       <div class="hero__copy">
-        <p class="eyebrow">Admin billing reports</p>
-        <h2>Billing Reports & Analytics</h2>
+        <p class="eyebrow">{{ 'billing.reports.eyebrow' | t }}</p>
+        <h2>{{ 'billing.reports.title' | t }}</h2>
         <p>
-          Backend-authoritative report dashboard for revenue, payment states, subscriptions, invoices, and wallet activity.
+          {{ 'billing.reports.subtitle' | t }}
         </p>
       </div>
 
       <div class="hero__actions">
-        <app-button [disabled]="reportsLoading" (click)="refreshReports()">Refresh reports</app-button>
-        <a class="secondary-link" routerLink="/admin/billing">Back to billing admin</a>
+        <app-button [disabled]="reportsLoading" (click)="refreshReports()">{{ 'billing.reports.actions.refresh' | t }}</app-button>
+        <a class="secondary-link" routerLink="/admin/billing">{{ 'billing.reports.actions.backToAdmin' | t }}</a>
       </div>
     </header>
   </ui-card>
@@ -19,11 +19,11 @@
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Filters</h3>
-        <p>All report totals come from backend aggregates. The UI only forwards filters.</p>
+        <h3>{{ 'billing.reports.filters.title' | t }}</h3>
+        <p>{{ 'billing.reports.filters.subtitle' | t }}</p>
       </div>
       <span class="status" [ngClass]="reportsLoading ? 'status--pending' : 'status--neutral'">
-        {{ reportsLoading ? 'Loading' : 'Ready' }}
+        {{ reportsLoading ? ('billing.reports.states.loading' | t) : ('billing.reports.states.ready' | t) }}
       </span>
     </div>
 
@@ -35,144 +35,144 @@
       <ul class="error-fields" *ngIf="errorFieldLines(reportsError).length">
         <li *ngFor="let field of errorFieldLines(reportsError)">{{ field }}</li>
       </ul>
-      <app-button (click)="refreshReports()">Retry</app-button>
+      <app-button (click)="refreshReports()">{{ 'billing.reports.actions.retry' | t }}</app-button>
     </div>
 
-    <app-loading-state [visible]="reportsLoading" [message]="'Loading billing reports...'"></app-loading-state>
+    <app-loading-state [visible]="reportsLoading" [message]="'billing.reports.loading.main' | t"></app-loading-state>
 
     <form class="filters-grid" [formGroup]="reportFiltersForm" (ngSubmit)="refreshReports()">
       <label>
-        <span>Date from</span>
+        <span>{{ 'billing.reports.filters.dateFrom' | t }}</span>
         <input type="date" formControlName="date_from" />
       </label>
       <label>
-        <span>Date to</span>
+        <span>{{ 'billing.reports.filters.dateTo' | t }}</span>
         <input type="date" formControlName="date_to" />
       </label>
       <label>
-        <span>Currency</span>
+        <span>{{ 'billing.reports.filters.currency' | t }}</span>
         <input type="text" formControlName="currency" maxlength="3" placeholder="USD" />
       </label>
       <label>
-        <span>Company id</span>
+        <span>{{ 'billing.reports.filters.companyId' | t }}</span>
         <input type="number" formControlName="company_id" min="1" />
       </label>
       <label>
-        <span>Seller id</span>
+        <span>{{ 'billing.reports.filters.sellerId' | t }}</span>
         <input type="number" formControlName="seller_id" min="1" />
       </label>
       <label>
-        <span>User id</span>
+        <span>{{ 'billing.reports.filters.userId' | t }}</span>
         <input type="number" formControlName="user_id" min="1" />
       </label>
       <label>
-        <span>Plan id</span>
+        <span>{{ 'billing.reports.filters.planId' | t }}</span>
         <input type="number" formControlName="plan_id" min="1" />
       </label>
       <label>
-        <span>Payment status</span>
+        <span>{{ 'billing.reports.filters.paymentStatus' | t }}</span>
         <select formControlName="payment_status">
-          <option value="">All</option>
-          <option value="pending">Pending</option>
-          <option value="processing">Processing</option>
-          <option value="succeeded">Succeeded</option>
-          <option value="failed">Failed</option>
-          <option value="expired">Expired</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="">{{ 'billing.reports.filters.options.all' | t }}</option>
+          <option value="pending">{{ 'billing.reports.filters.options.pending' | t }}</option>
+          <option value="processing">{{ 'billing.reports.filters.options.processing' | t }}</option>
+          <option value="succeeded">{{ 'billing.reports.filters.options.succeeded' | t }}</option>
+          <option value="failed">{{ 'billing.reports.filters.options.failed' | t }}</option>
+          <option value="expired">{{ 'billing.reports.filters.options.expired' | t }}</option>
+          <option value="cancelled">{{ 'billing.reports.filters.options.cancelled' | t }}</option>
         </select>
       </label>
       <label>
-        <span>Invoice status</span>
+        <span>{{ 'billing.reports.filters.invoiceStatus' | t }}</span>
         <select formControlName="invoice_status">
-          <option value="">All</option>
-          <option value="draft">Draft</option>
-          <option value="issued">Issued</option>
-          <option value="payment_pending">Payment pending</option>
-          <option value="paid">Paid</option>
-          <option value="failed">Failed</option>
-          <option value="void">Void</option>
-          <option value="overdue">Overdue</option>
-          <option value="cancelled">Cancelled</option>
+          <option value="">{{ 'billing.reports.filters.options.all' | t }}</option>
+          <option value="draft">{{ 'billing.reports.filters.options.draft' | t }}</option>
+          <option value="issued">{{ 'billing.reports.filters.options.issued' | t }}</option>
+          <option value="payment_pending">{{ 'billing.reports.filters.options.paymentPending' | t }}</option>
+          <option value="paid">{{ 'billing.reports.filters.options.paid' | t }}</option>
+          <option value="failed">{{ 'billing.reports.filters.options.failed' | t }}</option>
+          <option value="void">{{ 'billing.reports.filters.options.void' | t }}</option>
+          <option value="overdue">{{ 'billing.reports.filters.options.overdue' | t }}</option>
+          <option value="cancelled">{{ 'billing.reports.filters.options.cancelled' | t }}</option>
         </select>
       </label>
       <label>
-        <span>Subscription status</span>
+        <span>{{ 'billing.reports.filters.subscriptionStatus' | t }}</span>
         <select formControlName="subscription_status">
-          <option value="">All</option>
-          <option value="active">Active</option>
-          <option value="trialing">Trialing</option>
-          <option value="past_due">Past due</option>
-          <option value="cancelled">Cancelled</option>
-          <option value="expired">Expired</option>
-          <option value="pending">Pending</option>
+          <option value="">{{ 'billing.reports.filters.options.all' | t }}</option>
+          <option value="active">{{ 'billing.reports.filters.options.active' | t }}</option>
+          <option value="trialing">{{ 'billing.reports.filters.options.trialing' | t }}</option>
+          <option value="past_due">{{ 'billing.reports.filters.options.pastDue' | t }}</option>
+          <option value="cancelled">{{ 'billing.reports.filters.options.cancelled' | t }}</option>
+          <option value="expired">{{ 'billing.reports.filters.options.expired' | t }}</option>
+          <option value="pending">{{ 'billing.reports.filters.options.pending' | t }}</option>
         </select>
       </label>
       <label>
-        <span>Wallet status</span>
+        <span>{{ 'billing.reports.filters.walletStatus' | t }}</span>
         <select formControlName="wallet_status">
-          <option value="">All</option>
-          <option value="active">Active</option>
-          <option value="suspended">Suspended</option>
-          <option value="closed">Closed</option>
+          <option value="">{{ 'billing.reports.filters.options.all' | t }}</option>
+          <option value="active">{{ 'billing.reports.filters.options.active' | t }}</option>
+          <option value="suspended">{{ 'billing.reports.filters.options.suspended' | t }}</option>
+          <option value="closed">{{ 'billing.reports.filters.options.closed' | t }}</option>
         </select>
       </label>
 
       <div class="filters-actions">
-        <app-button type="submit" [disabled]="reportsLoading">Apply filters</app-button>
-        <button type="button" class="secondary-link secondary-link--button" (click)="resetFilters()">Reset</button>
+        <app-button type="submit" [disabled]="reportsLoading">{{ 'billing.reports.actions.applyFilters' | t }}</app-button>
+        <button type="button" class="secondary-link secondary-link--button" (click)="resetFilters()">{{ 'billing.reports.actions.resetFilters' | t }}</button>
       </div>
     </form>
   </ui-card>
 
   <div class="summary-grid" *ngIf="!reportsLoading">
     <article class="summary-card" *ngFor="let card of summaryCards">
-      <span class="summary-card__label">{{ card.label }}</span>
+      <span class="summary-card__label">{{ card.labelKey | t }}</span>
       <strong class="summary-card__value" [ngClass]="'status--' + card.tone">{{ card.value }}</strong>
-      <small class="summary-card__hint">{{ card.hint }}</small>
+      <small class="summary-card__hint">{{ card.hintKey | t }}</small>
     </article>
   </div>
 
   <ui-card *ngIf="!reportsLoading && !canViewFinancialReports">
     <div class="gap-callout">
-      Financial report endpoints require <code>billing.reports.view_financials</code>. This page still shows non-financial aggregates and operational counts.
+      {{ 'billing.reports.financialAccessNotice' | t }} <code>billing.reports.view_financials</code>.
     </div>
   </ui-card>
 
   <ui-card *ngIf="!reportsLoading">
     <div class="section-head">
       <div>
-        <h3>Revenue breakdowns</h3>
-        <p>These tables are fed directly from backend report aggregates. CSV export remains disabled until a backend export endpoint exists.</p>
+        <h3>{{ 'billing.reports.revenue.title' | t }}</h3>
+        <p>{{ 'billing.reports.revenue.subtitle' | t }}</p>
       </div>
       <span class="status" [ngClass]="revenueSummaryLoading ? 'status--pending' : 'status--neutral'">
-        {{ revenueSummaryLoading ? 'Loading' : 'Authoritative totals' }}
+        {{ revenueSummaryLoading ? ('billing.reports.states.loading' | t) : ('billing.reports.revenue.authoritativeTotals' | t) }}
       </span>
     </div>
 
     <div *ngIf="revenueSummaryError" class="error-block">
       <p class="error-line"><strong>{{ revenueSummaryError.code || 'revenue_error' }}</strong><span>{{ revenueSummaryError.message }}</span></p>
-      <button type="button" class="secondary-link secondary-link--button" (click)="refreshReports()">Retry financial reports</button>
+      <button type="button" class="secondary-link secondary-link--button" (click)="refreshReports()">{{ 'billing.reports.actions.retryFinancialReports' | t }}</button>
     </div>
 
-    <app-loading-state [visible]="revenueSummaryLoading" [message]="'Loading revenue reports...'"></app-loading-state>
+    <app-loading-state [visible]="revenueSummaryLoading" [message]="'billing.reports.loading.revenue' | t"></app-loading-state>
 
     <div class="export-row">
-      <app-button [disabled]="true">CSV export</app-button>
-      <small>CSV export requires backend export endpoint.</small>
+      <app-button [disabled]="true">{{ 'billing.reports.actions.csvExport' | t }}</app-button>
+      <small>{{ 'billing.reports.actions.csvExportHint' | t }}</small>
     </div>
 
     <div class="mini-kpi-grid">
       <article class="mini-kpi">
-        <span>Successful payments</span>
+        <span>{{ 'billing.reports.kpis.successfulPayments' | t }}</span>
         <strong>{{ revenueSummary?.summary?.successful_payment_count ?? 0 }}</strong>
       </article>
       <article class="mini-kpi">
-        <span>Revenue amount</span>
-        <strong>{{ canViewFinancialReports ? revenueSummaryCurrencyLabel() : 'Locked' }}</strong>
+        <span>{{ 'billing.reports.kpis.revenueAmount' | t }}</span>
+        <strong>{{ canViewFinancialReports ? revenueSummaryCurrencyLabel() : ('billing.reports.values.locked' | t) }}</strong>
       </article>
       <article class="mini-kpi">
-        <span>Average successful payment</span>
-        <strong>{{ revenueSummary ? formatAmount(revenueSummary.summary.average_successful_payment_amount, revenueSummary.currency_breakdown[0]?.currency || 'USD') : 'Locked' }}</strong>
+        <span>{{ 'billing.reports.kpis.averageSuccessfulPayment' | t }}</span>
+        <strong>{{ revenueSummary ? formatAmount(revenueSummary.summary.average_successful_payment_amount, revenueSummary.currency_breakdown[0]?.currency || 'USD') : ('billing.reports.values.locked' | t) }}</strong>
       </article>
     </div>
 
@@ -180,9 +180,9 @@
       <table>
         <thead>
           <tr>
-            <th>Currency</th>
-            <th>Payments</th>
-            <th>Revenue</th>
+            <th>{{ 'billing.reports.table.currency' | t }}</th>
+            <th>{{ 'billing.reports.table.payments' | t }}</th>
+            <th>{{ 'billing.reports.table.revenue' | t }}</th>
           </tr>
         </thead>
         <tbody>
@@ -201,8 +201,8 @@
       <section class="table-panel">
         <div class="section-head">
           <div>
-            <h4>Revenue by plan</h4>
-            <p>Plan-linked payments grouped by currency.</p>
+            <h4>{{ 'billing.reports.revenue.byPlan.title' | t }}</h4>
+            <p>{{ 'billing.reports.revenue.byPlan.subtitle' | t }}</p>
           </div>
           <span class="status" [ngClass]="revenueByPlanLoading ? 'status--pending' : 'status--neutral'">{{ revenueByPlan?.rows?.length ?? 0 }}</span>
         </div>
@@ -211,21 +211,21 @@
           <p class="error-line"><strong>{{ revenueByPlanError.code || 'revenue_by_plan_error' }}</strong><span>{{ revenueByPlanError.message }}</span></p>
         </div>
 
-        <app-loading-state [visible]="revenueByPlanLoading" [message]="'Loading revenue by plan...'"></app-loading-state>
+        <app-loading-state [visible]="revenueByPlanLoading" [message]="'billing.reports.loading.revenueByPlan' | t"></app-loading-state>
         <app-data-table *ngIf="canViewFinancialReports && !revenueByPlanLoading && revenueByPlan?.rows?.length">
           <table>
             <thead>
               <tr>
-                <th>Plan</th>
-                <th>Currency</th>
-                <th>Payments</th>
-                <th>Revenue</th>
+                <th>{{ 'billing.reports.table.plan' | t }}</th>
+                <th>{{ 'billing.reports.table.currency' | t }}</th>
+                <th>{{ 'billing.reports.table.payments' | t }}</th>
+                <th>{{ 'billing.reports.table.revenue' | t }}</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let row of revenueByPlan!.rows; trackBy: trackByRevenuePlan">
                 <td>
-                  <strong>{{ row.plan_name || 'Unassigned' }}</strong>
+                  <strong>{{ row.plan_name || ('billing.reports.values.unassigned' | t) }}</strong>
                   <small>{{ row.plan_slug || '-' }}</small>
                 </td>
                 <td>{{ row.currency || '-' }}</td>
@@ -241,8 +241,8 @@
       <section class="table-panel">
         <div class="section-head">
           <div>
-            <h4>Revenue by seller/company</h4>
-            <p>Seller and company ownership totals from the backend.</p>
+            <h4>{{ 'billing.reports.revenue.bySellerCompany.title' | t }}</h4>
+            <p>{{ 'billing.reports.revenue.bySellerCompany.subtitle' | t }}</p>
           </div>
           <span class="status" [ngClass]="revenueBySellerCompanyLoading ? 'status--pending' : 'status--neutral'">{{ revenueBySellerCompany?.rows?.length ?? 0 }}</span>
         </div>
@@ -251,26 +251,26 @@
           <p class="error-line"><strong>{{ revenueBySellerCompanyError.code || 'revenue_by_seller_company_error' }}</strong><span>{{ revenueBySellerCompanyError.message }}</span></p>
         </div>
 
-        <app-loading-state [visible]="revenueBySellerCompanyLoading" [message]="'Loading revenue by seller/company...'"></app-loading-state>
+        <app-loading-state [visible]="revenueBySellerCompanyLoading" [message]="'billing.reports.loading.revenueBySellerCompany' | t"></app-loading-state>
         <app-data-table *ngIf="canViewFinancialReports && !revenueBySellerCompanyLoading && revenueBySellerCompany?.rows?.length">
           <table>
             <thead>
               <tr>
-                <th>Company</th>
-                <th>Seller</th>
-                <th>Currency</th>
-                <th>Payments</th>
-                <th>Revenue</th>
+                <th>{{ 'billing.reports.table.company' | t }}</th>
+                <th>{{ 'billing.reports.table.seller' | t }}</th>
+                <th>{{ 'billing.reports.table.currency' | t }}</th>
+                <th>{{ 'billing.reports.table.payments' | t }}</th>
+                <th>{{ 'billing.reports.table.revenue' | t }}</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let row of revenueBySellerCompany!.rows; trackBy: trackByRevenueSellerCompany">
                 <td>
-                  <strong>{{ row.company_name || 'Unassigned' }}</strong>
+                  <strong>{{ row.company_name || ('billing.reports.values.unassigned' | t) }}</strong>
                   <small>#{{ row.company_id || '-' }}</small>
                 </td>
                 <td>
-                  <strong>{{ row.seller_name || 'Unassigned' }}</strong>
+                  <strong>{{ row.seller_name || ('billing.reports.values.unassigned' | t) }}</strong>
                   <small>#{{ row.seller_id || '-' }}</small>
                 </td>
                 <td>{{ row.currency || '-' }}</td>
@@ -288,11 +288,11 @@
   <ui-card *ngIf="!reportsLoading">
     <div class="section-head">
       <div>
-        <h3>Operational metrics</h3>
-        <p>Payment, subscription, invoice, and wallet summaries are also backend-derived.</p>
+        <h3>{{ 'billing.reports.operational.title' | t }}</h3>
+        <p>{{ 'billing.reports.operational.subtitle' | t }}</p>
       </div>
       <span class="status" [ngClass]="paymentStatusSummaryLoading || subscriptionMetricsLoading || invoiceMetricsLoading || walletMetricsLoading ? 'status--pending' : 'status--neutral'">
-        {{ paymentStatusSummary?.summary?.payment_count ?? 0 }} payments
+        {{ paymentStatusSummary?.summary?.payment_count ?? 0 }} {{ 'billing.reports.operational.paymentsSuffix' | t }}
       </span>
     </div>
 
@@ -301,29 +301,29 @@
         <strong>{{ (paymentStatusSummaryError || subscriptionMetricsError || invoiceMetricsError || walletMetricsError)?.code || 'operational_reports_error' }}</strong>
         <span>{{ (paymentStatusSummaryError || subscriptionMetricsError || invoiceMetricsError || walletMetricsError)?.message }}</span>
       </p>
-      <button type="button" class="secondary-link secondary-link--button" (click)="refreshReports()">Retry operational reports</button>
+      <button type="button" class="secondary-link secondary-link--button" (click)="refreshReports()">{{ 'billing.reports.actions.retryOperationalReports' | t }}</button>
     </div>
 
     <div class="table-grid">
       <section class="table-panel">
         <div class="section-head">
           <div>
-            <h4>Payment status summary</h4>
-            <p>Operational counts by status and amount.</p>
+            <h4>{{ 'billing.reports.operational.paymentStatus.title' | t }}</h4>
+            <p>{{ 'billing.reports.operational.paymentStatus.subtitle' | t }}</p>
           </div>
           <span class="status" [ngClass]="paymentStatusSummaryLoading ? 'status--pending' : 'status--neutral'">
             {{ paymentStatusSummary?.summary?.payment_count ?? 0 }}
           </span>
         </div>
 
-        <app-loading-state [visible]="paymentStatusSummaryLoading" [message]="'Loading payment status summary...'"></app-loading-state>
+        <app-loading-state [visible]="paymentStatusSummaryLoading" [message]="'billing.reports.loading.paymentStatusSummary' | t"></app-loading-state>
         <app-data-table *ngIf="!paymentStatusSummaryLoading && paymentStatusSummary?.status_breakdown?.length">
           <table>
             <thead>
               <tr>
-                <th>Status</th>
-                <th>Payments</th>
-                <th>Amount total</th>
+                <th>{{ 'billing.reports.table.status' | t }}</th>
+                <th>{{ 'billing.reports.table.payments' | t }}</th>
+                <th>{{ 'billing.reports.table.amountTotal' | t }}</th>
               </tr>
             </thead>
             <tbody>
@@ -341,21 +341,21 @@
       <section class="table-panel">
         <div class="section-head">
           <div>
-            <h4>Subscription metrics</h4>
-            <p>Lifecycle counts and plan breakdowns.</p>
+            <h4>{{ 'billing.reports.operational.subscriptionMetrics.title' | t }}</h4>
+            <p>{{ 'billing.reports.operational.subscriptionMetrics.subtitle' | t }}</p>
           </div>
           <span class="status" [ngClass]="subscriptionMetricsLoading ? 'status--pending' : 'status--neutral'">
             {{ subscriptionMetrics?.summary?.subscription_count ?? 0 }}
           </span>
         </div>
 
-        <app-loading-state [visible]="subscriptionMetricsLoading" [message]="'Loading subscription metrics...'"></app-loading-state>
+        <app-loading-state [visible]="subscriptionMetricsLoading" [message]="'billing.reports.loading.subscriptionMetrics' | t"></app-loading-state>
         <app-data-table *ngIf="!subscriptionMetricsLoading && subscriptionMetrics?.status_breakdown?.length">
           <table>
             <thead>
               <tr>
-                <th>Status</th>
-                <th>Subscriptions</th>
+                <th>{{ 'billing.reports.table.status' | t }}</th>
+                <th>{{ 'billing.reports.table.subscriptions' | t }}</th>
               </tr>
             </thead>
             <tbody>
@@ -372,24 +372,24 @@
       <section class="table-panel">
         <div class="section-head">
           <div>
-            <h4>Invoice metrics</h4>
-            <p>Lifecycle and currency totals.</p>
+            <h4>{{ 'billing.reports.operational.invoiceMetrics.title' | t }}</h4>
+            <p>{{ 'billing.reports.operational.invoiceMetrics.subtitle' | t }}</p>
           </div>
           <span class="status" [ngClass]="invoiceMetricsLoading ? 'status--pending' : 'status--neutral'">
             {{ invoiceMetrics?.summary?.invoice_count ?? 0 }}
           </span>
         </div>
 
-        <app-loading-state [visible]="invoiceMetricsLoading" [message]="'Loading invoice metrics...'"></app-loading-state>
+        <app-loading-state [visible]="invoiceMetricsLoading" [message]="'billing.reports.loading.invoiceMetrics' | t"></app-loading-state>
         <app-data-table *ngIf="!invoiceMetricsLoading && invoiceMetrics?.status_breakdown?.length">
           <table>
             <thead>
               <tr>
-                <th>Status</th>
-                <th>Invoices</th>
-                <th>Total</th>
-                <th>Paid</th>
-                <th>Due</th>
+                <th>{{ 'billing.reports.table.status' | t }}</th>
+                <th>{{ 'billing.reports.table.invoices' | t }}</th>
+                <th>{{ 'billing.reports.table.total' | t }}</th>
+                <th>{{ 'billing.reports.table.paid' | t }}</th>
+                <th>{{ 'billing.reports.table.due' | t }}</th>
               </tr>
             </thead>
             <tbody>
@@ -409,25 +409,25 @@
       <section class="table-panel">
         <div class="section-head">
           <div>
-            <h4>Wallet metrics</h4>
-            <p>Wallet status, balances, and ledger breakdowns.</p>
+            <h4>{{ 'billing.reports.operational.walletMetrics.title' | t }}</h4>
+            <p>{{ 'billing.reports.operational.walletMetrics.subtitle' | t }}</p>
           </div>
           <span class="status" [ngClass]="walletMetricsLoading ? 'status--pending' : 'status--neutral'">
             {{ walletMetrics?.summary?.wallet_count ?? 0 }}
           </span>
         </div>
 
-        <app-loading-state [visible]="walletMetricsLoading" [message]="'Loading wallet metrics...'"></app-loading-state>
+        <app-loading-state [visible]="walletMetricsLoading" [message]="'billing.reports.loading.walletMetrics' | t"></app-loading-state>
         <app-data-table *ngIf="!walletMetricsLoading && walletMetrics?.transaction_breakdown?.length">
           <table>
             <thead>
               <tr>
-                <th>Type</th>
-                <th>Direction</th>
-                <th>Currency</th>
-                <th>Transactions</th>
-                <th>Credited</th>
-                <th>Debited</th>
+                <th>{{ 'billing.reports.table.type' | t }}</th>
+                <th>{{ 'billing.reports.table.direction' | t }}</th>
+                <th>{{ 'billing.reports.table.currency' | t }}</th>
+                <th>{{ 'billing.reports.table.transactions' | t }}</th>
+                <th>{{ 'billing.reports.table.credited' | t }}</th>
+                <th>{{ 'billing.reports.table.debited' | t }}</th>
               </tr>
             </thead>
             <tbody>
@@ -450,16 +450,16 @@
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Notes and limitations</h3>
-        <p>These keep the UI honest about what the backend currently supports.</p>
+        <h3>{{ 'billing.reports.notesSection.title' | t }}</h3>
+        <p>{{ 'billing.reports.notesSection.subtitle' | t }}</p>
       </div>
-      <span class="status status--neutral">Read only</span>
+      <span class="status status--neutral">{{ 'billing.reports.states.readOnly' | t }}</span>
     </div>
 
     <div class="gap-grid">
       <article class="gap-card" *ngFor="let note of notes">
-        <h4>{{ note.title }}</h4>
-        <p>{{ note.body }}</p>
+        <h4>{{ note.titleKey | t }}</h4>
+        <p>{{ note.bodyKey | t }}</p>
       </article>
     </div>
   </ui-card>

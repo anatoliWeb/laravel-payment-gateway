@@ -1,7 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { LocaleService } from '../../../../i18n/services/locale.service';
+import { TranslationFacadeService } from '../../../../i18n/services/translation-facade.service';
 import { BillingIdempotencyService } from '../../services/billing-idempotency.service';
 import { BillingService } from '../../services/billing.service';
 import type {
@@ -22,9 +25,13 @@ import type {
   standalone: false,
 })
 export class InvoicePaymentPageComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
   private readonly idempotency = inject(BillingIdempotencyService);
+  private readonly translations = inject(TranslationFacadeService);
+  private readonly localeService = inject(LocaleService);
+  private readonly destroyRef = inject(DestroyRef);
 
   invoice: BillingInvoice | null = null;
   invoiceLoading = false;
@@ -46,17 +53,25 @@ export class InvoicePaymentPageComponent implements OnInit {
   paymentActionError: BillingPortalError | null = null;
   submitting = false;
 
-  readonly paymentSourceOptions: Array<{ value: BillingPaymentSource; label: string }> = [
-    { value: 'wallet', label: 'Wallet balance' },
-    { value: 'payment_method', label: 'Saved simulator payment method' },
-    { value: 'wallet_first', label: 'Wallet first, then payment method fallback' },
-  ];
+  paymentSourceOptions: Array<{ value: BillingPaymentSource; label: string }> = [];
 
-  readonly paymentStrategyOptions: Array<{ value: BillingPaymentStrategy; label: string }> = [
-    { value: 'wallet_only', label: 'Wallet only' },
-    { value: 'payment_method_only', label: 'Payment method only' },
-    { value: 'wallet_first', label: 'Wallet first' },
-  ];
+  paymentStrategyOptions: Array<{ value: BillingPaymentStrategy; label: string }> = [];
+
+  private localizedPaymentSources(): Array<{ value: BillingPaymentSource; label: string }> {
+    return [
+      { value: 'wallet', label: this.translations.t('billing.invoicePayment.paymentSources.wallet') },
+      { value: 'payment_method', label: this.translations.t('billing.invoicePayment.paymentSources.paymentMethod') },
+      { value: 'wallet_first', label: this.translations.t('billing.invoicePayment.paymentSources.walletFirst') },
+    ];
+  }
+
+  private localizedPaymentStrategies(): Array<{ value: BillingPaymentStrategy; label: string }> {
+    return [
+      { value: 'wallet_only', label: this.translations.t('billing.invoicePayment.paymentStrategies.walletOnly') },
+      { value: 'payment_method_only', label: this.translations.t('billing.invoicePayment.paymentStrategies.paymentMethodOnly') },
+      { value: 'wallet_first', label: this.translations.t('billing.invoicePayment.paymentStrategies.walletFirst') },
+    ];
+  }
 
   readonly invoicePaymentForm = this.fb.group({
     payment_source: ['wallet_first' as BillingPaymentSource, [Validators.required]],
@@ -69,6 +84,10 @@ export class InvoicePaymentPageComponent implements OnInit {
   constructor(private readonly billingService: BillingService) {}
 
   ngOnInit(): void {
+    this.refreshLocalizedOptions();
+    this.localeService.locale$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.refreshLocalizedOptions());
     void this.refresh();
   }
 
@@ -91,7 +110,7 @@ export class InvoicePaymentPageComponent implements OnInit {
       this.invoiceError = {
         status: 404,
         code: 'invoice_not_found',
-        message: 'Invoice id is missing or invalid.',
+        message: this.translations.t('billing.invoicePayment.validation.invalidInvoiceId'),
         errors: null,
       };
       return;
@@ -113,7 +132,7 @@ export class InvoicePaymentPageComponent implements OnInit {
       this.paymentActionError = {
         status: 404,
         code: 'invoice_not_loaded',
-        message: 'Invoice details are not loaded yet.',
+        message: this.translations.t('billing.invoicePayment.validation.invoiceNotLoaded'),
         errors: null,
       };
       return;
@@ -124,7 +143,7 @@ export class InvoicePaymentPageComponent implements OnInit {
       this.paymentActionError = {
         status: 422,
         code: 'validation',
-        message: 'Please complete the invoice payment form.',
+        message: this.translations.t('billing.invoicePayment.validation.completeForm'),
         errors: null,
       };
       return;
@@ -154,12 +173,13 @@ export class InvoicePaymentPageComponent implements OnInit {
       );
       const payment = this.paymentResult;
       this.paymentResultMessage = payment?.status === 'succeeded'
-        ? 'Invoice payment succeeded.'
-        : 'Invoice payment created and is awaiting completion.';
+        ? this.translations.t('billing.invoicePayment.messages.paymentSucceeded')
+        : this.translations.t('billing.invoicePayment.messages.paymentPending');
     } catch (error) {
       this.paymentActionError = BillingService.extractError(error);
     } finally {
       this.submitting = false;
+      this.syncView();
     }
   }
 
@@ -227,6 +247,7 @@ export class InvoicePaymentPageComponent implements OnInit {
       this.invoiceError = BillingService.extractError(error);
     } finally {
       this.invoiceLoading = false;
+      this.syncView();
     }
   }
 
@@ -241,6 +262,7 @@ export class InvoicePaymentPageComponent implements OnInit {
       this.walletError = BillingService.extractError(error);
     } finally {
       this.walletLoading = false;
+      this.syncView();
     }
   }
 
@@ -256,6 +278,7 @@ export class InvoicePaymentPageComponent implements OnInit {
       this.paymentMethodsError = BillingService.extractError(error);
     } finally {
       this.paymentMethodsLoading = false;
+      this.syncView();
     }
   }
 
@@ -277,6 +300,7 @@ export class InvoicePaymentPageComponent implements OnInit {
       this.paymentPreferencesError = BillingService.extractError(error);
     } finally {
       this.paymentPreferencesLoading = false;
+      this.syncView();
     }
   }
 
@@ -296,5 +320,16 @@ export class InvoicePaymentPageComponent implements OnInit {
 
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  private refreshLocalizedOptions(): void {
+    this.paymentSourceOptions = this.localizedPaymentSources();
+    this.paymentStrategyOptions = this.localizedPaymentStrategies();
+  }
+
+  private syncView(): void {
+    if (!this.destroyRef.destroyed) {
+      this.cdr.markForCheck();
+    }
   }
 }

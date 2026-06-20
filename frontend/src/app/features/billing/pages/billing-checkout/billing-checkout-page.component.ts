@@ -1,7 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { LocaleService } from '../../../../i18n/services/locale.service';
+import { TranslationFacadeService } from '../../../../i18n/services/translation-facade.service';
 import { BillingIdempotencyService } from '../../services/billing-idempotency.service';
 import { BillingService } from '../../services/billing.service';
 import type {
@@ -29,69 +32,101 @@ type CheckoutPlan = BillingPlanReference & {
   standalone: false,
 })
 export class BillingCheckoutPageComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
   private readonly idempotency = inject(BillingIdempotencyService);
+  private readonly translations = inject(TranslationFacadeService);
+  private readonly localeService = inject(LocaleService);
+  private readonly destroyRef = inject(DestroyRef);
 
-  readonly plans: CheckoutPlan[] = [
-    {
-      slug: 'free',
-      name: 'Free',
-      description: 'Onboarding baseline. No checkout is required for this tier.',
-      priceLabel: 'Free',
-      audience: 'New users',
-      amount: 0,
-      currency: 'USD',
-      interval: 'Monthly',
-      features: ['No payment required', 'Basic dashboard access', 'Trial-friendly defaults'],
-    },
-    {
-      slug: 'basic',
-      name: 'Basic',
-      description: 'Entry paid tier for small teams.',
-      priceLabel: 'Paid',
-      audience: 'Small teams',
-      amount: 19900,
-      currency: 'USD',
-      interval: 'Monthly',
-      features: ['Higher chat limits', 'Wallet-first billing', 'Simulated invoices'],
-    },
-    {
-      slug: 'pro',
-      name: 'Pro',
-      description: 'Production-like tier for growing teams.',
-      priceLabel: 'Paid',
-      audience: 'Growing teams',
-      amount: 49900,
-      currency: 'USD',
-      interval: 'Monthly',
-      highlighted: true,
-      features: ['Advanced chat limits', 'Saved payment methods', 'Webhook-ready flows'],
-    },
-    {
-      slug: 'enterprise',
-      name: 'Enterprise',
-      description: 'Custom checkout with user-entered amount because the backend has no plans catalog endpoint.',
-      priceLabel: 'Custom',
-      audience: 'Large teams',
-      amount: null,
-      currency: 'USD',
-      interval: null,
-      features: ['Manual amount entry', 'Company/seller context', 'Checkout preview only'],
-    },
-  ];
+  plans: CheckoutPlan[] = [];
 
-  readonly paymentSourceOptions: Array<{ value: BillingPaymentPayload['payment_source']; label: string }> = [
-    { value: 'wallet', label: 'Wallet balance' },
-    { value: 'payment_method', label: 'Saved simulator payment method' },
-    { value: 'wallet_first', label: 'Wallet first, then payment method fallback' },
-  ];
+  paymentSourceOptions: Array<{ value: BillingPaymentPayload['payment_source']; label: string }> = [];
 
-  readonly paymentStrategyOptions: Array<{ value: BillingPaymentStrategy; label: string }> = [
-    { value: 'wallet_only', label: 'Wallet only' },
-    { value: 'payment_method_only', label: 'Payment method only' },
-    { value: 'wallet_first', label: 'Wallet first' },
-  ];
+  paymentStrategyOptions: Array<{ value: BillingPaymentStrategy; label: string }> = [];
+
+  private localizedPlans(): CheckoutPlan[] {
+    return [
+      {
+        slug: 'free',
+        name: this.translations.t('billing.checkout.plans.free.name'),
+        description: this.translations.t('billing.checkout.plans.free.description'),
+        priceLabel: this.translations.t('billing.checkout.plans.free.priceLabel'),
+        audience: this.translations.t('billing.checkout.plans.free.audience'),
+        amount: 0,
+        currency: 'USD',
+        interval: this.translations.t('billing.checkout.values.monthly'),
+        features: [
+          this.translations.t('billing.checkout.plans.free.features.noPayment'),
+          this.translations.t('billing.checkout.plans.free.features.dashboard'),
+          this.translations.t('billing.checkout.plans.free.features.trial'),
+        ],
+      },
+      {
+        slug: 'basic',
+        name: this.translations.t('billing.checkout.plans.basic.name'),
+        description: this.translations.t('billing.checkout.plans.basic.description'),
+        priceLabel: this.translations.t('billing.checkout.plans.basic.priceLabel'),
+        audience: this.translations.t('billing.checkout.plans.basic.audience'),
+        amount: 19900,
+        currency: 'USD',
+        interval: this.translations.t('billing.checkout.values.monthly'),
+        features: [
+          this.translations.t('billing.checkout.plans.basic.features.chatLimits'),
+          this.translations.t('billing.checkout.plans.basic.features.walletFirst'),
+          this.translations.t('billing.checkout.plans.basic.features.invoices'),
+        ],
+      },
+      {
+        slug: 'pro',
+        name: this.translations.t('billing.checkout.plans.pro.name'),
+        description: this.translations.t('billing.checkout.plans.pro.description'),
+        priceLabel: this.translations.t('billing.checkout.plans.pro.priceLabel'),
+        audience: this.translations.t('billing.checkout.plans.pro.audience'),
+        amount: 49900,
+        currency: 'USD',
+        interval: this.translations.t('billing.checkout.values.monthly'),
+        highlighted: true,
+        features: [
+          this.translations.t('billing.checkout.plans.pro.features.chatLimits'),
+          this.translations.t('billing.checkout.plans.pro.features.savedMethods'),
+          this.translations.t('billing.checkout.plans.pro.features.webhooks'),
+        ],
+      },
+      {
+        slug: 'enterprise',
+        name: this.translations.t('billing.checkout.plans.enterprise.name'),
+        description: this.translations.t('billing.checkout.plans.enterprise.description'),
+        priceLabel: this.translations.t('billing.checkout.plans.enterprise.priceLabel'),
+        audience: this.translations.t('billing.checkout.plans.enterprise.audience'),
+        amount: null,
+        currency: 'USD',
+        interval: null,
+        features: [
+          this.translations.t('billing.checkout.plans.enterprise.features.manualAmount'),
+          this.translations.t('billing.checkout.plans.enterprise.features.ownership'),
+          this.translations.t('billing.checkout.plans.enterprise.features.preview'),
+        ],
+      },
+    ];
+  }
+
+  private localizedPaymentSources(): Array<{ value: BillingPaymentPayload['payment_source']; label: string }> {
+    return [
+      { value: 'wallet', label: this.translations.t('billing.checkout.paymentSources.wallet') },
+      { value: 'payment_method', label: this.translations.t('billing.checkout.paymentSources.paymentMethod') },
+      { value: 'wallet_first', label: this.translations.t('billing.checkout.paymentSources.walletFirst') },
+    ];
+  }
+
+  private localizedPaymentStrategies(): Array<{ value: BillingPaymentStrategy; label: string }> {
+    return [
+      { value: 'wallet_only', label: this.translations.t('billing.checkout.paymentStrategies.walletOnly') },
+      { value: 'payment_method_only', label: this.translations.t('billing.checkout.paymentStrategies.paymentMethodOnly') },
+      { value: 'wallet_first', label: this.translations.t('billing.checkout.paymentStrategies.walletFirst') },
+    ];
+  }
 
   wallet: BillingWallet | null = null;
   walletLoading = false;
@@ -128,6 +163,10 @@ export class BillingCheckoutPageComponent implements OnInit {
   constructor(private readonly billingService: BillingService) {}
 
   ngOnInit(): void {
+    this.refreshLocalizedOptions();
+    this.localeService.locale$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.refreshLocalizedOptions());
     this.syncPlanDefaults(this.planFromRoute());
     void this.refresh();
   }
@@ -178,7 +217,7 @@ export class BillingCheckoutPageComponent implements OnInit {
       this.paymentActionError = {
         status: 422,
         code: 'validation',
-        message: 'Please complete the checkout form.',
+        message: this.translations.t('billing.checkout.validation.completeForm'),
         errors: null,
       };
       return;
@@ -210,7 +249,7 @@ export class BillingCheckoutPageComponent implements OnInit {
       this.paymentActionError = {
         status: 422,
         code: 'validation',
-        message: 'Please enter an amount for this checkout.',
+        message: this.translations.t('billing.checkout.validation.amountRequired'),
         errors: null,
       };
       return;
@@ -221,13 +260,14 @@ export class BillingCheckoutPageComponent implements OnInit {
       this.paymentResult = await firstValueFrom(this.billingService.createPayment(payload, idempotencyKey));
       const payment = this.paymentResult;
       this.paymentResultMessage = payment?.status === 'succeeded'
-        ? 'Payment succeeded.'
-        : 'Payment created and is awaiting completion.';
+        ? this.translations.t('billing.checkout.messages.paymentSucceeded')
+        : this.translations.t('billing.checkout.messages.paymentPending');
       await Promise.allSettled([this.loadWallet(), this.loadPaymentMethods()]);
     } catch (error) {
       this.paymentActionError = BillingService.extractError(error);
     } finally {
       this.submitting = false;
+      this.syncView();
     }
   }
 
@@ -243,11 +283,13 @@ export class BillingCheckoutPageComponent implements OnInit {
     try {
       const payment = await firstValueFrom(this.billingService.simulatePaymentSuccess(this.paymentResult.uuid));
       this.paymentResult = payment;
-      this.simulationActionMessage = `Payment ${payment?.uuid || 'payment'} marked as succeeded.`;
+      this.simulationActionMessage = this.translations.t('billing.checkout.messages.simulationSucceeded')
+        .replace(':uuid', payment?.uuid || this.translations.t('billing.checkout.values.paymentFallback'));
     } catch (error) {
       this.simulationActionError = BillingService.extractError(error);
     } finally {
       this.simulationLoading = false;
+      this.syncView();
     }
   }
 
@@ -263,11 +305,13 @@ export class BillingCheckoutPageComponent implements OnInit {
     try {
       const payment = await firstValueFrom(this.billingService.simulatePaymentFailure(this.paymentResult.uuid));
       this.paymentResult = payment;
-      this.simulationActionMessage = `Payment ${payment?.uuid || 'payment'} marked as failed.`;
+      this.simulationActionMessage = this.translations.t('billing.checkout.messages.simulationFailed')
+        .replace(':uuid', payment?.uuid || this.translations.t('billing.checkout.values.paymentFallback'));
     } catch (error) {
       this.simulationActionError = BillingService.extractError(error);
     } finally {
       this.simulationLoading = false;
+      this.syncView();
     }
   }
 
@@ -363,6 +407,7 @@ export class BillingCheckoutPageComponent implements OnInit {
       this.walletError = BillingService.extractError(error);
     } finally {
       this.walletLoading = false;
+      this.syncView();
     }
   }
 
@@ -380,6 +425,7 @@ export class BillingCheckoutPageComponent implements OnInit {
       this.paymentMethodsError = BillingService.extractError(error);
     } finally {
       this.paymentMethodsLoading = false;
+      this.syncView();
     }
   }
 
@@ -390,5 +436,17 @@ export class BillingCheckoutPageComponent implements OnInit {
 
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  private refreshLocalizedOptions(): void {
+    this.plans = this.localizedPlans();
+    this.paymentSourceOptions = this.localizedPaymentSources();
+    this.paymentStrategyOptions = this.localizedPaymentStrategies();
+  }
+
+  private syncView(): void {
+    if (!this.destroyRef.destroyed) {
+      this.cdr.markForCheck();
+    }
   }
 }

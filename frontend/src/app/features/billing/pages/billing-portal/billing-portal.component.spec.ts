@@ -5,6 +5,7 @@ import { BillingService } from '../../services/billing.service';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { BillingPortalComponent } from './billing-portal.component';
+import { LocaleService } from '../../../../i18n/services/locale.service';
 
 describe('BillingPortalComponent', () => {
   let fixture: ComponentFixture<BillingPortalComponent>;
@@ -149,18 +150,18 @@ describe('BillingPortalComponent', () => {
       ],
     }).compileComponents();
 
+    TestBed.inject(LocaleService).setLocale('uk');
     fixture = TestBed.createComponent(BillingPortalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
   it('renders live billing sections and placeholder sections', () => {
-    expect(fixture.nativeElement.textContent).toContain('Billing Portal');
-    expect(fixture.nativeElement.textContent).toContain('Current subscription');
-    expect(fixture.nativeElement.textContent).toContain('Available plans');
-    expect(fixture.nativeElement.textContent).toContain('Wallet');
-    expect(fixture.nativeElement.textContent).toContain('Payment methods');
-    expect(fixture.nativeElement.textContent).toContain('What is not wired yet');
+    expect(fixture.nativeElement.textContent).toContain('Портал білінгу');
+    expect(fixture.nativeElement.textContent).toContain('Поточна підписка');
+    expect(fixture.nativeElement.textContent).toContain('Доступні плани');
+    expect(fixture.nativeElement.textContent).toContain('Гаманець');
+    expect(fixture.nativeElement.textContent).toContain('Поповнити гаманець');
   });
 
   it('creates a simulator payment method through the billing service', async () => {
@@ -189,7 +190,7 @@ describe('BillingPortalComponent', () => {
         }),
       }),
     );
-    expect(component.paymentMethodActionMessage).toBe('Payment method created successfully.');
+    expect(component.paymentMethodActionMessage).toBe('Спосіб оплати створено успішно.');
   });
 
   it('saves billing preferences through the billing service', async () => {
@@ -220,6 +221,6 @@ describe('BillingPortalComponent', () => {
         max_auto_top_up_per_month: 4,
       }),
     );
-    expect(component.paymentPreferencesMessage).toBe('Payment preferences saved.');
+    expect(component.paymentPreferencesMessage).toBe('Налаштування оплати збережено.');
   });
 });

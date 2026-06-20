@@ -2,15 +2,13 @@
   <ui-card>
     <header class="billing-hero">
       <div class="billing-hero__copy">
-        <p class="eyebrow">Checkout</p>
-        <h2>Billing Checkout</h2>
-        <p>
-          Plan checkout uses the real billing payment endpoint with client-side idempotency protection and no raw card collection.
-        </p>
+        <p class="eyebrow">{{ 'billing.checkout.eyebrow' | t }}</p>
+        <h2>{{ 'billing.checkout.title' | t }}</h2>
+        <p>{{ 'billing.checkout.subtitle' | t }}</p>
       </div>
 
       <div class="billing-hero__actions">
-        <a class="secondary-link" routerLink="/billing">Back to billing portal</a>
+        <a class="secondary-link" routerLink="/billing">{{ 'billing.checkout.actions.backToPortal' | t }}</a>
       </div>
     </header>
   </ui-card>
@@ -18,8 +16,8 @@
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Plan selection</h3>
-        <p>Select a demo-safe plan reference. The portal stays honest about plans that have no live catalog endpoint yet.</p>
+        <h3>{{ 'billing.checkout.planSelection.title' | t }}</h3>
+        <p>{{ 'billing.checkout.planSelection.subtitle' | t }}</p>
       </div>
       <span class="status" [ngClass]="statusClass(selectedPlan.slug)">{{ selectedPlan.slug }}</span>
     </div>
@@ -36,10 +34,10 @@
           </span>
         </div>
         <small class="plan-card__audience">{{ plan.audience }}</small>
-        <p class="plan-card__price">{{ plan.amount === null ? 'Custom amount' : formatAmount(plan.amount, plan.currency, 2) }}</p>
-        <small class="plan-card__interval">{{ plan.interval || 'No billing interval supplied by backend' }}</small>
+        <p class="plan-card__price">{{ plan.amount === null ? ('billing.checkout.values.customAmount' | t) : formatAmount(plan.amount, plan.currency, 2) }}</p>
+        <small class="plan-card__interval">{{ plan.interval || ('billing.checkout.values.missingInterval' | t) }}</small>
         <button type="button" class="secondary-link secondary-link--button" (click)="selectPlan(plan.slug)">
-          {{ isSelectedPlan(plan) ? 'Selected' : 'Choose plan' }}
+          {{ isSelectedPlan(plan) ? ('billing.checkout.actions.selected' | t) : ('billing.checkout.actions.choosePlan' | t) }}
         </button>
       </article>
     </div>
@@ -48,49 +46,49 @@
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Checkout form</h3>
-        <p>Uses `POST /api/v1/billing/payments` with a client-generated idempotency key.</p>
+        <h3>{{ 'billing.checkout.form.title' | t }}</h3>
+        <p>{{ 'billing.checkout.form.subtitle' | t }}</p>
       </div>
-      <span class="status status--pending" *ngIf="submitting">Submitting</span>
+      <span class="status status--pending" *ngIf="submitting">{{ 'billing.checkout.states.submitting' | t }}</span>
     </div>
 
     <div class="billing-split">
       <div class="billing-split__main">
         <div class="preview-grid">
           <div class="preview-card">
-            <span>Plan</span>
+            <span>{{ 'billing.checkout.preview.plan' | t }}</span>
             <strong>{{ selectedPlan.name }}</strong>
           </div>
           <div class="preview-card">
-            <span>Amount</span>
+            <span>{{ 'billing.checkout.preview.amount' | t }}</span>
             <strong>{{ formatAmount(paymentAmountPreview, checkoutForm.controls.currency.value || selectedPlan.currency) }}</strong>
           </div>
           <div class="preview-card">
-            <span>Interval</span>
-            <strong>{{ selectedPlan.interval || 'Custom' }}</strong>
+            <span>{{ 'billing.checkout.preview.interval' | t }}</span>
+            <strong>{{ selectedPlan.interval || ('billing.checkout.values.custom' | t) }}</strong>
           </div>
           <div class="preview-card">
-            <span>Wallet balance</span>
-            <strong>{{ walletBalancePreview ? formatAmount(walletBalancePreview.available_amount, checkoutForm.controls.currency.value || selectedPlan.currency) : 'Unavailable' }}</strong>
+            <span>{{ 'billing.checkout.preview.walletBalance' | t }}</span>
+            <strong>{{ walletBalancePreview ? formatAmount(walletBalancePreview.available_amount, checkoutForm.controls.currency.value || selectedPlan.currency) : ('billing.checkout.values.unavailable' | t) }}</strong>
           </div>
         </div>
 
-        <app-loading-state [visible]="walletLoading" [message]="'Loading wallet preview...'"></app-loading-state>
-        <app-loading-state [visible]="paymentMethodsLoading" [message]="'Loading payment methods...'"></app-loading-state>
+        <app-loading-state [visible]="walletLoading" [message]="'billing.checkout.loading.walletPreview' | t"></app-loading-state>
+        <app-loading-state [visible]="paymentMethodsLoading" [message]="'billing.checkout.loading.paymentMethods' | t"></app-loading-state>
         <div *ngIf="walletError" class="error-block">
-          <p class="error-line"><strong>{{ walletError.code || 'wallet_error' }}</strong><span>{{ walletError.message }}</span></p>
+          <p class="error-line"><strong>{{ walletError.code || ('billing.checkout.errors.wallet' | t) }}</strong><span>{{ walletError.message }}</span></p>
           <ul class="error-fields" *ngIf="errorFieldLines(walletError).length">
             <li *ngFor="let field of errorFieldLines(walletError)">{{ field }}</li>
           </ul>
         </div>
         <div *ngIf="paymentMethodsError" class="error-block">
-          <p class="error-line"><strong>{{ paymentMethodsError.code || 'payment_methods_error' }}</strong><span>{{ paymentMethodsError.message }}</span></p>
+          <p class="error-line"><strong>{{ paymentMethodsError.code || ('billing.checkout.errors.paymentMethods' | t) }}</strong><span>{{ paymentMethodsError.message }}</span></p>
           <ul class="error-fields" *ngIf="errorFieldLines(paymentMethodsError).length">
             <li *ngFor="let field of errorFieldLines(paymentMethodsError)">{{ field }}</li>
           </ul>
         </div>
         <div *ngIf="paymentActionError" class="error-block">
-          <p class="error-line"><strong>{{ paymentActionError.code || 'checkout_error' }}</strong><span>{{ paymentActionError.message }}</span></p>
+          <p class="error-line"><strong>{{ paymentActionError.code || ('billing.checkout.errors.checkout' | t) }}</strong><span>{{ paymentActionError.message }}</span></p>
           <ul class="error-fields" *ngIf="errorFieldLines(paymentActionError).length">
             <li *ngFor="let field of errorFieldLines(paymentActionError)">{{ field }}</li>
           </ul>
@@ -100,32 +98,32 @@
         <div class="payment-result" *ngIf="paymentResult">
           <div class="section-head">
             <div>
-              <h4>Payment result</h4>
-              <p>Returned directly from the billing API.</p>
+              <h4>{{ 'billing.checkout.result.title' | t }}</h4>
+              <p>{{ 'billing.checkout.result.subtitle' | t }}</p>
             </div>
             <span class="status" [ngClass]="statusClass(paymentResult.status)">{{ paymentResult.status }}</span>
           </div>
 
           <div class="status-grid">
-            <div class="status-row"><span>Payment UUID</span><strong>{{ paymentResult.uuid }}</strong></div>
-            <div class="status-row"><span>Amount</span><strong>{{ formatAmount(paymentResult.amount, paymentResult.currency) }}</strong></div>
-            <div class="status-row"><span>Source</span><strong>{{ paymentResult.payment_source || '-' }}</strong></div>
-            <div class="status-row"><span>Invoice</span><strong>{{ paymentResult.invoice_id || '-' }}</strong></div>
-            <div class="status-row"><span>Provider</span><strong>{{ paymentResult.provider || '-' }}</strong></div>
-            <div class="status-row"><span>Created</span><strong>{{ paymentResult.created_at || '-' }}</strong></div>
+            <div class="status-row"><span>{{ 'billing.checkout.result.paymentUuid' | t }}</span><strong>{{ paymentResult.uuid }}</strong></div>
+            <div class="status-row"><span>{{ 'billing.checkout.result.amount' | t }}</span><strong>{{ formatAmount(paymentResult.amount, paymentResult.currency) }}</strong></div>
+            <div class="status-row"><span>{{ 'billing.checkout.result.source' | t }}</span><strong>{{ paymentResult.payment_source || '-' }}</strong></div>
+            <div class="status-row"><span>{{ 'billing.checkout.result.invoice' | t }}</span><strong>{{ paymentResult.invoice_id || '-' }}</strong></div>
+            <div class="status-row"><span>{{ 'billing.checkout.result.provider' | t }}</span><strong>{{ paymentResult.provider || '-' }}</strong></div>
+            <div class="status-row"><span>{{ 'billing.checkout.result.created' | t }}</span><strong>{{ paymentResult.created_at || '-' }}</strong></div>
           </div>
 
           <div class="status-note" *ngIf="canUseSimulationActions">
-            <p>Demo simulator actions can target the returned payment UUID, so local checkout flows can be exercised without exposing internal ids.</p>
+            <p>{{ 'billing.checkout.result.simulationNote' | t }}</p>
             <div class="billing-split__actions">
-              <app-button type="button" [disabled]="simulationLoading" (click)="simulateSuccess()">Simulate success</app-button>
-              <app-button type="button" [disabled]="simulationLoading" (click)="simulateFailure()">Simulate failure</app-button>
+              <app-button type="button" [disabled]="simulationLoading" (click)="simulateSuccess()">{{ 'billing.checkout.actions.simulateSuccess' | t }}</app-button>
+              <app-button type="button" [disabled]="simulationLoading" (click)="simulateFailure()">{{ 'billing.checkout.actions.simulateFailure' | t }}</app-button>
             </div>
             <p *ngIf="simulationActionMessage" class="success-line">{{ simulationActionMessage }}</p>
           </div>
 
           <div *ngIf="simulationActionError" class="error-block">
-            <p class="error-line"><strong>{{ simulationActionError.code || 'simulation_error' }}</strong><span>{{ simulationActionError.message }}</span></p>
+            <p class="error-line"><strong>{{ simulationActionError.code || ('billing.checkout.errors.simulation' | t) }}</strong><span>{{ simulationActionError.message }}</span></p>
             <ul class="error-fields" *ngIf="errorFieldLines(simulationActionError).length">
               <li *ngFor="let field of errorFieldLines(simulationActionError)">{{ field }}</li>
             </ul>
@@ -134,43 +132,43 @@
       </div>
 
       <form class="billing-form" [formGroup]="checkoutForm" (ngSubmit)="submit()">
-        <h4>Payment setup</h4>
+        <h4>{{ 'billing.checkout.setup.title' | t }}</h4>
 
         <label>
-          <span>Plan</span>
+          <span>{{ 'billing.checkout.setup.plan' | t }}</span>
           <select formControlName="plan_slug" (change)="onPlanChange()">
             <option *ngFor="let plan of plans" [value]="plan.slug">{{ plan.name }}</option>
           </select>
         </label>
 
         <label>
-          <span>Amount</span>
+          <span>{{ 'billing.checkout.setup.amount' | t }}</span>
           <input type="number" formControlName="amount" [readonly]="!showAmountInput" min="1" />
         </label>
 
         <label>
-          <span>Currency</span>
+          <span>{{ 'billing.checkout.setup.currency' | t }}</span>
           <input type="text" formControlName="currency" maxlength="3" />
         </label>
 
         <label>
-          <span>Payment source</span>
+          <span>{{ 'billing.checkout.setup.paymentSource' | t }}</span>
           <select formControlName="payment_source">
             <option *ngFor="let option of paymentSourceOptions" [value]="option.value">{{ option.label }}</option>
           </select>
         </label>
 
         <label>
-          <span>Payment strategy</span>
+          <span>{{ 'billing.checkout.setup.paymentStrategy' | t }}</span>
           <select formControlName="payment_strategy">
             <option *ngFor="let option of paymentStrategyOptions" [value]="option.value">{{ option.label }}</option>
           </select>
         </label>
 
         <label *ngIf="checkoutForm.controls.payment_source.value !== 'wallet'">
-          <span>Payment method</span>
+          <span>{{ 'billing.checkout.setup.paymentMethod' | t }}</span>
           <select formControlName="payment_method_id">
-            <option value="">Use default method</option>
+            <option value="">{{ 'billing.checkout.values.useDefaultMethod' | t }}</option>
             <option *ngFor="let method of paymentMethods; trackBy: trackById" [value]="method.id">
               {{ method.display_name || method.brand || method.type }} **** {{ method.last4 || '----' }}
             </option>
@@ -178,28 +176,28 @@
         </label>
 
         <label>
-          <span>Company id</span>
+          <span>{{ 'billing.checkout.setup.companyId' | t }}</span>
           <input type="number" formControlName="company_id" min="1" />
         </label>
 
         <label>
-          <span>Seller id</span>
+          <span>{{ 'billing.checkout.setup.sellerId' | t }}</span>
           <input type="number" formControlName="seller_id" min="1" />
         </label>
 
         <label>
-          <span>Callback URL</span>
-          <input type="url" formControlName="callback_url" placeholder="https://example.test/billing/callback" />
+          <span>{{ 'billing.checkout.setup.callbackUrl' | t }}</span>
+          <input type="url" formControlName="callback_url" [placeholder]="'billing.checkout.values.callbackPlaceholder' | t" />
         </label>
 
         <label>
-          <span>Description</span>
+          <span>{{ 'billing.checkout.setup.description' | t }}</span>
           <input type="text" formControlName="description" maxlength="255" />
         </label>
 
-        <small class="form-note">Idempotency keys are generated client-side to prevent duplicate submissions from double clicks or retries.</small>
+        <small class="form-note">{{ 'billing.checkout.setup.idempotencyNote' | t }}</small>
 
-        <app-button type="submit" [disabled]="submitting || selectedPlan.amount === 0">Create payment</app-button>
+        <app-button type="submit" [disabled]="submitting || selectedPlan.amount === 0">{{ 'billing.checkout.actions.createPayment' | t }}</app-button>
       </form>
     </div>
   </ui-card>

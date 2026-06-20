@@ -1,6 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { TranslationFacadeService } from '../../../../i18n/services/translation-facade.service';
 import { BillingIdempotencyService } from '../../services/billing-idempotency.service';
 import { BillingService } from '../../services/billing.service';
 import type {
@@ -17,8 +18,11 @@ import type {
   standalone: false,
 })
 export class WalletTopUpPageComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   private readonly idempotency = inject(BillingIdempotencyService);
+  private readonly translations = inject(TranslationFacadeService);
 
   wallet: BillingWallet | null = null;
   walletLoading = false;
@@ -66,7 +70,7 @@ export class WalletTopUpPageComponent implements OnInit {
       this.topUpActionError = {
         status: 422,
         code: 'validation',
-        message: 'Please complete the wallet top-up form.',
+        message: this.translations.t('billing.walletTopUp.validation.completeForm'),
         errors: null,
       };
       return;
@@ -86,7 +90,7 @@ export class WalletTopUpPageComponent implements OnInit {
       this.topUpActionError = {
         status: 422,
         code: 'validation',
-        message: 'Choose a saved simulator payment method.',
+        message: this.translations.t('billing.walletTopUp.validation.chooseMethod'),
         errors: null,
       };
       return;
@@ -97,12 +101,13 @@ export class WalletTopUpPageComponent implements OnInit {
       this.topUpResult = await firstValueFrom(
         this.billingService.createWalletTopUp(payload, this.idempotency.createKey('wallet-top-up')),
       );
-      this.topUpResultMessage = 'Wallet top-up created successfully.';
+      this.topUpResultMessage = this.translations.t('billing.walletTopUp.messages.created');
       await this.loadWallet();
     } catch (error) {
       this.topUpActionError = BillingService.extractError(error);
     } finally {
       this.submitting = false;
+      this.syncView();
     }
   }
 
@@ -160,6 +165,7 @@ export class WalletTopUpPageComponent implements OnInit {
       this.walletError = BillingService.extractError(error);
     } finally {
       this.walletLoading = false;
+      this.syncView();
     }
   }
 
@@ -178,6 +184,7 @@ export class WalletTopUpPageComponent implements OnInit {
       this.paymentMethodsError = BillingService.extractError(error);
     } finally {
       this.paymentMethodsLoading = false;
+      this.syncView();
     }
   }
 
@@ -188,5 +195,11 @@ export class WalletTopUpPageComponent implements OnInit {
 
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  private syncView(): void {
+    if (!this.destroyRef.destroyed) {
+      this.cdr.markForCheck();
+    }
   }
 }

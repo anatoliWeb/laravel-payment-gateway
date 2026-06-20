@@ -2,41 +2,39 @@
   <ui-card>
     <header class="hero">
       <div class="hero__copy">
-        <p class="eyebrow">Billing demo flows</p>
-        <h2>Billing Demo Flows</h2>
-        <p>
-          A reviewer-friendly walkthrough for the billing simulator. It points to the live Angular screens, spells out the safe steps, and keeps backend gaps visible instead of hiding them behind fake demo data.
-        </p>
+        <p class="eyebrow">{{ 'billing.demo.eyebrow' | t }}</p>
+        <h2>{{ 'billing.demo.title' | t }}</h2>
+        <p>{{ 'billing.demo.subtitle' | t }}</p>
       </div>
 
       <div class="hero__actions">
-        <a class="secondary-link" routerLink="/billing">Billing portal</a>
-        <a class="secondary-link" routerLink="/billing/checkout">Checkout</a>
-        <a class="secondary-link" routerLink="/billing/wallet/top-up">Wallet top-up</a>
-        <a class="secondary-link" routerLink="/admin/billing">Admin billing</a>
+        <a class="secondary-link" routerLink="/billing">{{ 'billing.demo.links.billingPortal' | t }}</a>
+        <a class="secondary-link" routerLink="/billing/checkout">{{ 'billing.demo.links.checkout' | t }}</a>
+        <a class="secondary-link" routerLink="/billing/wallet/top-up">{{ 'billing.demo.links.walletTopUp' | t }}</a>
+        <a class="secondary-link" routerLink="/admin/billing">{{ 'billing.demo.links.adminBilling' | t }}</a>
       </div>
     </header>
 
     <div class="summary-grid">
       <article class="summary-card">
-        <span class="summary-card__label">Route</span>
+        <span class="summary-card__label">{{ 'billing.demo.summary.route.label' | t }}</span>
         <strong class="summary-card__value">{{ demoRoute }}</strong>
-        <small class="summary-card__hint">Use this page as the first stop for a portfolio walkthrough.</small>
+        <small class="summary-card__hint">{{ 'billing.demo.summary.route.hint' | t }}</small>
       </article>
       <article class="summary-card">
-        <span class="summary-card__label">Flow count</span>
+        <span class="summary-card__label">{{ 'billing.demo.summary.flowCount.label' | t }}</span>
         <strong class="summary-card__value">{{ cards.length }}</strong>
-        <small class="summary-card__hint">All requested billing demo scenarios are documented below.</small>
+        <small class="summary-card__hint">{{ 'billing.demo.summary.flowCount.hint' | t }}</small>
       </article>
       <article class="summary-card">
-        <span class="summary-card__label">Safety</span>
-        <strong class="summary-card__value">Simulator-only</strong>
-        <small class="summary-card__hint">No real provider credentials or raw card data are used.</small>
+        <span class="summary-card__label">{{ 'billing.demo.summary.safety.label' | t }}</span>
+        <strong class="summary-card__value">{{ 'billing.demo.summary.safety.value' | t }}</strong>
+        <small class="summary-card__hint">{{ 'billing.demo.summary.safety.hint' | t }}</small>
       </article>
       <article class="summary-card">
-        <span class="summary-card__label">Evidence style</span>
-        <strong class="summary-card__value">Guide + gap notes</strong>
-        <small class="summary-card__hint">The page stays honest when backend discovery is still partial.</small>
+        <span class="summary-card__label">{{ 'billing.demo.summary.evidence.label' | t }}</span>
+        <strong class="summary-card__value">{{ 'billing.demo.summary.evidence.value' | t }}</strong>
+        <small class="summary-card__hint">{{ 'billing.demo.summary.evidence.hint' | t }}</small>
       </article>
     </div>
   </ui-card>
@@ -44,15 +42,15 @@
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Recommended walkthrough order</h3>
-        <p>Start here, then move through the guide in order. Each item links to the relevant section below.</p>
+        <h3>{{ 'billing.demo.walkthrough.title' | t }}</h3>
+        <p>{{ 'billing.demo.walkthrough.subtitle' | t }}</p>
       </div>
-      <span class="status status--pending">Checklist</span>
+      <span class="status status--pending">{{ 'billing.demo.walkthrough.badge' | t }}</span>
     </div>
 
     <ol class="walkthrough">
       <li *ngFor="let item of walkthrough; trackBy: trackByWalkthrough">
-        <a [href]="item.anchor">{{ item.title }}</a>
+        <a [href]="item.anchor">{{ item.titleKey | t }}</a>
       </li>
     </ol>
   </ui-card>
@@ -60,16 +58,16 @@
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Status legend</h3>
-        <p>These labels keep the demo honest about what is live, partial, admin-only, or still a backend gap.</p>
+        <h3>{{ 'billing.demo.legend.title' | t }}</h3>
+        <p>{{ 'billing.demo.legend.subtitle' | t }}</p>
       </div>
-      <span class="status status--neutral">Legend</span>
+      <span class="status status--neutral">{{ 'billing.demo.legend.badge' | t }}</span>
     </div>
 
     <div class="legend-grid">
       <article class="legend-card" *ngFor="let item of statusLegend">
-        <span class="status" [ngClass]="statusClass(item.label)">{{ item.label }}</span>
-        <p>{{ item.note }}</p>
+        <span class="status" [ngClass]="statusClass(item.label)">{{ ('billing.demo.status.' + item.label) | t }}</span>
+        <p>{{ item.noteKey | t }}</p>
       </article>
     </div>
   </ui-card>
@@ -77,68 +75,68 @@
   <ui-card *ngFor="let card of cards; trackBy: trackById" [attr.id]="card.id">
     <div class="section-head">
       <div>
-        <p class="eyebrow">Step {{ card.order }}</p>
-        <h3>{{ card.title }}</h3>
-        <p>{{ card.purpose }}</p>
+        <p class="eyebrow">{{ 'billing.demo.stepLabel' | t }} {{ card.order }}</p>
+        <h3>{{ card.titleKey | t }}</h3>
+        <p>{{ card.purposeKey | t }}</p>
       </div>
-      <span class="status" [ngClass]="statusClass(card.status)">{{ card.status }}</span>
+      <span class="status" [ngClass]="statusClass(card.status)">{{ ('billing.demo.status.' + card.status) | t }}</span>
     </div>
 
     <div class="detail-grid">
       <div class="detail-card">
-        <h4>Prerequisites</h4>
+        <h4>{{ 'billing.demo.card.prerequisites' | t }}</h4>
         <ul>
-          <li *ngFor="let item of card.prerequisites; trackBy: trackByText">{{ item }}</li>
+          <li *ngFor="let item of card.prerequisites; trackBy: trackByText">{{ item | t }}</li>
         </ul>
       </div>
 
       <div class="detail-card">
-        <h4>Steps</h4>
+        <h4>{{ 'billing.demo.card.steps' | t }}</h4>
         <ol>
-          <li *ngFor="let item of card.steps; trackBy: trackByText">{{ item }}</li>
+          <li *ngFor="let item of card.steps; trackBy: trackByText">{{ item | t }}</li>
         </ol>
       </div>
 
       <div class="detail-card">
-        <h4>Links</h4>
+        <h4>{{ 'billing.demo.card.links' | t }}</h4>
         <ul class="link-list">
           <li *ngFor="let link of card.links; trackBy: trackByLink">
-            <a *ngIf="link.route" [routerLink]="link.route">{{ link.label }}</a>
-            <span *ngIf="!link.route">{{ link.label }}</span>
+            <a *ngIf="link.route" [routerLink]="link.route">{{ link.labelKey | t }}</a>
+            <span *ngIf="!link.route">{{ link.labelKey | t }}</span>
             <small *ngIf="link.docs">{{ link.docs }}</small>
-            <small *ngIf="link.note">{{ link.note }}</small>
+            <small *ngIf="link.noteKey">{{ link.noteKey | t }}</small>
           </li>
         </ul>
       </div>
     </div>
 
-    <div class="safety-note" *ngIf="card.safetyNote">
-      <strong>Safety note:</strong>
-      <span>{{ card.safetyNote }}</span>
+    <div class="safety-note" *ngIf="card.safetyNoteKey">
+      <strong>{{ 'billing.demo.card.safetyNote' | t }}</strong>
+      <span>{{ card.safetyNoteKey | t }}</span>
     </div>
   </ui-card>
 
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Screenshots and notes</h3>
-        <p>This demo guide is documentation-first. Add screenshots or short GIF notes later if the portfolio needs visual proof.</p>
+        <h3>{{ 'billing.demo.notes.title' | t }}</h3>
+        <p>{{ 'billing.demo.notes.subtitle' | t }}</p>
       </div>
-      <span class="status status--neutral">Notes only</span>
+      <span class="status status--neutral">{{ 'billing.demo.notes.badge' | t }}</span>
     </div>
 
     <div class="notes-grid">
       <div class="note-card">
-        <h4>Suggested capture order</h4>
-        <p>Start with the portal, then checkout, then wallet top-up, then admin billing, then seller/company views.</p>
+        <h4>{{ 'billing.demo.notes.captureOrder.title' | t }}</h4>
+        <p>{{ 'billing.demo.notes.captureOrder.body' | t }}</p>
       </div>
       <div class="note-card">
-        <h4>Simulator-only warning</h4>
-        <p>No real charges, provider secrets, or raw card data belong in these captures.</p>
+        <h4>{{ 'billing.demo.notes.simulatorOnly.title' | t }}</h4>
+        <p>{{ 'billing.demo.notes.simulatorOnly.body' | t }}</p>
       </div>
       <div class="note-card">
-        <h4>Where to expand later</h4>
-        <p>Place future screenshots near the billing docs or in the README once the demo pack is finalized.</p>
+        <h4>{{ 'billing.demo.notes.expandLater.title' | t }}</h4>
+        <p>{{ 'billing.demo.notes.expandLater.body' | t }}</p>
       </div>
     </div>
   </ui-card>

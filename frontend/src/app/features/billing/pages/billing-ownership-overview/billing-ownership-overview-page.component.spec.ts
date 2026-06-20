@@ -35,7 +35,7 @@ describe('BillingOwnershipOverviewPageComponent', () => {
   it('renders the company ownership billing overview and gap notes', async () => {
     const fixture = await createFixture('company');
 
-    expect(fixture.nativeElement.textContent).toContain('Company billing overview');
+    expect(fixture.nativeElement.textContent).toContain('Company-scoped billing reporting');
     expect(fixture.nativeElement.textContent).toContain('Scope filters');
     expect(fixture.nativeElement.textContent).toContain('Payment history');
     expect(fixture.nativeElement.textContent).toContain('Revenue summary');
@@ -45,7 +45,7 @@ describe('BillingOwnershipOverviewPageComponent', () => {
   it('renders the seller ownership billing overview and switch navigation', async () => {
     const fixture = await createFixture('seller');
 
-    expect(fixture.nativeElement.textContent).toContain('Seller billing overview');
+    expect(fixture.nativeElement.textContent).toContain('Seller-scoped billing reporting');
     expect(fixture.nativeElement.textContent).toContain('Company billing');
     expect(fixture.nativeElement.textContent).toContain('Webhook delivery status');
   });

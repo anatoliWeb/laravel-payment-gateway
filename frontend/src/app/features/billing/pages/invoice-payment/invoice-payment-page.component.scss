@@ -1,6 +1,9 @@
+@use '../../styles/billing-dark-theme' as billingTheme;
+
 .billing-page {
   display: grid;
   gap: 1rem;
+  @include billingTheme.billing-dark-root;
 }
 
 .billing-hero {
@@ -20,7 +23,7 @@
 .section-head p,
 .form-note,
 .status-note p {
-  color: #677185;
+  color: var(--billing-text-muted);
 }
 
 .eyebrow {
@@ -29,12 +32,11 @@
   letter-spacing: 0;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #5661b3;
+  color: var(--billing-accent);
 }
 
 .secondary-link {
-  color: #4a59a8;
-  text-decoration: none;
+  @include billingTheme.billing-link;
 }
 
 .summary-grid {
@@ -46,14 +48,11 @@
 .summary-item {
   display: grid;
   gap: 0.3rem;
-  border: 1px solid #e3e8ef;
-  border-radius: 8px;
-  padding: 0.8rem;
-  background: #fafbfd;
+  @include billingTheme.billing-surface(0.8rem);
 }
 
 .summary-item span {
-  color: #677185;
+  color: var(--billing-text-muted);
   font-size: 0.8rem;
 }
 
@@ -73,10 +72,7 @@
 .billing-form {
   display: grid;
   gap: 0.75rem;
-  border: 1px solid #e3e8ef;
-  border-radius: 8px;
-  padding: 0.95rem;
-  background: #fafbfd;
+  @include billingTheme.billing-surface;
 }
 
 .billing-form label {
@@ -86,25 +82,16 @@
 
 .billing-form input,
 .billing-form select {
-  width: 100%;
-  border-radius: 6px;
-  border: 1px solid #d8e0ea;
-  padding: 0.6rem 0.7rem;
-  background: #fff;
+  @include billingTheme.billing-form-control;
 }
 
 .status-note {
-  padding: 0.75rem;
-  border-radius: 8px;
-  background: #fff3db;
-  color: #8a5b00;
+  @include billingTheme.billing-callout;
+  color: var(--billing-pending-text);
 }
 
 .payment-result {
-  border: 1px solid #dfe5ee;
-  border-radius: 8px;
-  padding: 0.95rem;
-  background: #fff;
+  @include billingTheme.billing-surface;
   display: grid;
   gap: 0.75rem;
 }
@@ -129,12 +116,12 @@
   display: flex;
   justify-content: space-between;
   gap: 1rem;
-  border-top: 1px solid #eef2f7;
+  border-top: 1px solid var(--billing-border);
   padding-top: 0.5rem;
 }
 
 .status-row span {
-  color: #677185;
+  color: var(--billing-text-muted);
 }
 
 .status-row strong,
@@ -143,32 +130,31 @@
 }
 
 .status {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.55rem;
-  border-radius: 999px;
-  background: #eef2f7;
-  color: #3e4a63;
+  @include billingTheme.billing-status-base;
 }
 
 .status--positive {
-  background: #e8f7ee;
-  color: #18794e;
+  background: var(--billing-positive-bg);
+  border-color: var(--billing-positive-border);
+  color: var(--billing-positive-text);
 }
 
 .status--pending {
-  background: #fff3db;
-  color: #8a5b00;
+  background: var(--billing-pending-bg);
+  border-color: var(--billing-pending-border);
+  color: var(--billing-pending-text);
 }
 
 .status--negative {
-  background: #fdecec;
-  color: #bf1f2f;
+  background: var(--billing-negative-bg);
+  border-color: var(--billing-negative-border);
+  color: var(--billing-negative-text);
 }
 
 .status--neutral {
-  background: #eef2f7;
-  color: #3e4a63;
+  background: var(--billing-neutral-bg);
+  border-color: var(--billing-neutral-border);
+  color: var(--billing-neutral-text);
 }
 
 @media (max-width: 1100px) {

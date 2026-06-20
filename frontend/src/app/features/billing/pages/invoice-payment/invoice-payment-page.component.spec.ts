@@ -5,6 +5,7 @@ import { vi } from 'vitest';
 import { BillingModule } from '../../billing.module';
 import { BillingIdempotencyService } from '../../services/billing-idempotency.service';
 import { BillingService } from '../../services/billing.service';
+import { LocaleService } from '../../../../i18n/services/locale.service';
 import { InvoicePaymentPageComponent } from './invoice-payment-page.component';
 
 describe('InvoicePaymentPageComponent', () => {
@@ -134,6 +135,7 @@ describe('InvoicePaymentPageComponent', () => {
       ],
     }).compileComponents();
 
+    TestBed.inject(LocaleService).setLocale('uk');
     fixture = TestBed.createComponent(InvoicePaymentPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -142,9 +144,10 @@ describe('InvoicePaymentPageComponent', () => {
   });
 
   it('renders invoice summary', () => {
-    expect(fixture.nativeElement.textContent).toContain('Invoice Payment');
+    expect(fixture.nativeElement.textContent).toContain('Оплата інвойсу');
     expect(fixture.nativeElement.textContent).toContain('INV-2026-0007');
-    expect(fixture.nativeElement.textContent).toContain('Pay invoice');
+    expect(fixture.nativeElement.textContent).toContain('Оплатити інвойс');
+    expect(fixture.nativeElement.textContent).not.toContain('billing.invoicePayment.title');
   });
 
   it('submits invoice payment with idempotency and shows the payment status', async () => {
@@ -169,7 +172,38 @@ describe('InvoicePaymentPageComponent', () => {
       }),
       'invoice-test-key',
     );
-    expect(fixture.nativeElement.textContent).toContain('Payment result');
+    expect(fixture.nativeElement.textContent).toContain('Результат оплати');
     expect(fixture.nativeElement.textContent).toContain('pending');
+  });
+
+  it('shows a localized invoice-not-found style error when invoice id is invalid', async () => {
+    await TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [BillingModule],
+      providers: [
+        { provide: BillingService, useValue: billingServiceMock },
+        { provide: BillingIdempotencyService, useValue: { createKey: vi.fn().mockReturnValue('invoice-test-key') } },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              paramMap: {
+                get: (key: string) => (key === 'invoiceId' ? 'abc' : null),
+              },
+            },
+          },
+        },
+      ],
+    }).compileComponents();
+
+    TestBed.inject(LocaleService).setLocale('uk');
+    const invalidFixture = TestBed.createComponent(InvoicePaymentPageComponent);
+    invalidFixture.detectChanges();
+    await invalidFixture.whenStable();
+    invalidFixture.detectChanges();
+
+    const text = invalidFixture.nativeElement.textContent as string;
+    expect(text).toContain('Ідентифікатор інвойсу відсутній або некоректний.');
+    expect(text).not.toContain('billing.invoicePayment.validation.invalidInvoiceId');
   });
 });

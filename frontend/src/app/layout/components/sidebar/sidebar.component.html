@@ -5,8 +5,9 @@
       *ngFor="let item of visibleNavItems"
       [routerLink]="item.route"
       routerLinkActive="is-active"
+      [routerLinkActiveOptions]="{ exact: item.exact !== false }"
     >
-      {{ item.label || (item.labelKey ? (item.labelKey | t) : '') }}
+      {{ item.labelKey ? (item.labelKey | t) : '' }}
     </a>
   </nav>
 </aside>

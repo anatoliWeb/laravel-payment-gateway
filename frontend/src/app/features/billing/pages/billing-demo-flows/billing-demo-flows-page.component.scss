@@ -1,4 +1,7 @@
+@use '../../styles/billing-dark-theme' as billing-theme;
+
 .demo-page {
+  @include billing-theme.billing-dark-root;
   display: grid;
   gap: 1rem;
 }
@@ -27,7 +30,7 @@
 .legend-card p,
 .note-card p,
 .safety-note {
-  color: #677185;
+  color: var(--billing-text-muted);
 }
 
 .eyebrow {
@@ -36,7 +39,7 @@
   letter-spacing: 0;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #5661b3;
+  color: var(--billing-accent);
 }
 
 .hero__actions {
@@ -49,9 +52,9 @@
 }
 
 .secondary-link {
-  color: #4a59a8;
-  text-decoration: none;
+  @include billing-theme.billing-link;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .summary-grid,
@@ -82,17 +85,14 @@
 .legend-card,
 .detail-card,
 .note-card {
-  border: 1px solid #e3e8ef;
-  border-radius: 8px;
-  padding: 0.95rem;
-  background: #fff;
+  @include billing-theme.billing-surface(1rem, true);
 }
 
 .summary-card__label {
   display: block;
   font-size: 0.75rem;
   text-transform: uppercase;
-  color: #77839a;
+  color: var(--billing-text-muted);
   margin-bottom: 0.3rem;
 }
 
@@ -101,6 +101,7 @@
   font-size: 1.35rem;
   line-height: 1.2;
   margin-bottom: 0.3rem;
+  color: var(--billing-text-strong);
 }
 
 .summary-card__hint {
@@ -117,33 +118,31 @@
 }
 
 .status {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.55rem;
-  border-radius: 999px;
-  background: #eef2f7;
-  color: #3e4a63;
-  font-size: 0.92rem;
+  @include billing-theme.billing-status-base;
 }
 
 .status--positive {
-  background: #e8f7ee;
-  color: #18794e;
+  border-color: var(--billing-positive-border);
+  background: var(--billing-positive-bg);
+  color: var(--billing-positive-text);
 }
 
 .status--pending {
-  background: #fff3db;
-  color: #8a5b00;
+  border-color: var(--billing-pending-border);
+  background: var(--billing-pending-bg);
+  color: var(--billing-pending-text);
 }
 
 .status--negative {
-  background: #fdecec;
-  color: #bf1f2f;
+  border-color: var(--billing-negative-border);
+  background: var(--billing-negative-bg);
+  color: var(--billing-negative-text);
 }
 
 .status--neutral {
-  background: #eef2f7;
-  color: #3e4a63;
+  border-color: var(--billing-neutral-border);
+  background: var(--billing-neutral-bg);
+  color: var(--billing-neutral-text);
 }
 
 .walkthrough {
@@ -154,8 +153,8 @@
 }
 
 .walkthrough a {
-  color: #4a59a8;
-  text-decoration: none;
+  @include billing-theme.billing-link;
+  font-weight: 600;
 }
 
 .detail-card {
@@ -182,20 +181,17 @@
 }
 
 .link-list a {
-  color: #4a59a8;
-  text-decoration: none;
+  @include billing-theme.billing-link;
+  font-weight: 600;
 }
 
 .link-list small {
-  color: #677185;
+  color: var(--billing-text-muted);
 }
 
 .safety-note {
   margin-top: 0.85rem;
-  padding: 0.75rem;
-  border-radius: 8px;
-  background: #f7f9fc;
-  border: 1px dashed #dbe3ef;
+  @include billing-theme.billing-callout;
   display: flex;
   gap: 0.4rem;
   flex-wrap: wrap;

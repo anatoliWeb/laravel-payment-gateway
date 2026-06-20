@@ -1,6 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { TranslationFacadeService } from '../../../../i18n/services/translation-facade.service';
 import { BillingIdempotencyService } from '../../../billing/services/billing-idempotency.service';
 import { BillingService } from '../../../billing/services/billing.service';
 import { PermissionService } from '../../../../rbac/services/permission.service';
@@ -36,9 +37,12 @@ type DashboardGap = {
   standalone: false,
 })
 export class AdminBillingDashboardPageComponent implements OnInit {
+  private readonly cdr = inject(ChangeDetectorRef);
   private readonly fb = inject(FormBuilder);
   private readonly idempotency = inject(BillingIdempotencyService);
   private readonly permissionService = inject(PermissionService);
+  private readonly translations = inject(TranslationFacadeService);
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly invoicePageSize = 6;
   readonly paymentPageSize = 8;
@@ -184,9 +188,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
   constructor(private readonly billingService: BillingService) {}
 
   ngOnInit(): void {
-    setTimeout(() => {
-      void this.refresh();
-    });
+    void this.refresh();
   }
 
   get isAdmin(): boolean {
@@ -232,47 +234,47 @@ export class AdminBillingDashboardPageComponent implements OnInit {
     return this.providerAccountsMeta?.total ?? this.providerAccounts.length;
   }
 
-  get summaryCards(): Array<{ label: string; value: string; hint: string }> {
+  get summaryCards(): Array<{ labelKey: string; value: string; hintKey: string }> {
     return [
       {
-        label: 'Invoices',
+        labelKey: 'billing.admin.summary.invoices.label',
         value: String(this.invoicesCount),
-        hint: this.invoicesLoading ? 'Loading invoice list' : 'Admin-readable invoices',
+        hintKey: this.invoicesLoading ? 'billing.admin.summary.invoices.loadingHint' : 'billing.admin.summary.invoices.hint',
       },
       {
-        label: 'Payments',
+        labelKey: 'billing.admin.summary.payments.label',
         value: String(this.paymentsCount),
-        hint: this.paymentsLoading ? 'Loading payment list' : 'UUID-backed admin payment view',
+        hintKey: this.paymentsLoading ? 'billing.admin.summary.payments.loadingHint' : 'billing.admin.summary.payments.hint',
       },
       {
-        label: 'Activity logs',
+        labelKey: 'billing.admin.summary.activity.label',
         value: String(this.activityCount),
-        hint: this.activityLoading ? 'Loading audit trail' : 'Billing and platform audit trail',
+        hintKey: this.activityLoading ? 'billing.admin.summary.activity.loadingHint' : 'billing.admin.summary.activity.hint',
       },
       {
-        label: 'Webhook deliveries',
+        labelKey: 'billing.admin.summary.webhooks.label',
         value: String(this.webhookCount),
-        hint: this.webhookLoading ? 'Loading deliveries' : 'Lookup by payment id',
+        hintKey: this.webhookLoading ? 'billing.admin.summary.webhooks.loadingHint' : 'billing.admin.summary.webhooks.hint',
       },
       {
-        label: 'Wallet adjustments',
-        value: this.canAdjustWallet ? 'Allowed' : 'Locked',
-        hint: this.canAdjustWallet ? 'Permission-gated UI' : 'Admin permission required',
+        labelKey: 'billing.admin.summary.walletAdjustments.label',
+        value: this.canAdjustWallet ? this.translations.t('billing.admin.values.allowed') : this.translations.t('billing.admin.values.locked'),
+        hintKey: this.canAdjustWallet ? 'billing.admin.summary.walletAdjustments.hint' : 'billing.admin.summary.walletAdjustments.lockedHint',
       },
       {
-        label: 'Wallets',
+        labelKey: 'billing.admin.summary.wallets.label',
         value: String(this.walletCount),
-        hint: this.walletsLoading ? 'Loading wallets' : 'Admin wallet balances and history',
+        hintKey: this.walletsLoading ? 'billing.admin.summary.wallets.loadingHint' : 'billing.admin.summary.wallets.hint',
       },
       {
-        label: 'Idempotency',
+        labelKey: 'billing.admin.summary.idempotency.label',
         value: String(this.idempotencyCount),
-        hint: this.idempotencyKeysLoading ? 'Loading keys' : 'Key fingerprint lookup only',
+        hintKey: this.idempotencyKeysLoading ? 'billing.admin.summary.idempotency.loadingHint' : 'billing.admin.summary.idempotency.hint',
       },
       {
-        label: 'Provider accounts',
+        labelKey: 'billing.admin.summary.providerAccounts.label',
         value: String(this.providerAccountCount),
-        hint: this.providerAccountsLoading ? 'Loading accounts' : 'Masked configuration only',
+        hintKey: this.providerAccountsLoading ? 'billing.admin.summary.providerAccounts.loadingHint' : 'billing.admin.summary.providerAccounts.hint',
       },
     ];
   }
@@ -304,6 +306,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.paymentsError = BillingService.extractError(error);
     } finally {
       this.paymentsLoading = false;
+      this.syncView();
     }
   }
 
@@ -311,17 +314,26 @@ export class AdminBillingDashboardPageComponent implements OnInit {
     this.selectedPayment = payment;
     this.selectedPaymentError = null;
     this.selectedPaymentLoading = true;
+    this.selectedPaymentTransactions = [];
+    this.selectedPaymentTransactionsMeta = null;
     this.selectedPaymentTransactionsError = null;
+    this.selectedPaymentTransactionsLoading = false;
 
     try {
       this.selectedPayment = await firstValueFrom(this.billingService.loadAdminPayment(payment.uuid));
-      await this.loadPaymentTransactions(payment.uuid, 1);
+      this.selectedPaymentLoading = false;
+
+      const transactionTarget = this.selectedPayment?.uuid || payment.uuid || payment.id;
+      void this.loadPaymentTransactions(transactionTarget, 1);
     } catch (error) {
+      this.selectedPayment = null;
       this.selectedPaymentError = BillingService.extractError(error);
       this.selectedPaymentTransactions = [];
       this.selectedPaymentTransactionsMeta = null;
+      this.selectedPaymentTransactionsLoading = false;
     } finally {
       this.selectedPaymentLoading = false;
+      this.syncView();
     }
   }
 
@@ -339,6 +351,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.invoicesError = BillingService.extractError(error);
     } finally {
       this.invoicesLoading = false;
+      this.syncView();
     }
   }
 
@@ -353,6 +366,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.selectedInvoiceError = BillingService.extractError(error);
     } finally {
       this.selectedInvoiceLoading = false;
+      this.syncView();
     }
   }
 
@@ -380,6 +394,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.subscriptionError = BillingService.extractError(error);
     } finally {
       this.subscriptionLoading = false;
+      this.syncView();
     }
   }
 
@@ -413,10 +428,11 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.activityError = BillingService.extractError(error);
     } finally {
       this.activityLoading = false;
+      this.syncView();
     }
   }
 
-  async loadPaymentTransactions(paymentIdOrUuid: string, page = 1): Promise<void> {
+  async loadPaymentTransactions(paymentIdOrUuid: string | number, page = 1): Promise<void> {
     this.selectedPaymentTransactionsLoading = true;
     this.selectedPaymentTransactionsError = null;
 
@@ -430,6 +446,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.selectedPaymentTransactionsError = BillingService.extractError(error);
     } finally {
       this.selectedPaymentTransactionsLoading = false;
+      this.syncView();
     }
   }
 
@@ -447,6 +464,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.walletsError = BillingService.extractError(error);
     } finally {
       this.walletsLoading = false;
+      this.syncView();
     }
   }
 
@@ -454,17 +472,26 @@ export class AdminBillingDashboardPageComponent implements OnInit {
     this.selectedWallet = wallet;
     this.selectedWalletError = null;
     this.selectedWalletLoading = true;
+    this.selectedWalletTransactions = [];
+    this.selectedWalletTransactionsMeta = null;
     this.selectedWalletTransactionsError = null;
+    this.selectedWalletTransactionsLoading = false;
 
     try {
       this.selectedWallet = await firstValueFrom(this.billingService.loadAdminWallet(wallet.id));
-      await this.loadWalletTransactions(wallet.id, 1);
+      this.selectedWalletLoading = false;
+
+      const transactionTarget = this.selectedWallet?.id || wallet.id;
+      void this.loadWalletTransactions(transactionTarget, 1);
     } catch (error) {
+      this.selectedWallet = null;
       this.selectedWalletError = BillingService.extractError(error);
       this.selectedWalletTransactions = [];
       this.selectedWalletTransactionsMeta = null;
+      this.selectedWalletTransactionsLoading = false;
     } finally {
       this.selectedWalletLoading = false;
+      this.syncView();
     }
   }
 
@@ -482,6 +509,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.selectedWalletTransactionsError = BillingService.extractError(error);
     } finally {
       this.selectedWalletTransactionsLoading = false;
+      this.syncView();
     }
   }
 
@@ -499,6 +527,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.idempotencyKeysError = BillingService.extractError(error);
     } finally {
       this.idempotencyKeysLoading = false;
+      this.syncView();
     }
   }
 
@@ -513,6 +542,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.selectedIdempotencyKeyError = BillingService.extractError(error);
     } finally {
       this.selectedIdempotencyKeyLoading = false;
+      this.syncView();
     }
   }
 
@@ -530,6 +560,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.providerAccountsError = BillingService.extractError(error);
     } finally {
       this.providerAccountsLoading = false;
+      this.syncView();
     }
   }
 
@@ -544,6 +575,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.selectedProviderAccountError = BillingService.extractError(error);
     } finally {
       this.selectedProviderAccountLoading = false;
+      this.syncView();
     }
   }
 
@@ -561,6 +593,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.restrictionsError = BillingService.extractError(error);
     } finally {
       this.restrictionsLoading = false;
+      this.syncView();
     }
   }
 
@@ -575,6 +608,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.selectedRestrictionError = BillingService.extractError(error);
     } finally {
       this.selectedRestrictionLoading = false;
+      this.syncView();
     }
   }
 
@@ -592,6 +626,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.featureOverridesError = BillingService.extractError(error);
     } finally {
       this.featureOverridesLoading = false;
+      this.syncView();
     }
   }
 
@@ -606,6 +641,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.selectedFeatureOverrideError = BillingService.extractError(error);
     } finally {
       this.selectedFeatureOverrideLoading = false;
+      this.syncView();
     }
   }
 
@@ -638,6 +674,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.webhookError = BillingService.extractError(error);
     } finally {
       this.webhookLoading = false;
+      this.syncView();
     }
   }
 
@@ -661,6 +698,8 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.webhookRetryMessage = `Webhook delivery ${retried?.uuid ?? delivery.uuid} queued for retry.`;
     } catch (error) {
       this.webhookRetryError = BillingService.extractError(error);
+    } finally {
+      this.syncView();
     }
   }
 
@@ -714,6 +753,7 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       this.walletAdjustmentError = BillingService.extractError(error);
     } finally {
       this.walletAdjustmentLoading = false;
+      this.syncView();
     }
   }
 
@@ -829,5 +869,11 @@ export class AdminBillingDashboardPageComponent implements OnInit {
       per_page: Number(source['per_page'] ?? perPage),
       total: Number(source['total'] ?? 0),
     };
+  }
+
+  private syncView(): void {
+    if (!this.destroyRef.destroyed) {
+      this.cdr.markForCheck();
+    }
   }
 }

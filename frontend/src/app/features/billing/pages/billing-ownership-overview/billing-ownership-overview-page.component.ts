@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { TranslationFacadeService } from '../../../../i18n/services/translation-facade.service';
 
 type BillingOwnershipScope = 'company' | 'seller';
 
@@ -30,6 +31,7 @@ type OwnershipFilterState = {
 export class BillingOwnershipOverviewPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
+  private readonly translations = inject(TranslationFacadeService);
 
   readonly sections: OwnershipGapSection[] = [
     {
@@ -96,17 +98,21 @@ export class BillingOwnershipOverviewPageComponent implements OnInit {
   }
 
   get scopeLabel(): string {
-    return this.scope === 'company' ? 'Company' : 'Seller';
+    return this.scope === 'company'
+      ? this.translations.t('billing.ownership.scopes.company')
+      : this.translations.t('billing.ownership.scopes.seller');
   }
 
   get scopeTitle(): string {
-    return `${this.scopeLabel} billing overview`;
+    return this.scope === 'company'
+      ? this.translations.t('billing.ownership.company.title')
+      : this.translations.t('billing.ownership.seller.title');
   }
 
   get heroNote(): string {
     return this.scope === 'company'
-      ? 'Company-scoped billing reporting is modeled as a UI-first shell until dedicated company list endpoints are added.'
-      : 'Seller-scoped billing reporting is modeled as a UI-first shell until dedicated seller list endpoints are added.';
+      ? this.translations.t('billing.ownership.company.subtitle')
+      : this.translations.t('billing.ownership.seller.subtitle');
   }
 
   get otherScopeRoute(): string {
@@ -116,12 +122,12 @@ export class BillingOwnershipOverviewPageComponent implements OnInit {
   get filterSummary(): string[] {
     const filters = this.appliedFilters ?? this.normalizedFilters();
     const entries: Array<[string, string]> = [
-      ['Date from', filters.date_from || 'Any'],
-      ['Date to', filters.date_to || 'Any'],
-      ['Status', filters.status || 'Any'],
-      ['Currency', filters.currency || 'Any'],
-      ['Seller', filters.seller_id || 'Any'],
-      ['Customer', filters.customer_id || 'Any'],
+      [this.translations.t('billing.ownership.filters.dateFrom'), filters.date_from || this.translations.t('billing.ownership.values.any')],
+      [this.translations.t('billing.ownership.filters.dateTo'), filters.date_to || this.translations.t('billing.ownership.values.any')],
+      [this.translations.t('billing.ownership.filters.status'), filters.status || this.translations.t('billing.ownership.values.any')],
+      [this.translations.t('billing.ownership.filters.currency'), filters.currency || this.translations.t('billing.ownership.values.any')],
+      [this.translations.t('billing.ownership.filters.sellerId'), filters.seller_id || this.translations.t('billing.ownership.values.any')],
+      [this.translations.t('billing.ownership.filters.customerId'), filters.customer_id || this.translations.t('billing.ownership.values.any')],
     ];
 
     return entries.map(([label, value]) => `${label}: ${value}`);

@@ -1,6 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { LocaleService } from '../../../../i18n/services/locale.service';
+import { TranslationFacadeService } from '../../../../i18n/services/translation-facade.service';
 import {
   BillingService,
 } from '../../services/billing.service';
@@ -32,41 +35,66 @@ type PaginatedMeta = {
   standalone: false,
 })
 export class BillingPortalComponent implements OnInit {
-  readonly plannedPlans: BillingPlanReference[] = [
-    {
-      slug: 'free',
-      name: 'Free',
-      description: 'Onboarding and demo baseline.',
-      priceLabel: 'Free',
-      audience: 'New users',
-      features: ['Limited chat usage', 'Basic dashboard access', 'No dialer access'],
-    },
-    {
-      slug: 'basic',
-      name: 'Basic',
-      description: 'Entry paid tier for small teams.',
-      priceLabel: 'Paid',
-      audience: 'Small teams',
-      features: ['Higher chat limits', 'Webhook-enabled workflows', 'Longer retention'],
-    },
-    {
-      slug: 'pro',
-      name: 'Pro',
-      description: 'Production-like tier for growing teams.',
-      priceLabel: 'Paid',
-      audience: 'Growing teams',
-      features: ['Advanced chat limits', 'API access', 'Dialer-ready feature keys'],
-      highlighted: true,
-    },
-    {
-      slug: 'enterprise',
-      name: 'Enterprise',
-      description: 'High-limit portfolio tier with custom controls.',
-      priceLabel: 'Custom',
-      audience: 'Large teams',
-      features: ['Higher limits', 'Longer retention', 'Operator-friendly controls'],
-    },
-  ];
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translations = inject(TranslationFacadeService);
+  private readonly localeService = inject(LocaleService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  plannedPlans: BillingPlanReference[] = [];
+
+  private localizedPlans(): BillingPlanReference[] {
+    return [
+      {
+        slug: 'free',
+        name: this.translations.t('billing.portal.plans.free.name'),
+        description: this.translations.t('billing.portal.plans.free.description'),
+        priceLabel: this.translations.t('billing.portal.plans.free.priceLabel'),
+        audience: this.translations.t('billing.portal.plans.free.audience'),
+        features: [
+          this.translations.t('billing.portal.plans.free.features.chatUsage'),
+          this.translations.t('billing.portal.plans.free.features.dashboard'),
+          this.translations.t('billing.portal.plans.free.features.dialer'),
+        ],
+      },
+      {
+        slug: 'basic',
+        name: this.translations.t('billing.portal.plans.basic.name'),
+        description: this.translations.t('billing.portal.plans.basic.description'),
+        priceLabel: this.translations.t('billing.portal.plans.basic.priceLabel'),
+        audience: this.translations.t('billing.portal.plans.basic.audience'),
+        features: [
+          this.translations.t('billing.portal.plans.basic.features.chatLimits'),
+          this.translations.t('billing.portal.plans.basic.features.webhooks'),
+          this.translations.t('billing.portal.plans.basic.features.retention'),
+        ],
+      },
+      {
+        slug: 'pro',
+        name: this.translations.t('billing.portal.plans.pro.name'),
+        description: this.translations.t('billing.portal.plans.pro.description'),
+        priceLabel: this.translations.t('billing.portal.plans.pro.priceLabel'),
+        audience: this.translations.t('billing.portal.plans.pro.audience'),
+        features: [
+          this.translations.t('billing.portal.plans.pro.features.chatLimits'),
+          this.translations.t('billing.portal.plans.pro.features.apiAccess'),
+          this.translations.t('billing.portal.plans.pro.features.featureKeys'),
+        ],
+        highlighted: true,
+      },
+      {
+        slug: 'enterprise',
+        name: this.translations.t('billing.portal.plans.enterprise.name'),
+        description: this.translations.t('billing.portal.plans.enterprise.description'),
+        priceLabel: this.translations.t('billing.portal.plans.enterprise.priceLabel'),
+        audience: this.translations.t('billing.portal.plans.enterprise.audience'),
+        features: [
+          this.translations.t('billing.portal.plans.enterprise.features.limits'),
+          this.translations.t('billing.portal.plans.enterprise.features.retention'),
+          this.translations.t('billing.portal.plans.enterprise.features.controls'),
+        ],
+      },
+    ];
+  }
 
   readonly usageReference: BillingUsageReference[] = [
     { featureKey: 'chat.messages.daily', usedLabel: '-', limitLabel: '-', remainingLabel: '-', period: 'daily' },
@@ -127,13 +155,17 @@ export class BillingPortalComponent implements OnInit {
   });
 
   refreshing = false;
-  missingApiNotice = 'This section is waiting for a dedicated billing endpoint.';
+  missingApiNotice = this.translations.t('billing.portal.values.missingApiNotice');
 
   constructor(
     private readonly billingService: BillingService,
   ) {}
 
   ngOnInit(): void {
+    this.refreshLocalizedPlans();
+    this.localeService.locale$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.refreshLocalizedPlans());
     void this.refresh();
   }
 
@@ -147,6 +179,7 @@ export class BillingPortalComponent implements OnInit {
       this.loadPaymentPreferences(),
     ]);
     this.refreshing = false;
+    this.syncView();
   }
 
   async createPaymentMethod(): Promise<void> {
@@ -158,7 +191,7 @@ export class BillingPortalComponent implements OnInit {
       this.paymentMethodActionError = {
         status: 422,
         code: 'validation',
-        message: 'Please complete the payment method form.',
+        message: this.translations.t('billing.portal.validation.completePaymentMethodForm'),
         errors: null,
       };
       return;
@@ -180,7 +213,7 @@ export class BillingPortalComponent implements OnInit {
 
     try {
       await firstValueFrom(this.billingService.createPaymentMethod(payload));
-      this.paymentMethodActionMessage = 'Payment method created successfully.';
+      this.paymentMethodActionMessage = this.translations.t('billing.portal.messages.paymentMethodCreated');
       this.paymentMethodForm.reset({
         type: 'fake_card',
         brand: 'Visa',
@@ -204,7 +237,7 @@ export class BillingPortalComponent implements OnInit {
 
     try {
       await firstValueFrom(this.billingService.setDefaultPaymentMethod(paymentMethodId));
-      this.paymentMethodActionMessage = 'Default payment method updated.';
+      this.paymentMethodActionMessage = this.translations.t('billing.portal.messages.defaultPaymentMethodUpdated');
       await Promise.allSettled([
         this.loadPaymentMethods(),
         this.loadPaymentPreferences(),
@@ -220,7 +253,7 @@ export class BillingPortalComponent implements OnInit {
 
     try {
       await firstValueFrom(this.billingService.deactivatePaymentMethod(paymentMethodId));
-      this.paymentMethodActionMessage = 'Payment method deactivated.';
+      this.paymentMethodActionMessage = this.translations.t('billing.portal.messages.paymentMethodDeactivated');
       await Promise.allSettled([
         this.loadPaymentMethods(),
         this.loadPaymentPreferences(),
@@ -239,7 +272,7 @@ export class BillingPortalComponent implements OnInit {
       this.paymentPreferencesActionError = {
         status: 422,
         code: 'validation',
-        message: 'Please complete the payment preferences form.',
+        message: this.translations.t('billing.portal.validation.completePreferencesForm'),
         errors: null,
       };
       return;
@@ -260,7 +293,7 @@ export class BillingPortalComponent implements OnInit {
 
     try {
       await firstValueFrom(this.billingService.updatePaymentPreferences(payload));
-      this.paymentPreferencesMessage = 'Payment preferences saved.';
+      this.paymentPreferencesMessage = this.translations.t('billing.portal.messages.preferencesSaved');
       await this.loadPaymentPreferences();
     } catch (error) {
       this.paymentPreferencesActionError = BillingService.extractError(error);
@@ -351,6 +384,7 @@ export class BillingPortalComponent implements OnInit {
       this.walletError = BillingService.extractError(error);
     } finally {
       this.walletLoading = false;
+      this.syncView();
     }
   }
 
@@ -368,6 +402,7 @@ export class BillingPortalComponent implements OnInit {
       this.walletTransactionsError = BillingService.extractError(error);
     } finally {
       this.walletTransactionsLoading = false;
+      this.syncView();
     }
   }
 
@@ -385,6 +420,7 @@ export class BillingPortalComponent implements OnInit {
       this.invoicesError = BillingService.extractError(error);
     } finally {
       this.invoicesLoading = false;
+      this.syncView();
     }
   }
 
@@ -400,6 +436,7 @@ export class BillingPortalComponent implements OnInit {
       this.paymentMethodsError = BillingService.extractError(error);
     } finally {
       this.paymentMethodsLoading = false;
+      this.syncView();
     }
   }
 
@@ -415,6 +452,7 @@ export class BillingPortalComponent implements OnInit {
       this.paymentPreferencesError = BillingService.extractError(error);
     } finally {
       this.paymentPreferencesLoading = false;
+      this.syncView();
     }
   }
 
@@ -458,5 +496,15 @@ export class BillingPortalComponent implements OnInit {
 
     const parsed = Number(value);
     return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  private refreshLocalizedPlans(): void {
+    this.plannedPlans = this.localizedPlans();
+  }
+
+  private syncView(): void {
+    if (!this.destroyRef.destroyed) {
+      this.cdr.markForCheck();
+    }
   }
 }

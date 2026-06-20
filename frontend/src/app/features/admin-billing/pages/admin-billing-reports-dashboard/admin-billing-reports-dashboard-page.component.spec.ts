@@ -4,6 +4,7 @@ import { of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { AdminBillingModule } from '../../admin-billing.module';
 import { BillingService } from '../../../billing/services/billing.service';
+import { LocaleService } from '../../../../i18n/services/locale.service';
 import { PermissionService } from '../../../../rbac/services/permission.service';
 import { AdminBillingReportsDashboardPageComponent } from './admin-billing-reports-dashboard-page.component';
 
@@ -202,9 +203,10 @@ describe('AdminBillingReportsDashboardPageComponent', () => {
     };
   }
 
-  async function createFixture(options: { operationalError?: boolean; canViewFinancialReports?: boolean } = {}) {
+  async function createFixture(options: { operationalError?: boolean; canViewFinancialReports?: boolean; locale?: string } = {}) {
     const billingServiceMock = createBillingServiceMock({ operationalError: options.operationalError });
     const permissionServiceMock = createPermissionServiceMock(options.canViewFinancialReports ?? true);
+    window.localStorage.removeItem('dashboard_locale');
 
     TestBed.resetTestingModule();
     await TestBed.configureTestingModule({
@@ -214,6 +216,12 @@ describe('AdminBillingReportsDashboardPageComponent', () => {
         { provide: PermissionService, useValue: permissionServiceMock },
       ],
     }).compileComponents();
+
+    const localeService = TestBed.inject(LocaleService);
+
+    if (options.locale) {
+      localeService.setLocale(options.locale);
+    }
 
     const fixture = TestBed.createComponent(AdminBillingReportsDashboardPageComponent);
     fixture.detectChanges();
@@ -256,5 +264,15 @@ describe('AdminBillingReportsDashboardPageComponent', () => {
     expect(component.reportsError?.code).toBe('forbidden');
     expect(component.reportsError?.message).toBe('Denied');
     expect(component.paymentStatusSummaryError?.code).toBe('forbidden');
+  });
+
+  it('renders Ukrainian report labels when locale is uk', async () => {
+    const { fixture } = await createFixture({ locale: 'uk' });
+    const text = fixture.nativeElement.textContent as string;
+
+    expect(text).toContain('Звіти та аналітика білінгу');
+    expect(text).toContain('Фільтри');
+    expect(text).toContain('Дата від');
+    expect(text).toContain('CSV експорт');
   });
 });

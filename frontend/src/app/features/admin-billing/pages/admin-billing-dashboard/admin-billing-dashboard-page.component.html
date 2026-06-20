@@ -2,36 +2,34 @@
   <ui-card>
     <header class="hero">
       <div class="hero__copy">
-        <p class="eyebrow">Admin billing</p>
-        <h2>Billing Management</h2>
-        <p>
-          Operator-focused billing view for invoices, subscriptions, webhook deliveries, audit logs, and permission-gated wallet adjustments.
-        </p>
+        <p class="eyebrow">{{ 'billing.admin.eyebrow' | t }}</p>
+        <h2>{{ 'billing.admin.title' | t }}</h2>
+        <p>{{ 'billing.admin.subtitle' | t }}</p>
       </div>
 
       <div class="hero__actions">
         <app-button [disabled]="invoicesLoading || activityLoading" (click)="refresh()">
-          Refresh dashboard
+          {{ 'billing.admin.actions.refreshDashboard' | t }}
         </app-button>
-        <a class="secondary-link" routerLink="/billing">User billing portal</a>
-        <a class="secondary-link" routerLink="/billing/checkout">Checkout UI</a>
+        <a class="secondary-link" routerLink="/billing">{{ 'billing.admin.actions.userPortal' | t }}</a>
+        <a class="secondary-link" routerLink="/billing/checkout">{{ 'billing.admin.actions.checkoutUi' | t }}</a>
       </div>
     </header>
   </ui-card>
 
   <div class="summary-grid">
     <article class="summary-card" *ngFor="let card of summaryCards">
-      <span class="summary-card__label">{{ card.label }}</span>
+      <span class="summary-card__label">{{ card.labelKey | t }}</span>
       <strong class="summary-card__value">{{ card.value }}</strong>
-      <small class="summary-card__hint">{{ card.hint }}</small>
+      <small class="summary-card__hint">{{ card.hintKey | t }}</small>
     </article>
   </div>
 
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Invoices</h3>
-        <p>Invoice list and details are available through the existing API.</p>
+        <h3>{{ 'billing.admin.sections.invoices.title' | t }}</h3>
+        <p>{{ 'billing.admin.sections.invoices.subtitle' | t }}</p>
       </div>
       <span class="status" [ngClass]="invoicesLoading ? 'status--pending' : 'status--neutral'">{{ invoicesCount }}</span>
     </div>
@@ -43,7 +41,7 @@
       </ul>
     </div>
 
-    <app-loading-state [visible]="invoicesLoading" [message]="'Loading invoices...'"></app-loading-state>
+    <app-loading-state [visible]="invoicesLoading" [message]="'billing.admin.loading.invoices' | t"></app-loading-state>
 
     <ng-container *ngIf="!invoicesLoading && invoices.length > 0">
       <app-data-table>
@@ -103,7 +101,7 @@
         <span class="status" [ngClass]="statusClass(selectedInvoice?.status)">{{ selectedInvoice?.status || 'waiting' }}</span>
       </div>
 
-      <app-loading-state [visible]="selectedInvoiceLoading" [message]="'Loading invoice detail...'"></app-loading-state>
+      <app-loading-state [visible]="selectedInvoiceLoading" [message]="'billing.admin.loading.invoiceDetail' | t"></app-loading-state>
       <div *ngIf="selectedInvoiceError" class="error-block">
         <p class="error-line"><strong>{{ selectedInvoiceError.code || 'invoice_error' }}</strong><span>{{ selectedInvoiceError.message }}</span></p>
       </div>
@@ -153,8 +151,8 @@
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Payments</h3>
-        <p>Payments are loaded from the admin billing API and can be opened by UUID or legacy id.</p>
+        <h3>{{ 'billing.admin.sections.payments.title' | t }}</h3>
+        <p>{{ 'billing.admin.sections.payments.subtitle' | t }}</p>
       </div>
       <span class="status" [ngClass]="paymentsLoading ? 'status--pending' : 'status--neutral'">{{ paymentsCount }}</span>
     </div>
@@ -166,7 +164,7 @@
       </ul>
     </div>
 
-    <app-loading-state [visible]="paymentsLoading" [message]="'Loading payments...'"></app-loading-state>
+    <app-loading-state [visible]="paymentsLoading" [message]="'billing.admin.loading.payments' | t"></app-loading-state>
 
     <ng-container *ngIf="!paymentsLoading && payments.length > 0">
       <app-data-table>
@@ -226,7 +224,7 @@
         <span class="status" [ngClass]="statusClass(selectedPayment?.status)">{{ selectedPayment?.status || 'waiting' }}</span>
       </div>
 
-      <app-loading-state [visible]="selectedPaymentLoading" [message]="'Loading payment detail...'"></app-loading-state>
+      <app-loading-state [visible]="selectedPaymentLoading" [message]="'billing.admin.loading.paymentDetail' | t"></app-loading-state>
       <div *ngIf="selectedPaymentError" class="error-block">
         <p class="error-line"><strong>{{ selectedPaymentError.code || 'payment_error' }}</strong><span>{{ selectedPaymentError.message }}</span></p>
       </div>
@@ -254,7 +252,7 @@
           <div class="status-row"><span>Updated</span><strong>{{ selectedPayment.updated_at || '-' }}</strong></div>
         </div>
 
-        <app-loading-state [visible]="selectedPaymentTransactionsLoading" [message]="'Loading payment transactions...'"></app-loading-state>
+        <app-loading-state [visible]="selectedPaymentTransactionsLoading" [message]="'billing.admin.loading.paymentTransactions' | t"></app-loading-state>
         <div *ngIf="selectedPaymentTransactionsError" class="error-block">
           <p class="error-line"><strong>{{ selectedPaymentTransactionsError.code || 'payment_transactions_error' }}</strong><span>{{ selectedPaymentTransactionsError.message }}</span></p>
         </div>
@@ -316,7 +314,7 @@
       </form>
 
       <div class="panel-detail">
-        <app-loading-state [visible]="subscriptionLoading" [message]="'Loading subscription detail...'"></app-loading-state>
+        <app-loading-state [visible]="subscriptionLoading" [message]="'billing.admin.loading.subscriptionDetail' | t"></app-loading-state>
         <div *ngIf="subscriptionError" class="error-block">
           <p class="error-line"><strong>{{ subscriptionError.code || 'subscription_error' }}</strong><span>{{ subscriptionError.message }}</span></p>
         </div>
@@ -640,7 +638,7 @@
         <span class="status" [ngClass]="statusClass(selectedWallet?.status)">{{ selectedWallet?.status || 'waiting' }}</span>
       </div>
 
-      <app-loading-state [visible]="selectedWalletLoading" [message]="'Loading wallet detail...'"></app-loading-state>
+      <app-loading-state [visible]="selectedWalletLoading" [message]="'billing.admin.loading.walletDetail' | t"></app-loading-state>
       <div *ngIf="selectedWalletError" class="error-block">
         <p class="error-line"><strong>{{ selectedWalletError.code || 'wallet_error' }}</strong><span>{{ selectedWalletError.message }}</span></p>
       </div>
@@ -674,7 +672,7 @@
           </table>
         </app-data-table>
 
-        <app-loading-state [visible]="selectedWalletTransactionsLoading" [message]="'Loading wallet transactions...'"></app-loading-state>
+        <app-loading-state [visible]="selectedWalletTransactionsLoading" [message]="'billing.admin.loading.walletTransactions' | t"></app-loading-state>
         <div *ngIf="selectedWalletTransactionsError" class="error-block">
           <p class="error-line"><strong>{{ selectedWalletTransactionsError.code || 'wallet_transactions_error' }}</strong><span>{{ selectedWalletTransactionsError.message }}</span></p>
         </div>

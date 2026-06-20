@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { vi } from 'vitest';
 import { AdminBillingModule } from '../../admin-billing.module';
 import { BillingIdempotencyService } from '../../../billing/services/billing-idempotency.service';
@@ -11,6 +11,13 @@ import { AdminBillingDashboardPageComponent } from './admin-billing-dashboard-pa
 describe('AdminBillingDashboardPageComponent', () => {
   let fixture: ComponentFixture<AdminBillingDashboardPageComponent>;
   let component: AdminBillingDashboardPageComponent;
+
+  const asyncValue = <T>(value: T) => new Observable<T>((subscriber) => {
+    Promise.resolve().then(() => {
+      subscriber.next(value);
+      subscriber.complete();
+    });
+  });
 
   const invoice = {
     id: 88,
@@ -281,6 +288,7 @@ describe('AdminBillingDashboardPageComponent', () => {
   };
 
   beforeEach(async () => {
+    vi.clearAllMocks();
     await TestBed.configureTestingModule({
       imports: [AdminBillingModule, RouterTestingModule],
       providers: [
@@ -290,11 +298,21 @@ describe('AdminBillingDashboardPageComponent', () => {
       ],
     }).compileComponents();
 
+    vi.spyOn(AdminBillingDashboardPageComponent.prototype, 'ngOnInit').mockImplementation(() => {});
     fixture = TestBed.createComponent(AdminBillingDashboardPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
+  });
+
+  it('starts the initial refresh immediately in ngOnInit without waiting for a second navigation', () => {
+    const refreshSpy = vi.spyOn(component, 'refresh').mockResolvedValue();
+
+    vi.mocked(AdminBillingDashboardPageComponent.prototype.ngOnInit).mockRestore();
+    component.ngOnInit();
+
+    expect(refreshSpy).toHaveBeenCalledTimes(1);
   });
 
   it('renders the admin billing dashboard and documented gaps', () => {
@@ -303,6 +321,57 @@ describe('AdminBillingDashboardPageComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Activity logs');
     expect(fixture.nativeElement.textContent).toContain('Wallets');
     expect(fixture.nativeElement.textContent).toContain('Provider accounts');
+  });
+
+  it('renders payments, invoices, and wallets in the DOM after async paginated responses', async () => {
+    billingServiceMock.loadAdminPayments.mockReturnValueOnce(asyncValue({
+      items: [payment],
+      meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 },
+    }));
+    billingServiceMock.loadInvoices.mockReturnValueOnce(asyncValue({
+      items: [invoice],
+      meta: { current_page: 1, last_page: 1, per_page: 6, total: 1 },
+    }));
+    billingServiceMock.loadAdminWallets.mockReturnValueOnce(asyncValue({
+      items: [wallet],
+      meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 },
+    }));
+    billingServiceMock.loadActivityLogs.mockReturnValueOnce(asyncValue({
+      items: [activity],
+      meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 },
+    }));
+    billingServiceMock.loadAdminIdempotencyKeys.mockReturnValueOnce(asyncValue({
+      items: [idempotencyKey],
+      meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 },
+    }));
+    billingServiceMock.loadAdminProviderAccounts.mockReturnValueOnce(asyncValue({
+      items: [providerAccount],
+      meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 },
+    }));
+    billingServiceMock.loadAdminRestrictions.mockReturnValueOnce(asyncValue({
+      items: [restriction],
+      meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 },
+    }));
+    billingServiceMock.loadAdminFeatureOverrides.mockReturnValueOnce(asyncValue({
+      items: [featureOverride],
+      meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 },
+    }));
+
+    const localFixture = TestBed.createComponent(AdminBillingDashboardPageComponent);
+    const localComponent = localFixture.componentInstance;
+    await localComponent.refresh();
+    localFixture.detectChanges();
+
+    const text = localFixture.nativeElement.textContent;
+    expect(text).toContain(payment.uuid);
+    expect(text).toContain(invoice.number);
+    expect(text).toContain(wallet.uuid);
+    expect(text).not.toContain('Loading payments...');
+    expect(text).not.toContain('Loading invoices...');
+    expect(text).not.toContain('Loading wallets...');
+    expect(localComponent.paymentsLoading).toBe(false);
+    expect(localComponent.invoicesLoading).toBe(false);
+    expect(localComponent.walletsLoading).toBe(false);
   });
 
   it('validates the wallet adjustment reason field', async () => {
@@ -330,5 +399,116 @@ describe('AdminBillingDashboardPageComponent', () => {
 
     expect(billingServiceMock.retryWebhookDelivery).toHaveBeenCalledWith(9001);
     expect(component.webhookRetryMessage).toContain('queued for retry');
+  });
+
+  it('does not keep successful sections in loading state when one section fails', async () => {
+    billingServiceMock.loadAdminPayments.mockReturnValueOnce(asyncValue({
+      items: [payment],
+      meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 },
+    }));
+    billingServiceMock.loadInvoices.mockReturnValueOnce(throwError(() => ({
+      status: 500,
+      code: 'server',
+      message: 'Invoices failed.',
+    })));
+    billingServiceMock.loadAdminWallets.mockReturnValueOnce(asyncValue({
+      items: [wallet],
+      meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 },
+    }));
+
+    await component.refresh();
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent;
+    expect(component.paymentsLoading).toBe(false);
+    expect(component.invoicesLoading).toBe(false);
+    expect(component.walletsLoading).toBe(false);
+    expect(component.payments.length).toBe(1);
+    expect(component.wallets.length).toBe(1);
+    expect(component.invoicesError?.message).toBe('Invoices failed.');
+    expect(text).toContain(payment.uuid);
+    expect(text).toContain(wallet.uuid);
+    expect(text).toContain('Invoices failed.');
+  });
+
+  it('stops the payment detail spinner once payment detail loads even if transactions are still loading', async () => {
+    const pendingTransactions$ = new Observable<never>(() => undefined);
+    billingServiceMock.loadAdminPayment.mockReturnValueOnce(of(payment));
+    billingServiceMock.loadAdminPaymentTransactions.mockReturnValueOnce(pendingTransactions$);
+
+    await component.inspectPayment(payment);
+
+    expect(component.selectedPaymentLoading).toBe(false);
+    expect(component.selectedPaymentTransactionsLoading).toBe(true);
+    expect(component.selectedPayment?.uuid).toBe('payment-77');
+  });
+
+  it('renders empty payment transactions state without leaving the spinner active', async () => {
+    billingServiceMock.loadAdminPayment.mockReturnValueOnce(of(payment));
+    billingServiceMock.loadAdminPaymentTransactions.mockReturnValueOnce(of({
+      items: [],
+      meta: { current_page: 1, last_page: 1, per_page: 8, total: 0 },
+    }));
+
+    await component.inspectPayment(payment);
+
+    expect(component.selectedPaymentLoading).toBe(false);
+    expect(component.selectedPaymentTransactionsLoading).toBe(false);
+    expect(component.selectedPaymentTransactions).toEqual([]);
+    expect(component.selectedPaymentTransactionsMeta).toEqual({
+      current_page: 1,
+      last_page: 1,
+      per_page: 8,
+      total: 0,
+    });
+  });
+
+  it('renders payment detail and transactions after the first inspect action', async () => {
+    billingServiceMock.loadAdminPayment.mockReturnValueOnce(asyncValue(payment));
+    billingServiceMock.loadAdminPaymentTransactions.mockReturnValueOnce(asyncValue({
+      items: [paymentTransaction],
+      meta: { current_page: 1, last_page: 1, per_page: 8, total: 1 },
+    }));
+
+    await component.inspectPayment(payment);
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent;
+    expect(text).toContain('Payment detail');
+    expect(text).toContain(payment.uuid);
+    expect(text).toContain(paymentTransaction.message);
+    expect(component.selectedPaymentLoading).toBe(false);
+    expect(component.selectedPaymentTransactionsLoading).toBe(false);
+  });
+
+  it('shows a payment detail error and stops loading when the detail endpoint returns 404', async () => {
+    billingServiceMock.loadAdminPayment.mockReturnValueOnce(throwError(() => ({
+      status: 404,
+      code: 'not_found',
+      message: 'Payment not found.',
+    })));
+
+    await component.inspectPayment(payment);
+
+    expect(component.selectedPaymentLoading).toBe(false);
+    expect(component.selectedPaymentTransactionsLoading).toBe(false);
+    expect(component.selectedPayment).toBeNull();
+    expect(component.selectedPaymentError?.code).toBe('not_found');
+    expect(component.selectedPaymentError?.message).toBe('Payment not found.');
+  });
+
+  it('clears list loading flags after a section error', async () => {
+    billingServiceMock.loadInvoices.mockReturnValueOnce(throwError(() => ({
+      status: 500,
+      code: 'server',
+      message: 'Invoices failed.',
+    })));
+
+    await component.loadInvoices();
+
+    expect(component.invoicesLoading).toBe(false);
+    expect(component.invoices).toEqual([]);
+    expect(component.invoicesError?.message).toBe('Invoices failed.');
   });
 });

@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 import { vi } from 'vitest';
 import { BillingModule } from '../../billing.module';
+import { LocaleService } from '../../../../i18n/services/locale.service';
 import { BillingIdempotencyService } from '../../services/billing-idempotency.service';
 import { BillingService } from '../../services/billing.service';
 import { BillingCheckoutPageComponent } from './billing-checkout-page.component';
@@ -78,6 +79,7 @@ describe('BillingCheckoutPageComponent', () => {
       ],
     }).compileComponents();
 
+    TestBed.inject(LocaleService).setLocale('uk');
     fixture = TestBed.createComponent(BillingCheckoutPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -86,9 +88,10 @@ describe('BillingCheckoutPageComponent', () => {
   });
 
   it('renders checkout content and plan summary', () => {
-    expect(fixture.nativeElement.textContent).toContain('Billing Checkout');
+    expect(fixture.nativeElement.textContent).toContain('Оформлення білінгу');
     expect(fixture.nativeElement.textContent).toContain('Pro');
-    expect(fixture.nativeElement.textContent).toContain('Create payment');
+    expect(fixture.nativeElement.textContent).toContain('Створити платіж');
+    expect(fixture.nativeElement.textContent).not.toContain('billing.checkout.title');
   });
 
   it('sends a payment payload with idempotency key and displays payment status', async () => {
@@ -120,7 +123,7 @@ describe('BillingCheckoutPageComponent', () => {
       }),
       'checkout-test-key',
     );
-    expect(fixture.nativeElement.textContent).toContain('Payment result');
+    expect(fixture.nativeElement.textContent).toContain('Результат платежу');
     expect(fixture.nativeElement.textContent).toContain('pending');
   });
 

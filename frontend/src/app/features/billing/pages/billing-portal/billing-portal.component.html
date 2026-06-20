@@ -2,48 +2,46 @@
   <ui-card>
     <header class="billing-hero">
       <div class="billing-hero__copy">
-        <p class="eyebrow">Billing portal</p>
-        <h2>Billing Portal</h2>
-        <p>
-          A user-facing billing surface for subscription state, wallet data, payment methods, invoices, and preferences.
-        </p>
+        <p class="eyebrow">{{ 'billing.portal.eyebrow' | t }}</p>
+        <h2>{{ 'billing.portal.title' | t }}</h2>
+        <p>{{ 'billing.portal.subtitle' | t }}</p>
       </div>
 
       <div class="billing-hero__actions">
         <app-button [disabled]="refreshing" (click)="refresh()">
-          {{ refreshing ? 'Refreshing...' : 'Refresh data' }}
+          {{ refreshing ? ('billing.portal.actions.refreshing' | t) : ('billing.portal.actions.refreshData' | t) }}
         </app-button>
-        <a class="link-button" routerLink="/billing/demo">Demo flows</a>
-        <a class="link-button" routerLink="/billing/checkout">Checkout</a>
-        <a class="link-button" routerLink="/billing/company">Company billing</a>
-        <a class="link-button" routerLink="/billing/seller">Seller billing</a>
-        <a class="link-button" routerLink="/billing/wallet/top-up">Top up wallet</a>
+        <a class="link-button" routerLink="/billing/demo">{{ 'billing.portal.actions.demoFlows' | t }}</a>
+        <a class="link-button" routerLink="/billing/checkout">{{ 'billing.portal.actions.checkout' | t }}</a>
+        <a class="link-button" routerLink="/billing/company">{{ 'billing.portal.actions.companyBilling' | t }}</a>
+        <a class="link-button" routerLink="/billing/seller">{{ 'billing.portal.actions.sellerBilling' | t }}</a>
+        <a class="link-button" routerLink="/billing/wallet/top-up">{{ 'billing.portal.actions.topUpWallet' | t }}</a>
       </div>
     </header>
 
     <div class="billing-summary">
       <article class="summary-card">
-        <span class="summary-card__label">Wallet currencies</span>
+        <span class="summary-card__label">{{ 'billing.portal.summary.walletCurrencies' | t }}</span>
         <strong class="summary-card__value">{{ wallet?.balances?.length ?? 0 }}</strong>
         <small class="summary-card__hint">Live from /api/v1/billing/wallet</small>
       </article>
 
       <article class="summary-card">
-        <span class="summary-card__label">Payment methods</span>
+        <span class="summary-card__label">{{ 'billing.portal.summary.paymentMethods' | t }}</span>
         <strong class="summary-card__value">{{ paymentMethods.length }}</strong>
         <small class="summary-card__hint">Live from /api/v1/billing/payment-methods</small>
       </article>
 
       <article class="summary-card">
-        <span class="summary-card__label">Invoices</span>
+        <span class="summary-card__label">{{ 'billing.portal.summary.invoices' | t }}</span>
         <strong class="summary-card__value">{{ invoices.length }}</strong>
         <small class="summary-card__hint">Live from /api/v1/billing/invoices</small>
       </article>
 
       <article class="summary-card">
-        <span class="summary-card__label">Preferences</span>
+        <span class="summary-card__label">{{ 'billing.portal.summary.preferences' | t }}</span>
         <strong class="summary-card__value">
-          {{ paymentPreferences?.strategy || 'waiting' }}
+          {{ paymentPreferences?.strategy || ('billing.portal.values.waiting' | t) }}
         </strong>
         <small class="summary-card__hint">Live from /api/v1/billing/payment-preferences</small>
       </article>
@@ -53,33 +51,33 @@
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Current subscription</h3>
-        <p>There is no dedicated current-subscription endpoint yet, so this block stays intentionally explicit.</p>
+        <h3>{{ 'billing.portal.currentSubscription.title' | t }}</h3>
+        <p>{{ 'billing.portal.currentSubscription.subtitle' | t }}</p>
       </div>
-      <span class="status status--neutral">API pending</span>
+      <span class="status status--neutral">{{ 'billing.portal.values.apiPending' | t }}</span>
     </div>
 
     <div class="placeholder-copy">
-      <p>The backend currently exposes subscription reads by subscription id only.</p>
-      <p>When a current-user subscription endpoint lands, this section will show status, plan, billing period, and cancel-at-period-end state.</p>
+      <p>{{ 'billing.portal.currentSubscription.noteOne' | t }}</p>
+      <p>{{ 'billing.portal.currentSubscription.noteTwo' | t }}</p>
     </div>
 
     <div class="status-grid">
       <div class="status-row">
         <span>Status</span>
-        <strong>Not available yet</strong>
+        <strong>{{ 'billing.portal.values.notAvailableYet' | t }}</strong>
       </div>
       <div class="status-row">
-        <span>Plan</span>
-        <strong>Not available yet</strong>
+        <span>{{ 'billing.portal.currentSubscription.plan' | t }}</span>
+        <strong>{{ 'billing.portal.values.notAvailableYet' | t }}</strong>
       </div>
       <div class="status-row">
-        <span>Billing period</span>
-        <strong>Not available yet</strong>
+        <span>{{ 'billing.portal.currentSubscription.billingPeriod' | t }}</span>
+        <strong>{{ 'billing.portal.values.notAvailableYet' | t }}</strong>
       </div>
       <div class="status-row">
-        <span>Cancel at period end</span>
-        <strong>Not available yet</strong>
+        <span>{{ 'billing.portal.currentSubscription.cancelAtPeriodEnd' | t }}</span>
+        <strong>{{ 'billing.portal.values.notAvailableYet' | t }}</strong>
       </div>
     </div>
   </ui-card>
@@ -87,10 +85,10 @@
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Available plans</h3>
-        <p>This is a design reference view because a live billing plans endpoint is not exposed yet.</p>
+        <h3>{{ 'billing.portal.availablePlans.title' | t }}</h3>
+        <p>{{ 'billing.portal.availablePlans.subtitle' | t }}</p>
       </div>
-      <span class="status status--pending">Design reference</span>
+      <span class="status status--pending">{{ 'billing.portal.values.designReference' | t }}</span>
     </div>
 
     <div class="plan-grid">
@@ -115,14 +113,14 @@
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Usage limits</h3>
-        <p>Usage tracking is enforced by backend services, but the live usage endpoint is not exposed yet.</p>
+        <h3>{{ 'billing.portal.usageLimits.title' | t }}</h3>
+        <p>{{ 'billing.portal.usageLimits.subtitle' | t }}</p>
       </div>
-      <span class="status status--pending">Placeholder</span>
+      <span class="status status--pending">{{ 'billing.portal.values.placeholder' | t }}</span>
     </div>
 
     <div class="placeholder-copy">
-      <p>Used, limit, and remaining values will appear once a dedicated usage endpoint becomes available.</p>
+      <p>{{ 'billing.portal.usageLimits.note' | t }}</p>
     </div>
 
     <app-data-table>
@@ -152,10 +150,10 @@
   <ui-card>
     <div class="section-head">
       <div>
-        <h3>Wallet</h3>
-        <p>Live wallet balances and transactions from the implemented billing API.</p>
+        <h3>{{ 'billing.portal.wallet.title' | t }}</h3>
+        <p>{{ 'billing.portal.wallet.subtitle' | t }}</p>
       </div>
-      <span class="status" [ngClass]="statusClass(wallet?.status)">{{ wallet?.status || 'unknown' }}</span>
+      <span class="status" [ngClass]="statusClass(wallet?.status)">{{ wallet?.status || ('billing.portal.values.unknown' | t) }}</span>
     </div>
 
     <app-loading-state [visible]="walletLoading" [message]="'Loading wallet...'"></app-loading-state>

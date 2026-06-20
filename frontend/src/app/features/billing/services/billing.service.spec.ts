@@ -117,4 +117,73 @@ describe('BillingService', () => {
     const [, options] = getMock.mock.calls[0];
     expect(options.params).toEqual({ wallet_status: 'active' });
   });
+
+  it('maps admin payment transactions from the paginated data/meta envelope', () => {
+    const getMock = vi.fn().mockReturnValue(of({
+      data: [
+        {
+          id: 3,
+          payment_id: 4,
+          type: 'payment_failed',
+          status_from: 'processing',
+          status_to: 'failed',
+          amount: 49900,
+          currency: 'USD',
+          message: 'Demo payment failed.',
+          payload: {
+            seeded: true,
+            source: 'billing_demo_seeder',
+            purpose: 'payment_history',
+            seed_key: 'billing_demo_idata_v2',
+          },
+          created_at: '2026-06-16T08:33:26.000000Z',
+        },
+      ],
+      meta: {
+        current_page: 1,
+        last_page: 1,
+        per_page: 8,
+        total: 1,
+      },
+    }));
+
+    const service = new BillingService({ get: getMock } as any);
+
+    let result: unknown = null;
+    service.loadAdminPaymentTransactions('payment-4', 1, 8).subscribe((value) => {
+      result = value;
+    });
+
+    expect(result).toEqual({
+      items: [
+        {
+          id: 3,
+          payment_id: 4,
+          type: 'payment_failed',
+          status_from: 'processing',
+          status_to: 'failed',
+          amount: 49900,
+          currency: 'USD',
+          message: 'Demo payment failed.',
+          payload: {
+            seeded: true,
+            source: 'billing_demo_seeder',
+            purpose: 'payment_history',
+            seed_key: 'billing_demo_idata_v2',
+          },
+          created_at: '2026-06-16T08:33:26.000000Z',
+        },
+      ],
+      meta: {
+        current_page: 1,
+        last_page: 1,
+        per_page: 8,
+        total: 1,
+      },
+    });
+
+    expect(getMock).toHaveBeenCalledWith('/v1/billing/admin/payments/payment-4/transactions', {
+      params: { page: 1, per_page: 8 },
+    });
+  });
 });

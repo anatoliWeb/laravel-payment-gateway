@@ -3,22 +3,22 @@ import { Component } from '@angular/core';
 type DemoStatus = 'available' | 'partial' | 'backend gap' | 'admin-only' | 'planned';
 
 type DemoLink = {
-  label: string;
+  labelKey: string;
   route?: string;
   docs?: string;
-  note?: string;
+  noteKey?: string;
 };
 
 type DemoFlowCard = {
   id: string;
   order: number;
-  title: string;
-  purpose: string;
+  titleKey: string;
+  purposeKey: string;
   prerequisites: string[];
   steps: string[];
   links: DemoLink[];
   status: DemoStatus;
-  safetyNote?: string;
+  safetyNoteKey?: string;
 };
 
 @Component({
@@ -30,294 +30,332 @@ type DemoFlowCard = {
 export class BillingDemoFlowsPageComponent {
   readonly demoRoute = '/billing/demo';
 
-  readonly walkthrough: Array<{ title: string; anchor: string }> = [
-    { title: 'Free plan limits', anchor: '#free-plan-limits' },
-    { title: 'Paid plan purchase', anchor: '#paid-plan-purchase' },
-    { title: 'Wallet top-up', anchor: '#wallet-top-up' },
-    { title: 'Wallet payment', anchor: '#wallet-payment' },
-    { title: 'Payment method payment', anchor: '#payment-method-payment' },
-    { title: 'Wallet-first fallback', anchor: '#wallet-first-fallback' },
-    { title: 'Invoice payment', anchor: '#invoice-payment' },
-    { title: 'Subscription activation', anchor: '#subscription-activation' },
-    { title: 'Failed payment', anchor: '#failed-payment' },
-    { title: 'Webhook delivery history', anchor: '#webhook-delivery-history' },
-    { title: 'Billing restriction / blacklist', anchor: '#billing-restriction-blacklist' },
-    { title: 'Feature override', anchor: '#feature-override' },
-    { title: 'Seller/company scoped payment', anchor: '#seller-company-scoped-payment' },
+  readonly walkthrough: Array<{ titleKey: string; anchor: string }> = [
+    { titleKey: 'billing.demo.walkthrough.freePlanLimits', anchor: '#free-plan-limits' },
+    { titleKey: 'billing.demo.walkthrough.paidPlanPurchase', anchor: '#paid-plan-purchase' },
+    { titleKey: 'billing.demo.walkthrough.walletTopUp', anchor: '#wallet-top-up' },
+    { titleKey: 'billing.demo.walkthrough.walletPayment', anchor: '#wallet-payment' },
+    { titleKey: 'billing.demo.walkthrough.paymentMethodPayment', anchor: '#payment-method-payment' },
+    { titleKey: 'billing.demo.walkthrough.walletFirstFallback', anchor: '#wallet-first-fallback' },
+    { titleKey: 'billing.demo.walkthrough.invoicePayment', anchor: '#invoice-payment' },
+    { titleKey: 'billing.demo.walkthrough.subscriptionActivation', anchor: '#subscription-activation' },
+    { titleKey: 'billing.demo.walkthrough.failedPayment', anchor: '#failed-payment' },
+    { titleKey: 'billing.demo.walkthrough.webhookDeliveryHistory', anchor: '#webhook-delivery-history' },
+    { titleKey: 'billing.demo.walkthrough.billingRestrictionBlacklist', anchor: '#billing-restriction-blacklist' },
+    { titleKey: 'billing.demo.walkthrough.featureOverride', anchor: '#feature-override' },
+    { titleKey: 'billing.demo.walkthrough.sellerCompanyScopedPayment', anchor: '#seller-company-scoped-payment' },
   ];
 
   readonly cards: DemoFlowCard[] = [
     {
       id: 'free-plan-limits',
       order: 1,
-      title: 'Free plan limits',
-      purpose: 'Show how the billing module supports product limits even before a paid checkout happens.',
-      prerequisites: ['User is signed in', 'Billing portal is available', 'Chat module is available for a limit-triggering action'],
+      titleKey: 'billing.demo.cards.freePlanLimits.title',
+      purposeKey: 'billing.demo.cards.freePlanLimits.purpose',
+      prerequisites: [
+        'billing.demo.cards.freePlanLimits.prerequisites.userSignedIn',
+        'billing.demo.cards.freePlanLimits.prerequisites.portalAvailable',
+        'billing.demo.cards.freePlanLimits.prerequisites.chatAvailable',
+      ],
       steps: [
-        'Open the billing portal.',
-        'Review current plan and placeholder usage sections.',
-        'Move to the related chat UI and perform an action that reaches a configured limit if the environment is seeded that way.',
-        'Observe the stable limit error and, where available, the corresponding activity log entry.',
+        'billing.demo.cards.freePlanLimits.steps.openPortal',
+        'billing.demo.cards.freePlanLimits.steps.reviewCurrentPlan',
+        'billing.demo.cards.freePlanLimits.steps.triggerLimit',
+        'billing.demo.cards.freePlanLimits.steps.observeLimitError',
       ],
       links: [
-        { label: 'Billing portal', route: '/billing' },
-        { label: 'User portal docs', docs: 'docs/billing/user-portal-ui.md' },
-        { label: 'Billing overview docs', docs: 'docs/billing/overview.md' },
+        { labelKey: 'billing.demo.links.billingPortal', route: '/billing' },
+        { labelKey: 'billing.demo.links.userPortalDocs', docs: 'docs/billing/user-portal-ui.md' },
+        { labelKey: 'billing.demo.links.billingOverviewDocs', docs: 'docs/billing/overview.md' },
       ],
       status: 'partial',
-      safetyNote: 'This is a demo walkthrough, not a live monetization test. No revenue values are shown.',
+      safetyNoteKey: 'billing.demo.cards.freePlanLimits.safetyNote',
     },
     {
       id: 'paid-plan-purchase',
       order: 2,
-      title: 'Paid plan purchase',
-      purpose: 'Demonstrate the checkout page and idempotent payment creation flow for a paid plan.',
-      prerequisites: ['Billing checkout page is reachable', 'Wallet or payment method is available', 'Idempotency key is generated client-side'],
+      titleKey: 'billing.demo.cards.paidPlanPurchase.title',
+      purposeKey: 'billing.demo.cards.paidPlanPurchase.purpose',
+      prerequisites: [
+        'billing.demo.cards.paidPlanPurchase.prerequisites.checkoutReachable',
+        'billing.demo.cards.paidPlanPurchase.prerequisites.walletOrMethod',
+        'billing.demo.cards.paidPlanPurchase.prerequisites.idempotencyGenerated',
+      ],
       steps: [
-        'Open the checkout page.',
-        'Choose a plan reference.',
-        'Select a payment source and strategy.',
-        'Submit once and avoid duplicate clicks thanks to the client-side idempotency protection.',
-        'Observe the returned payment status.',
+        'billing.demo.cards.paidPlanPurchase.steps.openCheckout',
+        'billing.demo.cards.paidPlanPurchase.steps.choosePlan',
+        'billing.demo.cards.paidPlanPurchase.steps.selectSourceStrategy',
+        'billing.demo.cards.paidPlanPurchase.steps.submitOnce',
+        'billing.demo.cards.paidPlanPurchase.steps.observeStatus',
       ],
       links: [
-        { label: 'Checkout', route: '/billing/checkout' },
-        { label: 'Checkout docs', docs: 'docs/billing/checkout-payment-ui.md' },
-        { label: 'API docs', docs: 'docs/billing/payment-api.md' },
+        { labelKey: 'billing.demo.links.checkout', route: '/billing/checkout' },
+        { labelKey: 'billing.demo.links.checkoutDocs', docs: 'docs/billing/checkout-payment-ui.md' },
+        { labelKey: 'billing.demo.links.apiDocs', docs: 'docs/billing/payment-api.md' },
       ],
       status: 'available',
     },
     {
       id: 'wallet-top-up',
       order: 3,
-      title: 'Wallet top-up',
-      purpose: 'Show the simulator-safe wallet top-up flow and resulting wallet transaction.',
-      prerequisites: ['Saved simulator payment method exists', 'Wallet top-up page is reachable'],
+      titleKey: 'billing.demo.cards.walletTopUp.title',
+      purposeKey: 'billing.demo.cards.walletTopUp.purpose',
+      prerequisites: [
+        'billing.demo.cards.walletTopUp.prerequisites.savedMethod',
+        'billing.demo.cards.walletTopUp.prerequisites.pageReachable',
+      ],
       steps: [
-        'Open the wallet top-up page.',
-        'Enter amount and currency.',
-        'Choose a saved simulator payment method.',
-        'Submit and observe the payment plus wallet transaction result.',
-        'Return to the billing portal and confirm the wallet section still renders correctly.',
+        'billing.demo.cards.walletTopUp.steps.openPage',
+        'billing.demo.cards.walletTopUp.steps.enterAmount',
+        'billing.demo.cards.walletTopUp.steps.chooseMethod',
+        'billing.demo.cards.walletTopUp.steps.observeResult',
+        'billing.demo.cards.walletTopUp.steps.returnToPortal',
       ],
       links: [
-        { label: 'Wallet top-up', route: '/billing/wallet/top-up' },
-        { label: 'Checkout docs', docs: 'docs/billing/checkout-payment-ui.md' },
-        { label: 'API docs', docs: 'docs/billing/payment-api.md' },
+        { labelKey: 'billing.demo.links.walletTopUp', route: '/billing/wallet/top-up' },
+        { labelKey: 'billing.demo.links.checkoutDocs', docs: 'docs/billing/checkout-payment-ui.md' },
+        { labelKey: 'billing.demo.links.apiDocs', docs: 'docs/billing/payment-api.md' },
       ],
       status: 'available',
     },
     {
       id: 'wallet-payment',
       order: 4,
-      title: 'Wallet payment',
-      purpose: 'Show a checkout payment that debits internal wallet balance.',
-      prerequisites: ['Wallet has sufficient balance', 'Checkout page is reachable'],
+      titleKey: 'billing.demo.cards.walletPayment.title',
+      purposeKey: 'billing.demo.cards.walletPayment.purpose',
+      prerequisites: [
+        'billing.demo.cards.walletPayment.prerequisites.sufficientBalance',
+        'billing.demo.cards.walletPayment.prerequisites.checkoutReachable',
+      ],
       steps: [
-        'Open the checkout page.',
-        'Pick wallet as the payment source.',
-        'Submit the payment.',
-        'Observe a succeeded or validation/insufficient-balance response depending on wallet state.',
+        'billing.demo.cards.walletPayment.steps.openCheckout',
+        'billing.demo.cards.walletPayment.steps.pickWallet',
+        'billing.demo.cards.walletPayment.steps.submitPayment',
+        'billing.demo.cards.walletPayment.steps.observeResponse',
       ],
       links: [
-        { label: 'Checkout', route: '/billing/checkout' },
-        { label: 'Wallet data', route: '/billing' },
-        { label: 'API docs', docs: 'docs/billing/payment-api.md' },
+        { labelKey: 'billing.demo.links.checkout', route: '/billing/checkout' },
+        { labelKey: 'billing.demo.links.walletData', route: '/billing' },
+        { labelKey: 'billing.demo.links.apiDocs', docs: 'docs/billing/payment-api.md' },
       ],
       status: 'available',
     },
     {
       id: 'payment-method-payment',
       order: 5,
-      title: 'Payment method payment',
-      purpose: 'Show a checkout payment that uses a saved simulator payment method.',
-      prerequisites: ['Saved simulator payment method exists', 'Checkout page is reachable'],
+      titleKey: 'billing.demo.cards.paymentMethodPayment.title',
+      purposeKey: 'billing.demo.cards.paymentMethodPayment.purpose',
+      prerequisites: [
+        'billing.demo.cards.paymentMethodPayment.prerequisites.savedMethod',
+        'billing.demo.cards.paymentMethodPayment.prerequisites.checkoutReachable',
+      ],
       steps: [
-        'Open checkout.',
-        'Select payment method as the payment source.',
-        'Choose a saved simulator card-like method.',
-        'Submit and observe the payment status response.',
+        'billing.demo.cards.paymentMethodPayment.steps.openCheckout',
+        'billing.demo.cards.paymentMethodPayment.steps.selectMethodSource',
+        'billing.demo.cards.paymentMethodPayment.steps.chooseSavedMethod',
+        'billing.demo.cards.paymentMethodPayment.steps.observeStatus',
       ],
       links: [
-        { label: 'Checkout', route: '/billing/checkout' },
-        { label: 'Portal payment methods', route: '/billing' },
-        { label: 'Checkout docs', docs: 'docs/billing/checkout-payment-ui.md' },
+        { labelKey: 'billing.demo.links.checkout', route: '/billing/checkout' },
+        { labelKey: 'billing.demo.links.portalPaymentMethods', route: '/billing' },
+        { labelKey: 'billing.demo.links.checkoutDocs', docs: 'docs/billing/checkout-payment-ui.md' },
       ],
       status: 'available',
-      safetyNote: 'No raw card data is collected. Only simulator-safe payment method metadata is used.',
+      safetyNoteKey: 'billing.demo.cards.paymentMethodPayment.safetyNote',
     },
     {
       id: 'wallet-first-fallback',
       order: 6,
-      title: 'Wallet-first fallback',
-      purpose: 'Show the mixed payment strategy where wallet is tried before a fallback source.',
-      prerequisites: ['Checkout page is reachable', 'Wallet and/or payment method state is seeded'],
+      titleKey: 'billing.demo.cards.walletFirstFallback.title',
+      purposeKey: 'billing.demo.cards.walletFirstFallback.purpose',
+      prerequisites: [
+        'billing.demo.cards.walletFirstFallback.prerequisites.checkoutReachable',
+        'billing.demo.cards.walletFirstFallback.prerequisites.stateSeeded',
+      ],
       steps: [
-        'Open checkout.',
-        'Choose wallet-first strategy.',
-        'Submit with a payment method fallback available.',
-        'Observe the final payment status and note that fallback behavior is server-controlled.',
+        'billing.demo.cards.walletFirstFallback.steps.openCheckout',
+        'billing.demo.cards.walletFirstFallback.steps.chooseStrategy',
+        'billing.demo.cards.walletFirstFallback.steps.submitWithFallback',
+        'billing.demo.cards.walletFirstFallback.steps.observeStatus',
       ],
       links: [
-        { label: 'Checkout', route: '/billing/checkout' },
-        { label: 'API docs', docs: 'docs/billing/payment-api.md' },
+        { labelKey: 'billing.demo.links.checkout', route: '/billing/checkout' },
+        { labelKey: 'billing.demo.links.apiDocs', docs: 'docs/billing/payment-api.md' },
       ],
       status: 'partial',
-      safetyNote: 'The UI does not invent fallback behavior; it only surfaces the server response.',
+      safetyNoteKey: 'billing.demo.cards.walletFirstFallback.safetyNote',
     },
     {
       id: 'invoice-payment',
       order: 7,
-      title: 'Invoice payment',
-      purpose: 'Show the invoice payment flow from invoice summary to paid or pending response.',
-      prerequisites: ['A target invoice id is known', 'Invoice payment page is reachable'],
+      titleKey: 'billing.demo.cards.invoicePayment.title',
+      purposeKey: 'billing.demo.cards.invoicePayment.purpose',
+      prerequisites: [
+        'billing.demo.cards.invoicePayment.prerequisites.invoiceKnown',
+        'billing.demo.cards.invoicePayment.prerequisites.pageReachable',
+      ],
       steps: [
-        'Open the invoice payment page for a specific invoice id.',
-        'Review invoice summary first.',
-        'Pick a payment source and strategy.',
-        'Submit payment and observe the returned payment state.',
+        'billing.demo.cards.invoicePayment.steps.openPage',
+        'billing.demo.cards.invoicePayment.steps.reviewSummary',
+        'billing.demo.cards.invoicePayment.steps.pickSource',
+        'billing.demo.cards.invoicePayment.steps.observeState',
       ],
       links: [
-        { label: 'Invoice payment route', note: 'Use /billing/invoices/:invoiceId/pay with a real invoice id from the portal.' },
-        { label: 'User portal', route: '/billing' },
-        { label: 'Checkout docs', docs: 'docs/billing/checkout-payment-ui.md' },
-        { label: 'Invoice docs', docs: 'docs/billing/invoices.md' },
+        { labelKey: 'billing.demo.links.invoicePaymentRoute', noteKey: 'billing.demo.links.invoicePaymentRouteNote' },
+        { labelKey: 'billing.demo.links.userPortal', route: '/billing' },
+        { labelKey: 'billing.demo.links.checkoutDocs', docs: 'docs/billing/checkout-payment-ui.md' },
+        { labelKey: 'billing.demo.links.invoiceDocs', docs: 'docs/billing/invoices.md' },
       ],
       status: 'partial',
-      safetyNote: 'Invoice discovery is still user-scoped rather than a dedicated demo list view.',
+      safetyNoteKey: 'billing.demo.cards.invoicePayment.safetyNote',
     },
     {
       id: 'subscription-activation',
       order: 8,
-      title: 'Subscription activation',
-      purpose: 'Show the payment-to-subscription lifecycle relationship documented by the backend.',
-      prerequisites: ['A pending subscription scenario exists in the seeded environment or test data'],
+      titleKey: 'billing.demo.cards.subscriptionActivation.title',
+      purposeKey: 'billing.demo.cards.subscriptionActivation.purpose',
+      prerequisites: [
+        'billing.demo.cards.subscriptionActivation.prerequisites.pendingScenario',
+      ],
       steps: [
-        'Create or reuse a pending subscription scenario.',
-        'Pay the linked payment path.',
-        'Observe that a successful payment activates the subscription.',
-        'Verify that a failed payment does not activate it.',
+        'billing.demo.cards.subscriptionActivation.steps.createScenario',
+        'billing.demo.cards.subscriptionActivation.steps.payPath',
+        'billing.demo.cards.subscriptionActivation.steps.observeSuccess',
+        'billing.demo.cards.subscriptionActivation.steps.verifyFailure',
       ],
       links: [
-        { label: 'Billing portal', route: '/billing' },
-        { label: 'Checkout docs', docs: 'docs/billing/checkout-payment-ui.md' },
-        { label: 'Subscription docs', docs: 'docs/billing/subscription-lifecycle.md' },
+        { labelKey: 'billing.demo.links.billingPortal', route: '/billing' },
+        { labelKey: 'billing.demo.links.checkoutDocs', docs: 'docs/billing/checkout-payment-ui.md' },
+        { labelKey: 'billing.demo.links.subscriptionDocs', docs: 'docs/billing/subscription-lifecycle.md' },
       ],
       status: 'partial',
-      safetyNote: 'The UI documents the lifecycle; it does not fabricate a hidden subscription-creation workflow.',
+      safetyNoteKey: 'billing.demo.cards.subscriptionActivation.safetyNote',
     },
     {
       id: 'failed-payment',
       order: 9,
-      title: 'Failed payment',
-      purpose: 'Show the safe failure path and how the review flow handles non-success payment states.',
-      prerequisites: ['Checkout or invoice payment page is reachable', 'Failure simulation is exposed only where safe'],
+      titleKey: 'billing.demo.cards.failedPayment.title',
+      purposeKey: 'billing.demo.cards.failedPayment.purpose',
+      prerequisites: [
+        'billing.demo.cards.failedPayment.prerequisites.pageReachable',
+        'billing.demo.cards.failedPayment.prerequisites.failureSafe',
+      ],
       steps: [
-        'Open checkout or invoice payment.',
-        'Use a safe failure path if the environment exposes one.',
-        'Observe the failed status and error envelope.',
-        'Check admin/operator views or logs if the environment is configured for it.',
+        'billing.demo.cards.failedPayment.steps.openFlow',
+        'billing.demo.cards.failedPayment.steps.useFailurePath',
+        'billing.demo.cards.failedPayment.steps.observeFailedStatus',
+        'billing.demo.cards.failedPayment.steps.checkAdminLogs',
       ],
       links: [
-        { label: 'Checkout', route: '/billing/checkout' },
-        { label: 'Admin billing', route: '/admin/billing' },
-        { label: 'Admin docs', docs: 'docs/billing/admin-operator-ui.md' },
-        { label: 'Simulation docs', docs: 'docs/billing/payment-simulation.md' },
+        { labelKey: 'billing.demo.links.checkout', route: '/billing/checkout' },
+        { labelKey: 'billing.demo.links.adminBilling', route: '/admin/billing' },
+        { labelKey: 'billing.demo.links.adminDocs', docs: 'docs/billing/admin-operator-ui.md' },
+        { labelKey: 'billing.demo.links.simulationDocs', docs: 'docs/billing/payment-simulation.md' },
       ],
       status: 'backend gap',
-      safetyNote: 'The user-facing UI does not expose hidden simulator failure controls unless they are already safe in the current product surface.',
+      safetyNoteKey: 'billing.demo.cards.failedPayment.safetyNote',
     },
     {
       id: 'webhook-delivery-history',
       order: 10,
-      title: 'Webhook delivery history',
-      purpose: 'Show the admin path for viewing webhook deliveries and retrying failed rows.',
-      prerequisites: ['Admin/operator access is available', 'A payment id with webhook deliveries exists'],
+      titleKey: 'billing.demo.cards.webhookDeliveryHistory.title',
+      purposeKey: 'billing.demo.cards.webhookDeliveryHistory.purpose',
+      prerequisites: [
+        'billing.demo.cards.webhookDeliveryHistory.prerequisites.adminAccess',
+        'billing.demo.cards.webhookDeliveryHistory.prerequisites.paymentKnown',
+      ],
       steps: [
-        'Open the admin billing dashboard.',
-        'Enter a payment id in the webhook lookup form.',
-        'Review the delivery history rows.',
-        'Retry only failed rows when permissions allow it.',
+        'billing.demo.cards.webhookDeliveryHistory.steps.openAdmin',
+        'billing.demo.cards.webhookDeliveryHistory.steps.enterPaymentId',
+        'billing.demo.cards.webhookDeliveryHistory.steps.reviewRows',
+        'billing.demo.cards.webhookDeliveryHistory.steps.retryFailed',
       ],
       links: [
-        { label: 'Admin billing', route: '/admin/billing' },
-        { label: 'Admin docs', docs: 'docs/billing/admin-operator-ui.md' },
-        { label: 'Webhook docs', docs: 'docs/billing/webhooks.md' },
+        { labelKey: 'billing.demo.links.adminBilling', route: '/admin/billing' },
+        { labelKey: 'billing.demo.links.adminDocs', docs: 'docs/billing/admin-operator-ui.md' },
+        { labelKey: 'billing.demo.links.webhookDocs', docs: 'docs/billing/webhooks.md' },
       ],
       status: 'admin-only',
     },
     {
       id: 'billing-restriction-blacklist',
       order: 11,
-      title: 'Billing restriction / blacklist',
-      purpose: 'Document the planned restriction workflow without pretending CRUD exists in the UI.',
-      prerequisites: ['Admin/operator scope would be required once backend CRUD exists'],
+      titleKey: 'billing.demo.cards.billingRestrictionBlacklist.title',
+      purposeKey: 'billing.demo.cards.billingRestrictionBlacklist.purpose',
+      prerequisites: [
+        'billing.demo.cards.billingRestrictionBlacklist.prerequisites.adminScope',
+      ],
       steps: [
-        'Review the admin/operator billing docs.',
-        'Note that restriction and blacklist CRUD is intentionally not exposed in the current UI.',
-        'Use this page as a guide for the intended future flow.',
+        'billing.demo.cards.billingRestrictionBlacklist.steps.reviewDocs',
+        'billing.demo.cards.billingRestrictionBlacklist.steps.noteCrudGap',
+        'billing.demo.cards.billingRestrictionBlacklist.steps.useAsGuide',
       ],
       links: [
-        { label: 'Admin billing', route: '/admin/billing' },
-        { label: 'Admin docs', docs: 'docs/billing/admin-operator-ui.md' },
-        { label: 'Overview docs', docs: 'docs/billing/overview.md' },
+        { labelKey: 'billing.demo.links.adminBilling', route: '/admin/billing' },
+        { labelKey: 'billing.demo.links.adminDocs', docs: 'docs/billing/admin-operator-ui.md' },
+        { labelKey: 'billing.demo.links.billingOverviewDocs', docs: 'docs/billing/overview.md' },
       ],
       status: 'backend gap',
     },
     {
       id: 'feature-override',
       order: 12,
-      title: 'Feature override',
-      purpose: 'Document the override story without inventing the missing CRUD surface.',
-      prerequisites: ['Admin/operator scope would be required once backend CRUD exists'],
+      titleKey: 'billing.demo.cards.featureOverride.title',
+      purposeKey: 'billing.demo.cards.featureOverride.purpose',
+      prerequisites: [
+        'billing.demo.cards.featureOverride.prerequisites.adminScope',
+      ],
       steps: [
-        'Review the admin/operator billing docs.',
-        'Note that feature override CRUD remains a backend gap.',
-        'Use the page as a portfolio guide, not as an implementation claim.',
+        'billing.demo.cards.featureOverride.steps.reviewDocs',
+        'billing.demo.cards.featureOverride.steps.noteCrudGap',
+        'billing.demo.cards.featureOverride.steps.useAsGuide',
       ],
       links: [
-        { label: 'Admin billing', route: '/admin/billing' },
-        { label: 'Admin docs', docs: 'docs/billing/admin-operator-ui.md' },
-        { label: 'Overrides docs', docs: 'docs/billing/overrides.md' },
+        { labelKey: 'billing.demo.links.adminBilling', route: '/admin/billing' },
+        { labelKey: 'billing.demo.links.adminDocs', docs: 'docs/billing/admin-operator-ui.md' },
+        { labelKey: 'billing.demo.links.overridesDocs', docs: 'docs/billing/overrides.md' },
       ],
       status: 'planned',
     },
     {
       id: 'seller-company-scoped-payment',
       order: 13,
-      title: 'Seller/company scoped payment',
-      purpose: 'Show the ownership-aware payment path and its current front-end reporting gaps.',
-      prerequisites: ['Company or seller scope is known', 'Checkout supports ownership fields'],
+      titleKey: 'billing.demo.cards.sellerCompanyScopedPayment.title',
+      purposeKey: 'billing.demo.cards.sellerCompanyScopedPayment.purpose',
+      prerequisites: [
+        'billing.demo.cards.sellerCompanyScopedPayment.prerequisites.scopeKnown',
+        'billing.demo.cards.sellerCompanyScopedPayment.prerequisites.checkoutSupportsOwnership',
+      ],
       steps: [
-        'Open company billing or seller billing overview.',
-        'Use checkout and supply company or seller ownership context where appropriate.',
-        'Observe the explicit gap notes for reporting/history.',
-        'Confirm that the UI does not calculate revenue client-side.',
+        'billing.demo.cards.sellerCompanyScopedPayment.steps.openOverview',
+        'billing.demo.cards.sellerCompanyScopedPayment.steps.useCheckout',
+        'billing.demo.cards.sellerCompanyScopedPayment.steps.observeGapNotes',
+        'billing.demo.cards.sellerCompanyScopedPayment.steps.confirmNoClientRevenue',
       ],
       links: [
-        { label: 'Company billing', route: '/billing/company' },
-        { label: 'Seller billing', route: '/billing/seller' },
-        { label: 'Checkout', route: '/billing/checkout' },
-        { label: 'Ownership docs', docs: 'docs/billing/seller-company-ui.md' },
+        { labelKey: 'billing.demo.links.companyBilling', route: '/billing/company' },
+        { labelKey: 'billing.demo.links.sellerBilling', route: '/billing/seller' },
+        { labelKey: 'billing.demo.links.checkout', route: '/billing/checkout' },
+        { labelKey: 'billing.demo.links.ownershipDocs', docs: 'docs/billing/seller-company-ui.md' },
       ],
       status: 'partial',
-      safetyNote: 'Ownership-aware views are intentionally conservative until dedicated backend reporting endpoints exist.',
+      safetyNoteKey: 'billing.demo.cards.sellerCompanyScopedPayment.safetyNote',
     },
   ];
 
-  readonly statusLegend: Array<{ label: DemoStatus; note: string }> = [
-    { label: 'available', note: 'Implemented and safe to demo from the current UI' },
-    { label: 'partial', note: 'Some pieces are live, but discovery or lifecycle is still incomplete' },
-    { label: 'backend gap', note: 'The UI is a guide only because the backend route or data is missing' },
-    { label: 'admin-only', note: 'Available only from the operator surface' },
-    { label: 'planned', note: 'Documented for the roadmap, not yet fully wired' },
+  readonly statusLegend: Array<{ label: DemoStatus; noteKey: string }> = [
+    { label: 'available', noteKey: 'billing.demo.legend.available' },
+    { label: 'partial', noteKey: 'billing.demo.legend.partial' },
+    { label: 'backend gap', noteKey: 'billing.demo.legend.backendGap' },
+    { label: 'admin-only', noteKey: 'billing.demo.legend.adminOnly' },
+    { label: 'planned', noteKey: 'billing.demo.legend.planned' },
   ];
 
   trackById(_: number, card: DemoFlowCard): string {
     return card.id;
   }
 
-  trackByWalkthrough(_: number, item: { title: string; anchor: string }): string {
+  trackByWalkthrough(_: number, item: { titleKey: string; anchor: string }): string {
     return item.anchor;
   }
 
@@ -326,7 +364,7 @@ export class BillingDemoFlowsPageComponent {
   }
 
   trackByLink(_: number, link: DemoLink): string {
-    return `${link.label}:${link.route ?? link.docs ?? ''}`;
+    return `${link.labelKey}:${link.route ?? link.docs ?? ''}`;
   }
 
   statusClass(status: DemoStatus): string {
