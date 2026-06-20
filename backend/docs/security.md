@@ -79,6 +79,7 @@ Security headers are applied by Laravel middleware (`SecurityHeadersMiddleware`)
 
 - Headers can be disabled with `SECURITY_HEADERS_ENABLED=false` for targeted debugging.
 - Docs access policy remains controlled by docs access middleware/gates; secure headers do not bypass permissions.
+- In local/dev only, the Scramble docs UI may allow Stoplight assets from `https://unpkg.com` so `/docs/api?lang=en` and `/docs/api?lang=uk` can render inside Docker. Production keeps the default strict CSP and should use bundled or self-hosted assets.
 
 ### Production recommendations
 

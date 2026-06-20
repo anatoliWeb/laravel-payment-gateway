@@ -18,6 +18,21 @@ return [
                 'SECURITY_CSP_VALUE',
                 "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'; img-src 'self' data: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self';"
             ),
+            'dev_docs' => [
+                'enabled' => (bool) env('SECURITY_CSP_DEV_DOCS_ENABLED', true),
+                'script_origins' => array_filter(array_map(
+                    'trim',
+                    explode(',', (string) env('SECURITY_CSP_DEV_DOCS_SCRIPT_ORIGINS', 'https://unpkg.com'))
+                )),
+                'style_origins' => array_filter(array_map(
+                    'trim',
+                    explode(',', (string) env('SECURITY_CSP_DEV_DOCS_STYLE_ORIGINS', 'https://unpkg.com'))
+                )),
+                'font_origins' => array_filter(array_map(
+                    'trim',
+                    explode(',', (string) env('SECURITY_CSP_DEV_DOCS_FONT_ORIGINS', 'https://unpkg.com'))
+                )),
+            ],
             'dev_vite' => [
                 'enabled' => (bool) env('SECURITY_CSP_DEV_VITE_ENABLED', true),
                 'http_origins' => array_filter(array_map(

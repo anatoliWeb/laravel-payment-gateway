@@ -39,6 +39,12 @@ Typical response:
 - prefer containerized execution for validation
 - use targeted frontend commands instead of broad rebuild loops
 
+## API Docs Blank Behind CSP
+
+If `/docs/api?lang=en` or `/docs/api?lang=uk` opens but the Swagger/Stoplight UI stays blank in local Docker, check the browser console for CSP errors against `https://unpkg.com`.
+
+The docs UI is rendered by Scramble and loads Stoplight Elements from that CDN in local/dev mode. Production should remain strict and rely on bundled or self-hosted assets instead of widening the global CSP.
+
 ## Vue Admin 401 After Login
 
 If the Vue admin shell loads but protected API requests such as `/api/v1/me`, `/api/v1/bootstrap`, or `/api/v1/stats` return `401`, verify that the SPA dev origins are listed in `SANCTUM_STATEFUL_DOMAINS`.

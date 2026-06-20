@@ -33,6 +33,36 @@ class SecurityHeadersTest extends TestCase
         $this->get('/docs/api/portal')->assertOk()->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     }
 
+    public function test_docs_ui_allows_stoplight_cdn_only_outside_production(): void
+    {
+        config()->set('security.headers.enabled', true);
+        config()->set('security.headers.content_security_policy.enabled', true);
+        config()->set('security.headers.content_security_policy.report_only', false);
+        config()->set('security.headers.content_security_policy.dev_docs.enabled', true);
+        config()->set('security.headers.content_security_policy.dev_docs.script_origins', ['https://unpkg.com']);
+        config()->set('security.headers.content_security_policy.dev_docs.style_origins', ['https://unpkg.com']);
+        config()->set('security.headers.content_security_policy.dev_docs.font_origins', ['https://unpkg.com']);
+        config()->set('api-docs.local_bypass', true);
+
+        config()->set('app.env', 'local');
+
+        foreach (['uk', 'en'] as $language) {
+            $response = $this->get('/docs/api?lang='.$language)->assertOk();
+            $csp = (string) $response->headers->get('Content-Security-Policy');
+
+            $this->assertMatchesRegularExpression('/script-src[^;]*https:\/\/unpkg\.com/', $csp);
+            $this->assertMatchesRegularExpression('/style-src[^;]*https:\/\/unpkg\.com/', $csp);
+            $this->assertMatchesRegularExpression('/font-src[^;]*https:\/\/unpkg\.com/', $csp);
+        }
+
+        config()->set('app.env', 'production');
+
+        $productionResponse = $this->get('/docs/api?lang=en')->assertOk();
+        $productionCsp = (string) $productionResponse->headers->get('Content-Security-Policy');
+
+        $this->assertStringNotContainsString('https://unpkg.com', $productionCsp);
+    }
+
     public function test_hsts_absent_by_default_and_present_when_enabled_for_secure_requests(): void
     {
         config()->set('security.headers.enabled', true);
