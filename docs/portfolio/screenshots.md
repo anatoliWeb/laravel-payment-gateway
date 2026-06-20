@@ -61,8 +61,8 @@ Verify the following routes in a browser after the Docker stack is running:
 | admin payment detail section | admin/operator | payment detail and transaction history render | `docs/assets/screenshots/billing/06-admin-payment-detail-transactions.png` | planned |
 | `/admin/billing/reports` | admin | reports dashboard renders aggregates and filters | `docs/assets/screenshots/billing/07-admin-reports-dashboard.png` | planned |
 | `/billing/demo` | customer/admin/operator | demo flow cards and walkthrough notes render | `docs/assets/screenshots/billing/08-billing-demo-flows.png` | planned |
-| `/billing/company` | company user | company-scoped billing overview renders | `docs/assets/screenshots/billing/09-company-billing-view.png` | planned |
-| `/billing/seller` | seller user | seller-scoped billing overview renders | `docs/assets/screenshots/billing/10-seller-billing-view.png` | planned |
+| `/billing/company` | `demo-company-owner@example.com` | gap-aware company billing ownership shell renders without fake scoped data | `docs/assets/screenshots/billing/09-company-billing-view.png` | planned |
+| `/billing/seller` | `demo-seller-owner@example.com` | gap-aware seller billing ownership shell renders without fake scoped data | `docs/assets/screenshots/billing/10-seller-billing-view.png` | planned |
 | Vue admin `/billing` | admin/operator | billing launchpad routes to the Angular operational and reports surfaces | `docs/assets/screenshots/billing/00-vue-admin-billing-launchpad.png` | planned |
 
 ## Screenshot Naming Plan

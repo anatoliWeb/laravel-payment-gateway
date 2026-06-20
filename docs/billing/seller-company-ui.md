@@ -60,6 +60,13 @@ The filter controls already cover the likely future query shape:
 
 Implemented as a UI-first ownership reporting shell for portfolio review.
 
+## Screenshot Guidance
+
+- Company ownership screenshot user: `demo-company-owner@example.com`
+- Seller ownership screenshot user: `demo-seller-owner@example.com`
+- Expected screenshot state: the gap-aware ownership shell should render with filters, scope summary, and explicit backend coverage notes.
+- The screenshot should not imply live scoped payment, invoice, customer, revenue, provider, or webhook rollup data until dedicated endpoints are implemented.
+
 ## Relation to Demo Flows
 
 The seller/company payment flow in [Billing Demo Flows](./demo-flows.md) points to these ownership-aware screens as the reviewer entry point for scoped billing context.
